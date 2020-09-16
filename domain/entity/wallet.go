@@ -14,14 +14,16 @@ func (w *Wallet) NewMoney(money vo.Money) {
 	w.money = money
 }
 
-func (w *Wallet) AddMoney(amount int64) vo.Money {
-	return w.money.Add(amount)
+func (w *Wallet) Add(amount int64) vo.Money {
+	w.money = w.money.Add(amount)
+	return w.money
 }
 
-func (w *Wallet) SubMoney(amount int64) vo.Money {
-	return w.money.Add(amount)
+func (w *Wallet) Sub(amount int64) vo.Money {
+	 w.money = w.money.Sub(amount)
+	return w.money.Sub(amount)
 }
 
-func (w *Wallet) Money() vo.Money {
+func (w Wallet) Money() vo.Money {
 	return w.money
 }

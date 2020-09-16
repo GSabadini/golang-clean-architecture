@@ -40,7 +40,7 @@ type CreateTransferInteractor struct {
 
 func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) (entity.Transfer, error) {
 	if err := c.process(ctx, i.PayerID, i.PayeeID, i.Value); err != nil {
-		return entity.Transfer{}, errors.New("")
+		return entity.Transfer{}, err
 	}
 
 	transfer := entity.NewTransfer(
@@ -66,7 +66,7 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 	}
 
 	if !payer.CanTransfer() {
-		return errors.New("")
+		return errors.New("!authorized")
 	}
 
 	payee, err := c.UserRepo.FindByID(ctx, payeeID)

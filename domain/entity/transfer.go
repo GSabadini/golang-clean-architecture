@@ -12,19 +12,39 @@ type TransferRepository interface {
 }
 
 type Transfer struct {
-	ID        vo.Uuid
-	Payer     vo.Uuid
-	Payee     vo.Uuid
-	Value     vo.Money
-	CreatedAt time.Time
+	id        vo.Uuid
+	payer     vo.Uuid
+	payee     vo.Uuid
+	value     vo.Money
+	createdAt time.Time
 }
 
 func NewTransfer(ID vo.Uuid, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money, createdAt time.Time) Transfer {
 	return Transfer{
-		ID:        ID,
-		Payer:     payerID,
-		Payee:     payeeID,
-		Value:     value,
-		CreatedAt: createdAt,
+		id:        ID,
+		payer:     payerID,
+		payee:     payeeID,
+		value:     value,
+		createdAt: createdAt,
 	}
+}
+
+func (t Transfer) ID() vo.Uuid {
+	return t.id
+}
+
+func (t Transfer) Payer() vo.Uuid {
+	return t.payer
+}
+
+func (t Transfer) Payee() vo.Uuid {
+	return t.payee
+}
+
+func (t Transfer) Value() vo.Money {
+	return t.value
+}
+
+func (t Transfer) CreatedAt() time.Time {
+	return t.createdAt
 }

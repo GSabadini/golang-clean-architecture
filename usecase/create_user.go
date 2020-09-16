@@ -13,7 +13,7 @@ type UserInput struct {
 	Document entity.Document `json:"document"`
 	Email    vo.Email        `json:"email"`
 	Password vo.Password     `json:"password"`
-	Wallet   *entity.Wallet   `json:"wallet"`
+	Wallet   *entity.Wallet  `json:"wallet"`
 	Type     entity.TypeUser `json:"type"`
 }
 
@@ -32,7 +32,7 @@ func NewCreateUserInteractor(repo entity.UserRepository) createUserInteractor {
 }
 
 func (c createUserInteractor) Execute(ctx context.Context, i UserInput) error {
-	var u, err = entity.NewUserFactory(
+	var u, err = entity.NewUser(
 		i.ID,
 		i.FullName,
 		i.Email,

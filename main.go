@@ -17,17 +17,20 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payer, err := entity.NewUserFactory(
+	payer, err := entity.NewUser(
 		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
 		"Gabriel Facina",
 		email,
 		"passw",
 		entity.Document{Type: entity.CPF, Number: "102476239"},
 		entity.NewWallet(vo.NewMoneyBRL(100)),
-		entity.Custom,
+		entity.Merchant,
 	)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	payee, err := entity.NewUserFactory(
+	payee, err := entity.NewUser(
 		"0db298eb-c8e7-4829-84b7-c1036b4f0792",
 		"Gabriel Facina",
 		email,
@@ -36,6 +39,9 @@ func main() {
 		entity.NewWallet(vo.NewMoneyBRL(100)),
 		entity.Merchant,
 	)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	userRepo := &repository.UserInMen{}
 	_ = userRepo.Save(
@@ -48,7 +54,6 @@ func main() {
 	)
 
 	transferRepo := &repository.TransferInMen{}
-
 	createTransfer := usecase.CreateTransferInteractor{
 		TransferRepo:       transferRepo,
 		UserRepo:           userRepo,
@@ -70,12 +75,13 @@ func main() {
 	}
 
 	payerR, _ := userRepo.FindByID(context.TODO(), payer.ID())
-	fmt.Println(payerR, "payer \n\n")
-	fmt.Printf("%T: ", payerR)
+	fmt.Println(" \n\npayer")
+	fmt.Printf("%+v: ", payerR.Wallet())
 
 	payeeR, _ := userRepo.FindByID(context.TODO(), payee.ID())
-	fmt.Println(payeeR, "payee \n\n")
-	fmt.Printf("%+v: ", payeeR)
+	fmt.Println(" \n\npayee")
+	fmt.Printf("%+v: ", payeeR.Wallet())
 
-	fmt.Println(transfer, "transfer")
+	fmt.Println("\n\ntransfer")
+	fmt.Printf("%+v: ", transfer)
 }

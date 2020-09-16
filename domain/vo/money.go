@@ -44,17 +44,17 @@ func (m Money) Currency() Currency {
 }
 
 // Add value in amount
-func (m Money) Add(addAmount int64) Money {
+func (m Money) Add(amount int64) Money {
 	return Money{
 		currency: m.currency,
-		amount:   m.amount + addAmount,
+		amount:   m.amount + amount,
 	}
 }
 
 // Sub value in amount
-func (m Money) Sub(subAmount int64) Money {
+func (m Money) Sub(amount int64) Money {
 	return Money{
 		currency: m.currency,
-		amount:   m.amount - subAmount,
+		amount:   m.amount - amount,
 	}
 }

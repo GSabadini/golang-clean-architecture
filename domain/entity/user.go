@@ -3,57 +3,19 @@ package entity
 import (
 	"context"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
 var (
-	ErrInsufficientBalance = errors.New("origin account does not have sufficient balance")
-
-	ErrInvalidTypeUser = errors.New("invalid type User")
+	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
 )
 
 type UserRepository interface {
-	Save(context.Context, *User) error
+	Save(context.Context, User) error
 	FindByID(context.Context, vo.Uuid) (User, error)
 	UpdateWallet(context.Context, vo.Uuid, vo.Money) error
-}
-
-type roles struct {
-	canTransfer bool
-}
-
-func NewRoles(canTransfer bool) roles {
-	return roles{canTransfer: canTransfer}
-}
-
-func (r roles) CanTransfer() bool {
-	return r.canTransfer
-}
-
-type TypeUser string
-
-func (t TypeUser) toUpper() TypeUser {
-	return TypeUser(strings.ToUpper(string(t)))
-}
-
-const (
-	Custom   TypeUser = "CUSTOM"
-	Merchant TypeUser = "MERCHANT"
-)
-
-type TypeDocument string
-
-const (
-	CPF  TypeDocument = "CPF"
-	CNPJ TypeDocument = "CNPJ"
-)
-
-type Document struct {
-	Type   TypeDocument
-	Number string
 }
 
 type User struct {
@@ -63,14 +25,14 @@ type User struct {
 	password vo.Password
 
 	document Document
-	wallet  *Wallet
+	wallet   *Wallet
 	typeUser TypeUser
-	roles    roles
+	roles    Roles
 
 	createdAt time.Time
 }
 
-func NewUserFactory(
+func NewUser(
 	ID vo.Uuid,
 	fullName vo.FullName,
 	email vo.Email,
@@ -78,7 +40,7 @@ func NewUserFactory(
 	document Document,
 	wallet *Wallet,
 	typeUser TypeUser,
-) (*User, error) {
+) (User, error) {
 	switch typeUser.toUpper() {
 	case Custom:
 		return NewCustomUser(
@@ -100,7 +62,7 @@ func NewUserFactory(
 		), nil
 	}
 
-	return nil, ErrInvalidTypeUser
+	return User{}, ErrInvalidTypeUser
 }
 
 func NewCustomUser(
@@ -110,8 +72,8 @@ func NewCustomUser(
 	password vo.Password,
 	document Document,
 	wallet *Wallet,
-) *User {
-	return &User{
+) User {
+	return User{
 		id:       ID,
 		fullName: fullName,
 		document: document,
@@ -119,7 +81,7 @@ func NewCustomUser(
 		password: password,
 		wallet:   wallet,
 		typeUser: Custom,
-		roles: roles{
+		roles: Roles{
 			canTransfer: true,
 		},
 		createdAt: time.Now(),
@@ -133,8 +95,8 @@ func NewMerchantUser(
 	password vo.Password,
 	document Document,
 	wallet *Wallet,
-) *User {
-	return &User{
+) User {
+	return User{
 		id:       ID,
 		fullName: fullName,
 		document: document,
@@ -142,29 +104,29 @@ func NewMerchantUser(
 		password: password,
 		wallet:   wallet,
 		typeUser: Merchant,
-		roles: roles{
+		roles: Roles{
 			canTransfer: false,
 		},
 		createdAt: time.Now(),
 	}
 }
 
-func (u *User) Withdraw(amount vo.Money) error {
-	if u.wallet.money.Amount() < amount.Amount() {
+func (u User) Withdraw(money vo.Money) error {
+	if u.Wallet().Money().Amount() < money.Amount() {
 		return ErrInsufficientBalance
 	}
 
-	u.wallet.NewMoney(u.wallet.SubMoney(amount.Amount()))
+	u.Wallet().Sub(money.Amount())
 
 	return nil
 }
 
-func (u *User) Deposit(amount vo.Money) {
-	u.wallet.NewMoney(u.wallet.AddMoney(amount.Amount()))
+func (u User) Deposit(money vo.Money) {
+	u.Wallet().Add(money.Amount())
 }
 
 func (u User) CanTransfer() bool {
-	return u.roles.CanTransfer()
+	return u.Roles().CanTransfer()
 }
 
 func (u User) ID() vo.Uuid {
@@ -183,7 +145,7 @@ func (u User) Email() vo.Email {
 	return u.email
 }
 
-func (u User) Roles() roles {
+func (u User) Roles() Roles {
 	return u.roles
 }
 
@@ -191,7 +153,7 @@ func (u User) TypeUser() TypeUser {
 	return u.typeUser
 }
 
-func (u *User) Wallet() *Wallet {
+func (u User) Wallet() *Wallet {
 	return u.wallet
 }
 

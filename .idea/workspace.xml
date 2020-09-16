@@ -2,22 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="29422044-ff12-41b6-8b10-19102bcffb34" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/domain/entity/money.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/vo/cnpj.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/vo/cpf.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/vo/email_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/domain/vo/uuid_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/domain/entity/roles.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/adapter/db/repository/user_inmem.go" beforeDir="false" afterPath="$PROJECT_DIR$/adapter/db/repository/user_inmem.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/entity/money.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/entity/wallet.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/domain/entity/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/entity/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/vo/document.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/vo/interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/vo/value.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/domain/vo/money.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/vo/money.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/vo/uuid.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/vo/uuid.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/db/mysql.go" beforeDir="false" afterPath="$PROJECT_DIR$/infrastructure/db/mongodb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/db/postgres.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usecase/create_transfer.go" beforeDir="false" afterPath="$PROJECT_DIR$/usecase/create_transfer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usecase/create_user.go" beforeDir="false" afterPath="$PROJECT_DIR$/usecase/create_user.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +23,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" path="/usr/local/go" />
+  <component name="GOROOT" path="$PROJECT_DIR$/../go/go1.13.7" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -54,18 +45,28 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/adapter" />
-    <property name="settings.editor.selected.configurable" value="go.sdk" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/domain/entity" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/adapter" />
       <recent name="$PROJECT_DIR$/infrastructure" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/domain/entity" />
+    </key>
   </component>
   <component name="RunManager" selected="Go Test.TestNewUuid in github.com/GSabadini/go-challenge/domain/vo">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="go-test-picpay" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$" />
+      <package value="github.com/GSabadini/go-challenge" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestNewUuid in github.com/GSabadini/go-challenge/domain/vo" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-test-picpay" />
       <working_directory value="$PROJECT_DIR$/domain/vo" />
@@ -75,6 +76,17 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <pattern value="^\QTestNewUuid\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="go-test-picpay" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="github.com/GSabadini/go-challenge" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
     <configuration name="email_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -131,11 +143,11 @@
       <screen x="1600" y="0" width="1920" height="1080" />
     </state>
     <state width="1878" height="290" key="GridCell.Tab.0.right/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600277620625" />
-    <state x="1803" y="5" width="1022" height="737" key="SettingsEditor" timestamp="1600274735984">
-      <screen x="1600" y="0" width="1920" height="1080" />
+    <state x="207" y="31" width="1022" height="737" key="SettingsEditor" timestamp="1600288159611">
+      <screen x="70" y="27" width="1296" height="741" />
     </state>
     <state x="1803" y="5" key="SettingsEditor/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600274735984" />
-    <state x="207" y="31" width="1022" height="737" key="SettingsEditor/70.27.1296.741@70.27.1296.741" timestamp="1600133354182" />
+    <state x="207" y="31" width="1022" height="737" key="SettingsEditor/70.27.1296.741@70.27.1296.741" timestamp="1600288159611" />
     <state x="2337" y="266" width="445" height="540" key="com.goide.refactor.move.GoMoveDeclarationDialog" timestamp="1600280646186">
       <screen x="1600" y="0" width="1920" height="1080" />
     </state>

@@ -11,8 +11,8 @@ type UserInMen struct {
 	users []*entity.User
 }
 
-func (u *UserInMen) Save(_ context.Context, user *entity.User) error {
-	u.users = append(u.users, user)
+func (u *UserInMen) Save(_ context.Context, user entity.User) error {
+	u.users = append(u.users, &user)
 
 	return nil
 }
@@ -31,7 +31,6 @@ func (u *UserInMen) UpdateWallet(_ context.Context, ID vo.Uuid, money vo.Money) 
 	for _, user := range u.users {
 		if user.ID() == ID {
 			user.Wallet().NewMoney(vo.NewMoneyBRL(money.Amount()))
-			//fmt.Print(wallet, "\n\n\n WLLET")
 		}
 	}
 
