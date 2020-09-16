@@ -18,8 +18,16 @@ type Notifier interface {
 	Notify() error
 }
 
+type TransferInput struct {
+	ID        vo.Uuid   `json:"id"`
+	PayerID   vo.Uuid   `json:"payer"`
+	PayeeID   vo.Uuid   `json:"payee"`
+	Value     vo.Money  `json:"value"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type CreateTransferUseCase interface {
-	Execute(context.Context, vo.Uuid, vo.Uuid, vo.Money) (entity.Transfer, error)
+	Execute(context.Context, TransferInput) (entity.Transfer, error)
 }
 
 type CreateTransferInteractor struct {
@@ -30,21 +38,16 @@ type CreateTransferInteractor struct {
 	Notifier           Notifier
 }
 
-func (c CreateTransferInteractor) Execute(
-	ctx context.Context,
-	payerID vo.Uuid,
-	payeeID vo.Uuid,
-	value vo.Money,
-) (entity.Transfer, error) {
-	if err := c.process(ctx, payerID, payeeID, value); err != nil {
+func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) (entity.Transfer, error) {
+	if err := c.process(ctx, i.PayerID, i.PayeeID, i.Value); err != nil {
 		return entity.Transfer{}, errors.New("")
 	}
 
 	transfer := entity.NewTransfer(
 		"",
-		payerID,
-		payeeID,
-		value,
+		i.PayerID,
+		i.PayeeID,
+		i.Value,
 		time.Now(),
 	)
 

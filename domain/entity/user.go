@@ -8,34 +8,26 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
+var (
+	ErrInsufficientBalance = errors.New("origin account does not have sufficient balance")
+)
+
 type UserRepository interface {
 	Save(context.Context, User) error
 	FindByID(context.Context, vo.Uuid) (User, error)
 	UpdateWallet(context.Context, vo.Uuid, vo.Money) error
 }
 
-type TyperUser string
+type Roles struct {
+	canTransfer bool
+}
+
+type TypeUser string
 
 const (
-	Custom1   TyperUser = "CUSTOM"
-	Merchant1 TyperUser = "MERCHANT"
+	Custom   TypeUser = "CUSTOM"
+	Merchant TypeUser = "MERCHANT"
 )
-
-type TypeUser interface {
-	isCanTransfer() bool
-}
-
-type Custom struct{}
-
-func (c Custom) isCanTransfer() bool {
-	return true
-}
-
-type Merchant struct{}
-
-func (m Merchant) isCanTransfer() bool {
-	return false
-}
 
 type User struct {
 	ID       vo.Uuid
@@ -45,20 +37,52 @@ type User struct {
 	Password vo.Password
 	Wallet   vo.Money
 
-	Type TypeUser
+	Type  TypeUser
+	Roles Roles
 
 	CreatedAt time.Time
 }
 
-func NewUser(
+func NewUserFactory(
 	ID vo.Uuid,
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
 	document vo.Document,
 	wallet vo.Money,
-	t TypeUser,
-	createdAt time.Time,
+	typeUser TypeUser,
+) User {
+	switch typeUser {
+	case Custom:
+		return NewCustomUser(
+			ID,
+			fullName,
+			email,
+			password,
+			document,
+			wallet,
+		)
+	case Merchant:
+		return NewMerchantUser(
+			ID,
+			fullName,
+			email,
+			password,
+			document,
+			wallet,
+		)
+	}
+
+	return User{}
+}
+
+func NewCustomUser(
+	ID vo.Uuid,
+	fullName vo.FullName,
+	email vo.Email,
+	password vo.Password,
+	document vo.Document,
+	wallet vo.Money,
 ) User {
 	return User{
 		ID:        ID,
@@ -67,14 +91,32 @@ func NewUser(
 		Email:     email,
 		Password:  password,
 		Wallet:    wallet,
-		Type:      t,
-		CreatedAt: createdAt,
+		Type:      Custom,
+		Roles:     Roles{canTransfer: true},
+		CreatedAt: time.Now(),
 	}
 }
 
-var (
-	ErrInsufficientBalance = errors.New("origin account does not have sufficient balance")
-)
+func NewMerchantUser(
+	ID vo.Uuid,
+	fullName vo.FullName,
+	email vo.Email,
+	password vo.Password,
+	document vo.Document,
+	wallet vo.Money,
+) User {
+	return User{
+		ID:        ID,
+		FullName:  fullName,
+		Document:  document,
+		Email:     email,
+		Password:  password,
+		Wallet:    wallet,
+		Type:      Merchant,
+		Roles:     Roles{canTransfer: false},
+		CreatedAt: time.Now(),
+	}
+}
 
 func (u *User) Withdraw(amount vo.Money) error {
 	if u.Wallet.Value < amount.Value {
@@ -91,5 +133,5 @@ func (u *User) Deposit(amount vo.Money) {
 }
 
 func (u User) IsCanTransfer() bool {
-	return u.Type.isCanTransfer()
+	return u.Roles.canTransfer
 }

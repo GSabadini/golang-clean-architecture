@@ -17,39 +17,25 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payer := entity.User{
-		ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0792",
-		FullName: "Gabriel Sabadini Facina",
-		Document: vo.Document{
-			Type:   vo.RG,
-			Number: "102476239",
-		},
-		Email:    email,
-		Password: "facina123",
-		Type:     entity.Custom{},
-		Wallet: vo.Money{
-			Currency: vo.BRL,
-			Value:    100,
-		},
-		CreatedAt: time.Now(),
-	}
+	payer := entity.NewUserFactory(
+		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+		"Gabriel Facina",
+		email,
+		"passw",
+		vo.Document{Type: vo.RG, Number: "102476239"},
+		vo.Money{Currency: vo.BRL, Value: 100},
+		entity.Custom,
+	)
 
-	payee := entity.User{
-		ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
-		FullName: "Gabriel Facina",
-		Document: vo.Document{
-			Type:   vo.RG,
-			Number: "102476239",
-		},
-		Email:    email,
-		Password: "facina123",
-		Type:     entity.Merchant{},
-		Wallet: vo.Money{
-			Currency: vo.BRL,
-			Value:    100,
-		},
-		CreatedAt: time.Now(),
-	}
+	payee := entity.NewUserFactory(
+		"0db298eb-c8e7-4829-84b7-c1036b4f0792",
+		"Gabriel Facina",
+		email,
+		"passw",
+		vo.Document{Type: vo.CNPJ, Number: "6239532017000000"},
+		vo.Money{Currency: vo.BRL, Value: 100},
+		entity.Merchant,
+	)
 
 	userRepo := &repository.UserInMen{}
 	_ = userRepo.Save(
@@ -64,19 +50,23 @@ func main() {
 	transferRepo := &repository.TransferInMen{}
 
 	createTransfer := usecase.CreateTransferInteractor{
-		TransferRepo: transferRepo,
-		UserRepo:     userRepo,
-		ExternalAuthorizer:   http.Authorizer{},
-		Notifier:     http.Notifier{},
+		TransferRepo:       transferRepo,
+		UserRepo:           userRepo,
+		ExternalAuthorizer: http.Authorizer{},
+		Notifier:           http.Notifier{},
 	}
 
 	transfer, err := createTransfer.Execute(
 		context.TODO(),
-		payer.ID,
-		payee.ID,
-		vo.Money{
-			Currency: vo.BRL,
-			Value:    100,
+		usecase.TransferInput{
+			ID:        "",
+			PayerID:        payer.ID,
+			PayeeID:   payee.ID,
+			Value:     	vo.Money{
+				Currency: vo.BRL,
+				Value:    100,
+			},
+			CreatedAt: time.Time{},
 		})
 	if err != nil {
 		fmt.Println(err)
