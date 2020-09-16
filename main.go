@@ -17,23 +17,23 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payer := entity.NewUserFactory(
+	payer, err := entity.NewUserFactory(
 		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
 		"Gabriel Facina",
 		email,
 		"passw",
-		vo.Document{Type: vo.RG, Number: "102476239"},
-		vo.Money{Currency: vo.BRL, Value: 100},
+		entity.Document{Type: entity.CPF, Number: "102476239"},
+		entity.NewWallet(vo.NewMoneyBRL(100)),
 		entity.Custom,
 	)
 
-	payee := entity.NewUserFactory(
+	payee, err := entity.NewUserFactory(
 		"0db298eb-c8e7-4829-84b7-c1036b4f0792",
 		"Gabriel Facina",
 		email,
 		"passw",
-		vo.Document{Type: vo.CNPJ, Number: "6239532017000000"},
-		vo.Money{Currency: vo.BRL, Value: 100},
+		entity.Document{Type: entity.CPF, Number: "1231231231"},
+		entity.NewWallet(vo.NewMoneyBRL(100)),
 		entity.Merchant,
 	)
 
@@ -60,23 +60,22 @@ func main() {
 		context.TODO(),
 		usecase.TransferInput{
 			ID:        "",
-			PayerID:        payer.ID,
-			PayeeID:   payee.ID,
-			Value:     	vo.Money{
-				Currency: vo.BRL,
-				Value:    100,
-			},
+			PayerID:   payer.ID(),
+			PayeeID:   payee.ID(),
+			Value:     vo.NewMoneyBRL(100),
 			CreatedAt: time.Time{},
 		})
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	payerR, _ := userRepo.FindByID(context.TODO(), payer.ID)
+	payerR, _ := userRepo.FindByID(context.TODO(), payer.ID())
 	fmt.Println(payerR, "payer \n\n")
+	fmt.Printf("%T: ", payerR)
 
-	payeeR, _ := userRepo.FindByID(context.TODO(), payee.ID)
+	payeeR, _ := userRepo.FindByID(context.TODO(), payee.ID())
 	fmt.Println(payeeR, "payee \n\n")
+	fmt.Printf("%+v: ", payeeR)
 
 	fmt.Println(transfer, "transfer")
 }

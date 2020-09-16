@@ -44,7 +44,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) 
 	}
 
 	transfer := entity.NewTransfer(
-		"",
+		"vo.Uuid{}",
 		i.PayerID,
 		i.PayeeID,
 		i.Value,
@@ -65,7 +65,7 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 		return errors.New("")
 	}
 
-	if !payer.IsCanTransfer() {
+	if !payer.CanTransfer() {
 		return errors.New("")
 	}
 
@@ -86,12 +86,12 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 	*/
 
 	//c.UserRepo.InitTransaction()
-	err = c.UserRepo.UpdateWallet(ctx, payerID, payer.Wallet)
+	err = c.UserRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
 	if err != nil {
 		return errors.New("")
 	}
 
-	err = c.UserRepo.UpdateWallet(ctx, payeeID, payee.Wallet)
+	err = c.UserRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
 	if err != nil {
 		//c.UserRepo.Rollback()
 		return errors.New("")
@@ -115,21 +115,3 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	return nil
 }
-
-//func (c CreateTransferInteractor) FindUsers(
-//	ctx context.Context ,
-//	payerID vo.Uuid,
-//	payeeID vo.Uuid,
-//	) (entity.User, entity.User, error) {
-//	payer, err := c.UserRepo.FindByID(ctx, payerID)
-//	if err != nil {
-//		return entity.User{}, entity.User{}, errors.New("")
-//	}
-//
-//	payee, err := c.UserRepo.FindByID(ctx, payeeID)
-//	if err != nil {
-//		return entity.User{}, entity.User{}, errors.New("")
-//	}
-//
-//	return payer, payee, nil
-//}

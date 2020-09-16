@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
@@ -10,37 +11,63 @@ import (
 
 var (
 	ErrInsufficientBalance = errors.New("origin account does not have sufficient balance")
+
+	ErrInvalidTypeUser = errors.New("invalid type User")
 )
 
 type UserRepository interface {
-	Save(context.Context, User) error
+	Save(context.Context, *User) error
 	FindByID(context.Context, vo.Uuid) (User, error)
 	UpdateWallet(context.Context, vo.Uuid, vo.Money) error
 }
 
-type Roles struct {
+type roles struct {
 	canTransfer bool
 }
 
+func NewRoles(canTransfer bool) roles {
+	return roles{canTransfer: canTransfer}
+}
+
+func (r roles) CanTransfer() bool {
+	return r.canTransfer
+}
+
 type TypeUser string
+
+func (t TypeUser) toUpper() TypeUser {
+	return TypeUser(strings.ToUpper(string(t)))
+}
 
 const (
 	Custom   TypeUser = "CUSTOM"
 	Merchant TypeUser = "MERCHANT"
 )
 
+type TypeDocument string
+
+const (
+	CPF  TypeDocument = "CPF"
+	CNPJ TypeDocument = "CNPJ"
+)
+
+type Document struct {
+	Type   TypeDocument
+	Number string
+}
+
 type User struct {
-	ID       vo.Uuid
-	FullName vo.FullName
-	Document vo.Document
-	Email    vo.Email
-	Password vo.Password
-	Wallet   vo.Money
+	id       vo.Uuid
+	fullName vo.FullName
+	email    vo.Email
+	password vo.Password
 
-	Type  TypeUser
-	Roles Roles
+	document Document
+	wallet  *Wallet
+	typeUser TypeUser
+	roles    roles
 
-	CreatedAt time.Time
+	createdAt time.Time
 }
 
 func NewUserFactory(
@@ -48,11 +75,11 @@ func NewUserFactory(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document vo.Document,
-	wallet vo.Money,
+	document Document,
+	wallet *Wallet,
 	typeUser TypeUser,
-) User {
-	switch typeUser {
+) (*User, error) {
+	switch typeUser.toUpper() {
 	case Custom:
 		return NewCustomUser(
 			ID,
@@ -61,7 +88,7 @@ func NewUserFactory(
 			password,
 			document,
 			wallet,
-		)
+		), nil
 	case Merchant:
 		return NewMerchantUser(
 			ID,
@@ -70,10 +97,10 @@ func NewUserFactory(
 			password,
 			document,
 			wallet,
-		)
+		), nil
 	}
 
-	return User{}
+	return nil, ErrInvalidTypeUser
 }
 
 func NewCustomUser(
@@ -81,19 +108,21 @@ func NewCustomUser(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document vo.Document,
-	wallet vo.Money,
-) User {
-	return User{
-		ID:        ID,
-		FullName:  fullName,
-		Document:  document,
-		Email:     email,
-		Password:  password,
-		Wallet:    wallet,
-		Type:      Custom,
-		Roles:     Roles{canTransfer: true},
-		CreatedAt: time.Now(),
+	document Document,
+	wallet *Wallet,
+) *User {
+	return &User{
+		id:       ID,
+		fullName: fullName,
+		document: document,
+		email:    email,
+		password: password,
+		wallet:   wallet,
+		typeUser: Custom,
+		roles: roles{
+			canTransfer: true,
+		},
+		createdAt: time.Now(),
 	}
 }
 
@@ -102,36 +131,74 @@ func NewMerchantUser(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document vo.Document,
-	wallet vo.Money,
-) User {
-	return User{
-		ID:        ID,
-		FullName:  fullName,
-		Document:  document,
-		Email:     email,
-		Password:  password,
-		Wallet:    wallet,
-		Type:      Merchant,
-		Roles:     Roles{canTransfer: false},
-		CreatedAt: time.Now(),
+	document Document,
+	wallet *Wallet,
+) *User {
+	return &User{
+		id:       ID,
+		fullName: fullName,
+		document: document,
+		email:    email,
+		password: password,
+		wallet:   wallet,
+		typeUser: Merchant,
+		roles: roles{
+			canTransfer: false,
+		},
+		createdAt: time.Now(),
 	}
 }
 
 func (u *User) Withdraw(amount vo.Money) error {
-	if u.Wallet.Value < amount.Value {
+	if u.wallet.money.Amount() < amount.Amount() {
 		return ErrInsufficientBalance
 	}
 
-	u.Wallet.Value -= amount.Value
+	u.wallet.NewMoney(u.wallet.SubMoney(amount.Amount()))
 
 	return nil
 }
 
 func (u *User) Deposit(amount vo.Money) {
-	u.Wallet.Value += amount.Value
+	u.wallet.NewMoney(u.wallet.AddMoney(amount.Amount()))
 }
 
-func (u User) IsCanTransfer() bool {
-	return u.Roles.canTransfer
+func (u User) CanTransfer() bool {
+	return u.roles.CanTransfer()
+}
+
+func (u User) ID() vo.Uuid {
+	return u.id
+}
+
+func (u User) FullName() vo.FullName {
+	return u.fullName
+}
+
+func (u User) Password() vo.Password {
+	return u.password
+}
+
+func (u User) Email() vo.Email {
+	return u.email
+}
+
+func (u User) Roles() roles {
+	return u.roles
+}
+
+func (u User) TypeUser() TypeUser {
+	return u.typeUser
+}
+
+func (u *User) Wallet() *Wallet {
+	return u.wallet
+}
+
+func (u User) Document() Document {
+	return u.document
+}
+
+func (u User) CreatedAt() time.Time {
+	return u.createdAt
 }

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
@@ -9,24 +10,29 @@ import (
 type UserInput struct {
 	ID       vo.Uuid         `json:"id"`
 	FullName vo.FullName     `json:"full_name"`
-	Document vo.Document     `json:"document"`
+	Document entity.Document `json:"document"`
 	Email    vo.Email        `json:"email"`
 	Password vo.Password     `json:"password"`
-	Wallet   vo.Money        `json:"wallet"`
+	Wallet   *entity.Wallet   `json:"wallet"`
 	Type     entity.TypeUser `json:"type"`
-	//CreatedAt time.Time       `json:"created_at"`
 }
 
 type CreateUserUseCase interface {
-	Execute(input UserInput) error
+	Execute(UserInput) error
 }
 
-type CreateUserInteractor struct {
-	Repo entity.UserRepository
+type createUserInteractor struct {
+	repo entity.UserRepository
 }
 
-func (c CreateUserInteractor) Execute(ctx context.Context, i UserInput) error {
-	return c.Repo.Save(ctx, entity.NewUserFactory(
+func NewCreateUserInteractor(repo entity.UserRepository) createUserInteractor {
+	return createUserInteractor{
+		repo: repo,
+	}
+}
+
+func (c createUserInteractor) Execute(ctx context.Context, i UserInput) error {
+	var u, err = entity.NewUserFactory(
 		i.ID,
 		i.FullName,
 		i.Email,
@@ -34,5 +40,10 @@ func (c CreateUserInteractor) Execute(ctx context.Context, i UserInput) error {
 		i.Document,
 		i.Wallet,
 		i.Type,
-	))
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.repo.Save(ctx, u)
 }

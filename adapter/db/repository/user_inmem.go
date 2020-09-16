@@ -11,15 +11,15 @@ type UserInMen struct {
 	users []*entity.User
 }
 
-func (u *UserInMen) Save(_ context.Context, user entity.User) error {
-	u.users = append(u.users, &user)
+func (u *UserInMen) Save(_ context.Context, user *entity.User) error {
+	u.users = append(u.users, user)
 
 	return nil
 }
 
 func (u *UserInMen) FindByID(_ context.Context, ID vo.Uuid) (entity.User, error) {
 	for _, user := range u.users {
-		if user.ID == ID {
+		if user.ID() == ID {
 			return *user, nil
 		}
 	}
@@ -27,10 +27,11 @@ func (u *UserInMen) FindByID(_ context.Context, ID vo.Uuid) (entity.User, error)
 	return entity.User{}, nil
 }
 
-func (u *UserInMen) UpdateWallet(_ context.Context, ID vo.Uuid, wallet vo.Money) error {
+func (u *UserInMen) UpdateWallet(_ context.Context, ID vo.Uuid, money vo.Money) error {
 	for _, user := range u.users {
-		if user.ID == ID {
-			user.Wallet.Value = wallet.Value
+		if user.ID() == ID {
+			user.Wallet().NewMoney(vo.NewMoneyBRL(money.Amount()))
+			//fmt.Print(wallet, "\n\n\n WLLET")
 		}
 	}
 
