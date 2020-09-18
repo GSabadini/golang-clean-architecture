@@ -20,10 +20,10 @@ func (w *Wallet) Add(amount int64) vo.Money {
 }
 
 func (w *Wallet) Sub(amount int64) vo.Money {
-	 w.money = w.money.Sub(amount)
+	w.money = w.money.Sub(amount)
 	return w.money.Sub(amount)
 }
 
-func (w Wallet) Money() vo.Money {
+func (w *Wallet) Money() vo.Money {
 	return w.money
 }

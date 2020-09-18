@@ -1,8 +1,13 @@
 package http
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
-type Authorizer struct{}
+type Authorizer struct {
+	client http.Client
+}
 
 func (a Authorizer) Authorized() (bool, error) {
 	fmt.Println("Authorizado")

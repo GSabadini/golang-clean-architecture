@@ -1,8 +1,13 @@
 package http
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
-type Notifier struct{}
+type Notifier struct {
+	client http.Client
+}
 
 func (n Notifier) Notify() error {
 	fmt.Println("Notificado")

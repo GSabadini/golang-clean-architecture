@@ -24,7 +24,8 @@ func main() {
 		"passw",
 		entity.Document{Type: entity.CPF, Number: "102476239"},
 		entity.NewWallet(vo.NewMoneyBRL(100)),
-		entity.Merchant,
+		entity.CUSTOM,
+		time.Now(),
 	)
 	if err != nil {
 		fmt.Println(err)
@@ -37,7 +38,8 @@ func main() {
 		"passw",
 		entity.Document{Type: entity.CPF, Number: "1231231231"},
 		entity.NewWallet(vo.NewMoneyBRL(100)),
-		entity.Merchant,
+		entity.MERCHANT,
+		time.Now(),
 	)
 	if err != nil {
 		fmt.Println(err)

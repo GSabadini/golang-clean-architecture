@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
+    <list default="true" id="29422044-ff12-41b6-8b10-19102bcffb34" name="Default Changelist" comment="" />
+=======
     <list default="true" id="29422044-ff12-41b6-8b10-19102bcffb34" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/domain/entity/roles.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/domain/entity/user_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adapter/db/repository/user_inmem.go" beforeDir="false" afterPath="$PROJECT_DIR$/adapter/db/repository/user_inmem.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/entity/money.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/entity/wallet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adapter/http/authorizer.go" beforeDir="false" afterPath="$PROJECT_DIR$/adapter/http/authorizer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adapter/http/notifier.go" beforeDir="false" afterPath="$PROJECT_DIR$/adapter/http/notifier.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/entity/type_document.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/entity/document.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/entity/type_user.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/domain/entity/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/entity/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/vo/money.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/vo/money.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usecase/create_user.go" beforeDir="false" afterPath="$PROJECT_DIR$/usecase/create_user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usecase/create_transfer.go" beforeDir="false" afterPath="$PROJECT_DIR$/usecase/create_transfer.go" afterDir="false" />
     </list>
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -56,7 +61,7 @@
       <recent name="$PROJECT_DIR$/domain/entity" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestNewUuid in github.com/GSabadini/go-challenge/domain/vo">
+  <component name="RunManager" selected="Go Test.TestTypeUser_toUpper in github.com/GSabadini/go-challenge/domain/entity">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="go-test-picpay" />
       <working_directory value="$PROJECT_DIR$" />
@@ -65,6 +70,17 @@
       <filePath value="$PROJECT_DIR$" />
       <package value="github.com/GSabadini/go-challenge" />
       <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestNewUser in github.com/GSabadini/go-challenge/domain/entity" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-test-picpay" />
+      <working_directory value="$PROJECT_DIR$/domain/entity" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/GSabadini/go-challenge/domain/entity" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestNewUser\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestNewUuid in github.com/GSabadini/go-challenge/domain/vo" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -76,6 +92,17 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <pattern value="^\QTestNewUuid\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestTypeUser_toUpper in github.com/GSabadini/go-challenge/domain/entity" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-test-picpay" />
+      <working_directory value="$PROJECT_DIR$/domain/entity" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/GSabadini/go-challenge/domain/entity" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestTypeUser_toUpper\E$" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
@@ -100,6 +127,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestTypeUser_toUpper in github.com/GSabadini/go-challenge/domain/entity" />
+        <item itemvalue="Go Test.TestNewUser in github.com/GSabadini/go-challenge/domain/entity" />
         <item itemvalue="Go Test.TestNewUuid in github.com/GSabadini/go-challenge/domain/vo" />
         <item itemvalue="Go Test.email_test.go" />
       </list>
@@ -127,22 +156,26 @@
       <screen x="1600" y="0" width="1920" height="1080" />
     </state>
     <state x="2082" y="128" width="424" height="479" key="FileChooserDialogImpl/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600274237848" />
-    <state width="1878" height="290" key="GridCell.Tab.0.bottom" timestamp="1600277620625">
-      <screen x="1600" y="0" width="1920" height="1080" />
+    <state width="1250" height="114" key="GridCell.Tab.0.bottom" timestamp="1600401479558">
+      <screen x="70" y="27" width="1296" height="741" />
     </state>
     <state width="1878" height="290" key="GridCell.Tab.0.bottom/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600277620625" />
-    <state width="1878" height="290" key="GridCell.Tab.0.center" timestamp="1600277620625">
-      <screen x="1600" y="0" width="1920" height="1080" />
+    <state width="1250" height="114" key="GridCell.Tab.0.bottom/70.27.1296.741@70.27.1296.741" timestamp="1600401479558" />
+    <state width="1250" height="114" key="GridCell.Tab.0.center" timestamp="1600401479557">
+      <screen x="70" y="27" width="1296" height="741" />
     </state>
     <state width="1878" height="290" key="GridCell.Tab.0.center/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600277620625" />
-    <state width="1878" height="290" key="GridCell.Tab.0.left" timestamp="1600277620625">
-      <screen x="1600" y="0" width="1920" height="1080" />
+    <state width="1250" height="114" key="GridCell.Tab.0.center/70.27.1296.741@70.27.1296.741" timestamp="1600401479557" />
+    <state width="1250" height="114" key="GridCell.Tab.0.left" timestamp="1600401479556">
+      <screen x="70" y="27" width="1296" height="741" />
     </state>
     <state width="1878" height="290" key="GridCell.Tab.0.left/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600277620625" />
-    <state width="1878" height="290" key="GridCell.Tab.0.right" timestamp="1600277620625">
-      <screen x="1600" y="0" width="1920" height="1080" />
+    <state width="1250" height="114" key="GridCell.Tab.0.left/70.27.1296.741@70.27.1296.741" timestamp="1600401479556" />
+    <state width="1250" height="114" key="GridCell.Tab.0.right" timestamp="1600401479558">
+      <screen x="70" y="27" width="1296" height="741" />
     </state>
     <state width="1878" height="290" key="GridCell.Tab.0.right/0.0.1600.900/1600.0.1920.1080@1600.0.1920.1080" timestamp="1600277620625" />
+    <state width="1250" height="114" key="GridCell.Tab.0.right/70.27.1296.741@70.27.1296.741" timestamp="1600401479557" />
     <state x="207" y="31" width="1022" height="737" key="SettingsEditor" timestamp="1600288159611">
       <screen x="70" y="27" width="1296" height="741" />
     </state>

@@ -18,7 +18,7 @@ func TestNewUuid(t *testing.T) {
 		{
 			name:    "Test new valid uuid",
 			args:    args{value: "0db298eb-c8e7-4829-84b7-c1036b4f0792"},
-			want:    Uuid{value: "0db298eb-c8e7-4829-84b7-c1036b4f0792"},
+			want:    "0db298eb-c8e7-4829-84b7-c1036b4f0792",
 			wantErr: false,
 		},
 	}

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -10,6 +11,7 @@ import (
 )
 
 type Authorizer interface {
+	//Authorized(entity.Transfer) (bool, error)
 	Authorized() (bool, error)
 }
 
@@ -18,7 +20,17 @@ type Notifier interface {
 	Notify() error
 }
 
-type TransferInput struct {
+//Output port
+type CreateTransferPresenter interface {
+	Output(entity.Transfer) TransferOutput
+}
+
+//Input port
+type CreateTransferUseCase interface {
+	Execute(context.Context, TransferInput) (entity.Transfer, error)
+}
+
+type TransferOutput struct {
 	ID        vo.Uuid   `json:"id"`
 	PayerID   vo.Uuid   `json:"payer"`
 	PayeeID   vo.Uuid   `json:"payee"`
@@ -26,8 +38,12 @@ type TransferInput struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type CreateTransferUseCase interface {
-	Execute(context.Context, TransferInput) (entity.Transfer, error)
+type TransferInput struct {
+	ID        vo.Uuid   `json:"id"`
+	PayerID   vo.Uuid   `json:"payer"`
+	PayeeID   vo.Uuid   `json:"payee"`
+	Value     vo.Money  `json:"value"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type CreateTransferInteractor struct {
@@ -44,7 +60,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) 
 	}
 
 	transfer := entity.NewTransfer(
-		"vo.Uuid{}",
+		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
 		i.PayerID,
 		i.PayeeID,
 		i.Value,
@@ -62,7 +78,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) 
 func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
 	payer, err := c.UserRepo.FindByID(ctx, payerID)
 	if err != nil {
-		return errors.New("")
+		return err
 	}
 
 	if !payer.CanTransfer() {
@@ -71,12 +87,12 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	payee, err := c.UserRepo.FindByID(ctx, payeeID)
 	if err != nil {
-		return errors.New("")
+		return err
 	}
 
 	err = payer.Withdraw(value)
 	if err != nil {
-		return errors.New("")
+		return err
 	}
 
 	payee.Deposit(value)
@@ -87,20 +103,21 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	//c.UserRepo.InitTransaction()
 	err = c.UserRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
+	fmt.Println(payer.Wallet().Money())
 	if err != nil {
-		return errors.New("")
+		return err
 	}
 
 	err = c.UserRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
 	if err != nil {
 		//c.UserRepo.Rollback()
-		return errors.New("")
+		return err
 	}
 
 	ok, err := c.ExternalAuthorizer.Authorized()
 	if err != nil || !ok {
 		//c.UserRepo.Rollback()
-		return errors.New("")
+		return err
 	}
 
 	//c.UserRepo.Commit()
@@ -110,7 +127,7 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	err = c.Notifier.Notify()
 	if err != nil {
-		return errors.New("")
+		return err
 	}
 
 	return nil
