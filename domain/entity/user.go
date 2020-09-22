@@ -26,9 +26,15 @@ const (
 	MERCHANT TypeUser = "MERCHANT"
 )
 
-type UserRepository interface {
-	Save(context.Context, User) error
+type CreateUserRepository interface {
+	Create(context.Context, User) (User, error)
+}
+
+type FindUserByIDRepository interface {
 	FindByID(context.Context, vo.Uuid) (User, error)
+}
+
+type UpdateUserWalletRepository interface {
 	UpdateWallet(context.Context, vo.Uuid, vo.Money) error
 }
 

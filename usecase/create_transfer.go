@@ -11,34 +11,32 @@ import (
 )
 
 type Authorizer interface {
-	//Authorized(entity.Transfer) (bool, error)
-	Authorized() (bool, error)
+	Authorized(entity.Transfer) (bool, error)
 }
 
 type Notifier interface {
-	//Notify(entity.Transfer) error
-	Notify() error
+	Notify(entity.Transfer) error
 }
 
 //Output port
 type CreateTransferPresenter interface {
-	Output(entity.Transfer) TransferOutput
+	Output(entity.Transfer) CreateTransferOutput
 }
 
 //Input port
 type CreateTransferUseCase interface {
-	Execute(context.Context, TransferInput) (entity.Transfer, error)
+	Execute(context.Context, CreateTransferInput) (CreateTransferOutput, error)
 }
 
-type TransferOutput struct {
-	ID        vo.Uuid   `json:"id"`
-	PayerID   vo.Uuid   `json:"payer"`
-	PayeeID   vo.Uuid   `json:"payee"`
-	Value     vo.Money  `json:"value"`
-	CreatedAt time.Time `json:"created_at"`
+type CreateTransferInput struct {
+	ID        vo.Uuid
+	PayerID   vo.Uuid
+	PayeeID   vo.Uuid
+	Value     vo.Money
+	CreatedAt time.Time
 }
 
-type TransferInput struct {
+type CreateTransferOutput struct {
 	ID        vo.Uuid   `json:"id"`
 	PayerID   vo.Uuid   `json:"payer"`
 	PayeeID   vo.Uuid   `json:"payee"`
@@ -47,36 +45,64 @@ type TransferInput struct {
 }
 
 type CreateTransferInteractor struct {
-	TransferRepo entity.TransferRepository
-	UserRepo     entity.UserRepository
-
-	ExternalAuthorizer Authorizer
-	Notifier           Notifier
+	createTransferRepo   entity.CreateTransferRepository
+	updateUserWalletRepo entity.UpdateUserWalletRepository
+	findUserByIDRepo     entity.FindUserByIDRepository
+	pre                  CreateTransferPresenter
+	externalAuthorizer   Authorizer
+	notifier             Notifier
 }
 
-func (c CreateTransferInteractor) Execute(ctx context.Context, i TransferInput) (entity.Transfer, error) {
+func NewCreateTransferInteractor(
+	transferRepo entity.CreateTransferRepository,
+	updateUserWalletRepo entity.UpdateUserWalletRepository,
+	findUserByIDRepo entity.FindUserByIDRepository,
+	pre CreateTransferPresenter,
+	externalAuthorizer Authorizer,
+	notifier Notifier,
+) CreateTransferInteractor {
+	return CreateTransferInteractor{
+		createTransferRepo:   transferRepo,
+		updateUserWalletRepo: updateUserWalletRepo,
+		findUserByIDRepo:     findUserByIDRepo,
+		pre:                  pre,
+		externalAuthorizer:   externalAuthorizer,
+		notifier:             notifier,
+	}
+}
+
+func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferInput) (CreateTransferOutput, error) {
 	if err := c.process(ctx, i.PayerID, i.PayeeID, i.Value); err != nil {
-		return entity.Transfer{}, err
+		return c.pre.Output(entity.Transfer{}), err
 	}
 
-	transfer := entity.NewTransfer(
+	transfer, err := c.createTransferRepo.Create(ctx, entity.NewTransfer(
 		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
 		i.PayerID,
 		i.PayeeID,
 		i.Value,
 		time.Now(),
-	)
-
-	err := c.TransferRepo.Save(ctx, transfer)
+	))
 	if err != nil {
-		return entity.Transfer{}, errors.New("")
+		return c.pre.Output(entity.Transfer{}), err
 	}
 
-	return transfer, nil
+	ok, err := c.externalAuthorizer.Authorized(transfer)
+	if err != nil || !ok {
+		//c.updateUserWalletRepo.Rollback()
+		return c.pre.Output(entity.Transfer{}), err
+	}
+
+	err = c.notifier.Notify(transfer)
+	if err != nil {
+		return c.pre.Output(entity.Transfer{}), err
+	}
+
+	return c.pre.Output(transfer), nil
 }
 
 func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
-	payer, err := c.UserRepo.FindByID(ctx, payerID)
+	payer, err := c.findUserByIDRepo.FindByID(ctx, payerID)
 	if err != nil {
 		return err
 	}
@@ -85,7 +111,7 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 		return errors.New("!authorized")
 	}
 
-	payee, err := c.UserRepo.FindByID(ctx, payeeID)
+	payee, err := c.findUserByIDRepo.FindByID(ctx, payeeID)
 	if err != nil {
 		return err
 	}
@@ -101,34 +127,23 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 	Start Transaction
 	*/
 
-	//c.UserRepo.InitTransaction()
-	err = c.UserRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
+	//c.updateUserWalletRepo.InitTransaction()
+	err = c.updateUserWalletRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
 	fmt.Println(payer.Wallet().Money())
 	if err != nil {
 		return err
 	}
 
-	err = c.UserRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
+	err = c.updateUserWalletRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
 	if err != nil {
-		//c.UserRepo.Rollback()
+		//c.updateUserWalletRepo.Rollback()
 		return err
 	}
 
-	ok, err := c.ExternalAuthorizer.Authorized()
-	if err != nil || !ok {
-		//c.UserRepo.Rollback()
-		return err
-	}
-
-	//c.UserRepo.Commit()
+	//c.updateUserWalletRepo.Commit()
 	/**
 	End Transaction
 	*/
-
-	err = c.Notifier.Notify()
-	if err != nil {
-		return err
-	}
 
 	return nil
 }

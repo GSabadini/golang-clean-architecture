@@ -7,8 +7,8 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-type TransferRepository interface {
-	Save(context.Context, Transfer) error
+type CreateTransferRepository interface {
+	Create(context.Context, Transfer) (Transfer, error)
 }
 
 type Transfer struct {

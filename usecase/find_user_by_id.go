@@ -9,15 +9,15 @@ import (
 
 //Output port
 type FindUserByIDPresenter interface {
-	Output(entity.User) UserOutput
+	Output(entity.User) FindUserByIDOutput
 }
 
 //Input port
 type FindUserByID interface {
-	Execute(context.Context, vo.Uuid) (UserOutput, error)
+	Execute(context.Context, vo.Uuid) (FindUserByIDOutput, error)
 }
 
-type UserOutput struct {
+type FindUserByIDOutput struct {
 	ID       vo.Uuid         `json:"id"`
 	FullName vo.FullName     `json:"full_name"`
 	Document entity.Document `json:"document"`
@@ -28,22 +28,22 @@ type UserOutput struct {
 }
 
 type FindUserByIDInteractor struct {
-	repo entity.UserRepository
+	repo entity.FindUserByIDRepository
 	pre  FindUserByIDPresenter
 }
 
-func NewFindUserByIDInteractor(repo entity.UserRepository, pre FindUserByIDPresenter) FindUserByIDInteractor {
+func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByIDInteractor {
 	return FindUserByIDInteractor{
 		repo: repo,
 		pre:  pre,
 	}
 }
 
-func (f FindUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (UserOutput, error) {
-	u, err := f.repo.FindByID(ctx, ID)
+func (f FindUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
+	user, err := f.repo.FindByID(ctx, ID)
 	if err != nil {
 		return f.pre.Output(entity.User{}), err
 	}
 
-	return f.pre.Output(u), nil
+	return f.pre.Output(user), nil
 }

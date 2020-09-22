@@ -8,11 +8,26 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
+//Input port
 type CreateUserUseCase interface {
-	Execute(UserInput) error
+	Execute(CreateUserInput) (CreateUserOutput, error)
 }
 
-type UserInput struct {
+//Output port
+type CreateUserPresenter interface {
+	Output(entity.User) CreateUserOutput
+}
+
+type CreateUserInput struct {
+	FullName vo.FullName
+	Document entity.Document
+	Email    vo.Email
+	Password vo.Password
+	Wallet   *entity.Wallet
+	Type     entity.TypeUser
+}
+
+type CreateUserOutput struct {
 	ID       vo.Uuid         `json:"id"`
 	FullName vo.FullName     `json:"full_name"`
 	Document entity.Document `json:"document"`
@@ -23,18 +38,20 @@ type UserInput struct {
 }
 
 type CreateUserInteractor struct {
-	repo entity.UserRepository
+	repo entity.CreateUserRepository
+	pre  CreateUserPresenter
 }
 
-func NewCreateUserInteractor(repo entity.UserRepository) CreateUserInteractor {
+func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserInteractor {
 	return CreateUserInteractor{
 		repo: repo,
+		pre:  pre,
 	}
 }
 
-func (c CreateUserInteractor) Execute(ctx context.Context, i UserInput) error {
+func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
 	var u, err = entity.NewUser(
-		i.ID,
+		"i.ID",
 		i.FullName,
 		i.Email,
 		i.Password,
@@ -44,8 +61,13 @@ func (c CreateUserInteractor) Execute(ctx context.Context, i UserInput) error {
 		time.Now(),
 	)
 	if err != nil {
-		return err
+		return c.pre.Output(entity.User{}), err
 	}
 
-	return c.repo.Save(ctx, u)
+	user, err := c.repo.Create(ctx, u)
+	if err != nil {
+		return c.pre.Output(entity.User{}), err
+	}
+
+	return c.pre.Output(user), nil
 }

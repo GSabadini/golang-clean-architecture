@@ -10,64 +10,66 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-type findUserByIDRepoStub struct {
+type createUserRepoStub struct {
 	result entity.User
 	err    error
 }
 
-func (f findUserByIDRepoStub) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
-	return f.result, f.err
+func (c createUserRepoStub) Create(context.Context, entity.User) (entity.User, error) {
+	return c.result, c.err
 }
 
-type findUserByIDPresenterStub struct {
-	result FindUserByIDOutput
+type createUserPresenterStub struct {
+	result CreateUserOutput
 }
 
-func (f findUserByIDPresenterStub) Output(entity.User) FindUserByIDOutput {
-	return f.result
+func (c createUserPresenterStub) Output(_ entity.User) CreateUserOutput {
+	return c.result
 }
 
-func TestFindUserByIDInteractor_Execute(t *testing.T) {
+func TestCreateUserInteractor_Execute(t *testing.T) {
 	type fields struct {
-		repo entity.FindUserByIDRepository
-		pre  FindUserByIDPresenter
+		repo entity.CreateUserRepository
+		pre  CreateUserPresenter
 	}
+
 	type args struct {
 		ctx context.Context
-		ID  vo.Uuid
+		i   CreateUserInput
 	}
-	var tests = []struct {
+
+	tests := []struct {
 		name    string
 		fields  fields
 		args    args
-		want    FindUserByIDOutput
+		want    CreateUserOutput
 		wantErr bool
 	}{
 		{
-			name: "Create user success",
+			name: "Create custom user success",
 			fields: fields{
-				repo: findUserByIDRepoStub{
+				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
 						"0db298eb-c8e7-4829-84b7-c1036b4f0791",
 						"Test testing",
 						vo.Email{},
 						"passw",
 						entity.Document{
-							Type:   entity.CPF,
-							Number: "07091054954",
+							Type:   entity.CNPJ,
+							Number: "34018708000191",
 						},
 						nil,
 						time.Now(),
 					),
 					err: nil,
 				},
-				pre: findUserByIDPresenterStub{
-					result: FindUserByIDOutput{
+				pre: createUserPresenterStub{
+					result: CreateUserOutput{
 						ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 						FullName: "Test testing",
 						Document: entity.Document{
-							Type:   entity.CPF,
-							Number: "07091054954",
+							Type:   entity.CNPJ,
+							Number: "34018708000191",
 						},
 						Email:    vo.Email{},
 						Password: "passw",
@@ -78,14 +80,24 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			},
 			args: args{
 				ctx: nil,
-				ID:  "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				i: CreateUserInput{
+					FullName: "Test testing",
+					Document: entity.Document{
+						Type:   entity.CNPJ,
+						Number: "34018708000191",
+					},
+					Email:    vo.Email{},
+					Password: "passw",
+					Wallet:   nil,
+					Type:     "CUSTOM",
+				},
 			},
-			want: FindUserByIDOutput{
+			want: CreateUserOutput{
 				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 				FullName: "Test testing",
 				Document: entity.Document{
-					Type:   entity.CPF,
-					Number: "07091054954",
+					Type:   entity.CNPJ,
+					Number: "34018708000191",
 				},
 				Email:    vo.Email{},
 				Password: "passw",
@@ -97,12 +109,12 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := NewFindUserByIDInteractor(
+			c := NewCreateUserInteractor(
 				tt.fields.repo,
 				tt.fields.pre,
 			)
 
-			got, err := f.Execute(tt.args.ctx, tt.args.ID)
+			got, err := c.Execute(tt.args.ctx, tt.args.i)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

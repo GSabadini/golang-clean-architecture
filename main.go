@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/GSabadini/go-challenge/adapter/db/repository"
+	"time"
+
 	"github.com/GSabadini/go-challenge/adapter/http"
+	"github.com/GSabadini/go-challenge/adapter/presenter"
+	"github.com/GSabadini/go-challenge/adapter/repository"
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/usecase"
-	"time"
 )
 
 func main() {
@@ -56,16 +58,17 @@ func main() {
 	)
 
 	transferRepo := &repository.TransferInMen{}
-	createTransfer := usecase.CreateTransferInteractor{
-		TransferRepo:       transferRepo,
-		UserRepo:           userRepo,
-		ExternalAuthorizer: http.Authorizer{},
-		Notifier:           http.Notifier{},
-	}
+	createTransfer := usecase.NewCreateTransferInteractor(
+		transferRepo,
+		userRepo,
+		presenter.CreateTransferPresenter{},
+		http.Authorizer{},
+		http.Notifier{},
+	)
 
 	transfer, err := createTransfer.Execute(
 		context.TODO(),
-		usecase.TransferInput{
+		usecase.CreateTransferInput{
 			ID:        "",
 			PayerID:   payer.ID(),
 			PayeeID:   payee.ID(),
