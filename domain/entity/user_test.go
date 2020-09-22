@@ -48,8 +48,7 @@ func TestNewUser(t *testing.T) {
 					Type:   CPF,
 					Number: "07010965836",
 				},
-				roles: Roles{canTransfer: true},
-
+				roles:     Roles{canTransfer: true},
 				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
 				typeUser:  CUSTOM,
 				createdAt: time.Time{},

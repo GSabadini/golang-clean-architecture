@@ -32,9 +32,10 @@ type FindUserByIDInteractor struct {
 	pre  FindUserByIDPresenter
 }
 
-func NewFindUserByIDInteractor(repo entity.UserRepository) FindUserByIDInteractor {
+func NewFindUserByIDInteractor(repo entity.UserRepository, pre FindUserByIDPresenter) FindUserByIDInteractor {
 	return FindUserByIDInteractor{
 		repo: repo,
+		pre:  pre,
 	}
 }
 
