@@ -37,11 +37,11 @@ type CreateTransferInput struct {
 }
 
 type CreateTransferOutput struct {
-	ID        vo.Uuid   `json:"id"`
-	PayerID   vo.Uuid   `json:"payer"`
-	PayeeID   vo.Uuid   `json:"payee"`
-	Value     vo.Money  `json:"value"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        string `json:"id"`
+	PayerID   string `json:"payer"`
+	PayeeID   string `json:"payee"`
+	Value     int64  `json:"value"`
+	CreatedAt string `json:"created_at"`
 }
 
 type CreateTransferInteractor struct {
@@ -54,7 +54,7 @@ type CreateTransferInteractor struct {
 }
 
 func NewCreateTransferInteractor(
-	transferRepo entity.CreateTransferRepository,
+	createTransferRepo entity.CreateTransferRepository,
 	updateUserWalletRepo entity.UpdateUserWalletRepository,
 	findUserByIDRepo entity.FindUserByIDRepository,
 	pre CreateTransferPresenter,
@@ -62,7 +62,7 @@ func NewCreateTransferInteractor(
 	notifier Notifier,
 ) CreateTransferInteractor {
 	return CreateTransferInteractor{
-		createTransferRepo:   transferRepo,
+		createTransferRepo:   createTransferRepo,
 		updateUserWalletRepo: updateUserWalletRepo,
 		findUserByIDRepo:     findUserByIDRepo,
 		pre:                  pre,

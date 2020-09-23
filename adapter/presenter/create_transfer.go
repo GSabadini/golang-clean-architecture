@@ -9,10 +9,10 @@ type CreateTransferPresenter struct{}
 
 func (c CreateTransferPresenter) Output(t entity.Transfer) usecase.CreateTransferOutput {
 	return usecase.CreateTransferOutput{
-		ID:        t.ID(),
-		PayerID:   t.Payer(),
-		PayeeID:   t.Payee(),
-		Value:     t.Value(),
-		CreatedAt: t.CreatedAt(),
+		ID:        string(t.ID()),
+		PayerID:   string(t.Payer()),
+		PayeeID:   string(t.Payee()),
+		Value:     t.Value().Amount(),
+		CreatedAt: t.CreatedAt().String(),
 	}
 }

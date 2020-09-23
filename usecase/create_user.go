@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -27,14 +29,23 @@ type CreateUserInput struct {
 	Type     entity.TypeUser
 }
 
+func NewCreateUserInput(fullName vo.FullName, document entity.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
+	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
+}
+
 type CreateUserOutput struct {
-	ID       vo.Uuid         `json:"id"`
-	FullName vo.FullName     `json:"full_name"`
-	Document entity.Document `json:"document"`
-	Email    vo.Email        `json:"email"`
-	Password vo.Password     `json:"password"`
-	Wallet   *entity.Wallet  `json:"wallet"`
-	Type     entity.TypeUser `json:"type"`
+	ID       string             `json:"id"`
+	FullName string             `json:"full_name"`
+	Document DocumentUserOutput `json:"document"`
+	Email    string             `json:"email"`
+	Password string             `json:"password"`
+	Wallet   *entity.Wallet     `json:"wallet"`
+	Type     string             `json:"type"`
+}
+
+type DocumentUserOutput struct {
+	Type   string `json:"type"`
+	Number string `json:"number"`
 }
 
 type CreateUserInteractor struct {
@@ -51,7 +62,7 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 
 func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
 	var u, err = entity.NewUser(
-		"i.ID",
+		vo.Uuid(fmt.Sprintf("i.ID-%d", rand.Intn(20))),
 		i.FullName,
 		i.Email,
 		i.Password,

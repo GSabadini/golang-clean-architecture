@@ -15,16 +15,16 @@ var (
 	ErrInvalidTypeUser = errors.New("invalid type user")
 )
 
+const (
+	CUSTOM   TypeUser = "CUSTOM"
+	MERCHANT TypeUser = "MERCHANT"
+)
+
 type TypeUser string
 
 func (t TypeUser) toUpper() TypeUser {
 	return TypeUser(strings.ToUpper(string(t)))
 }
-
-const (
-	CUSTOM   TypeUser = "CUSTOM"
-	MERCHANT TypeUser = "MERCHANT"
-)
 
 type CreateUserRepository interface {
 	Create(context.Context, User) (User, error)

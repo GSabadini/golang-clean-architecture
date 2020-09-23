@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 	"time"
@@ -105,6 +106,45 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Type:     entity.CUSTOM,
 			},
 			wantErr: false,
+		},
+		{
+			name: "Create custom user error",
+			fields: fields{
+				repo: createUserRepoStub{
+					result: entity.NewCustomUser(
+						"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+						"Test testing",
+						vo.Email{},
+						"passw",
+						entity.Document{
+							Type:   entity.CNPJ,
+							Number: "34018708000191",
+						},
+						nil,
+						time.Now(),
+					),
+					err: errors.New("fail"),
+				},
+				pre: createUserPresenterStub{
+					result: CreateUserOutput{},
+				},
+			},
+			args: args{
+				ctx: nil,
+				i: CreateUserInput{
+					FullName: "Test testing",
+					Document: entity.Document{
+						Type:   entity.CNPJ,
+						Number: "34018708000191",
+					},
+					Email:    vo.Email{},
+					Password: "passw",
+					Wallet:   nil,
+					Type:     "CUSTOM",
+				},
+			},
+			want:    CreateUserOutput{},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

@@ -6,6 +6,11 @@ var (
 	ErrInvalidTypeDocument = errors.New("invalid type document")
 )
 
+const (
+	CPF  TypeDocument = "CPF"
+	CNPJ TypeDocument = "CNPJ"
+)
+
 type TypeDocument string
 
 type Document struct {
@@ -14,18 +19,13 @@ type Document struct {
 	Number string
 }
 
-func NewDocument(t TypeDocument, number string) (*Document, error) {
+func NewDocument(t TypeDocument, number string) (Document, error) {
 	switch t {
 	case CPF:
-		return &Document{Type: CPF, Number: number}, nil
+		return Document{Type: CPF, Number: number}, nil
 	case CNPJ:
-		return &Document{Type: CNPJ, Number: number}, nil
+		return Document{Type: CNPJ, Number: number}, nil
 	}
 
-	return nil, ErrInvalidTypeDocument
+	return Document{}, ErrInvalidTypeDocument
 }
-
-const (
-	CPF  TypeDocument = "CPF"
-	CNPJ TypeDocument = "CNPJ"
-)

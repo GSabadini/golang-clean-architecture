@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/GSabadini/go-challenge/adapter/http"
 	"github.com/GSabadini/go-challenge/adapter/presenter"
-	"github.com/GSabadini/go-challenge/adapter/repository"
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/go-challenge/infrastructure/db"
 	"github.com/GSabadini/go-challenge/usecase"
 )
 
@@ -19,48 +20,53 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payer, err := entity.NewUser(
-		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+	payer := usecase.NewCreateUserInput(
 		"Gabriel Facina",
+		entity.Document{Type: entity.CPF, Number: "102476239"},
 		email,
 		"passw",
-		entity.Document{Type: entity.CPF, Number: "102476239"},
 		entity.NewWallet(vo.NewMoneyBRL(100)),
 		entity.CUSTOM,
-		time.Now(),
 	)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	payee, err := entity.NewUser(
-		"0db298eb-c8e7-4829-84b7-c1036b4f0792",
+	payee := usecase.NewCreateUserInput(
 		"Gabriel Facina",
+		entity.Document{Type: entity.CPF, Number: "1231231231"},
 		email,
 		"passw",
-		entity.Document{Type: entity.CPF, Number: "1231231231"},
 		entity.NewWallet(vo.NewMoneyBRL(100)),
 		entity.MERCHANT,
-		time.Now(),
 	)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	userRepo := &repository.UserInMen{}
-	_ = userRepo.Save(
+	createUserRepo := &db.UserInMen{}
+	createUserUC := usecase.NewCreateUserInteractor(createUserRepo, presenter.CreateUserPresenter{})
+	u1, _ := createUserUC.Execute(
 		context.TODO(),
 		payer,
 	)
-	_ = userRepo.Save(
+
+	b2, err := json.Marshal(u1)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(b2), "b222222222")
+
+	u2, _ := createUserUC.Execute(
 		context.TODO(),
 		payee,
 	)
 
-	transferRepo := &repository.TransferInMen{}
+	createTransferRepo := &db.TransferInMen{}
 	createTransfer := usecase.NewCreateTransferInteractor(
-		transferRepo,
-		userRepo,
+		createTransferRepo,
+		createUserRepo,
+		createUserRepo,
 		presenter.CreateTransferPresenter{},
 		http.Authorizer{},
 		http.Notifier{},
@@ -70,8 +76,8 @@ func main() {
 		context.TODO(),
 		usecase.CreateTransferInput{
 			ID:        "",
-			PayerID:   payer.ID(),
-			PayeeID:   payee.ID(),
+			PayerID:   vo.Uuid(u1.ID),
+			PayeeID:   vo.Uuid(u2.ID),
 			Value:     vo.NewMoneyBRL(100),
 			CreatedAt: time.Time{},
 		})
@@ -79,14 +85,16 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payerR, _ := userRepo.FindByID(context.TODO(), payer.ID())
+	payerR, _ := createUserRepo.FindByID(context.TODO(), vo.Uuid(u1.ID))
 	fmt.Println(" \n\npayer")
 	fmt.Printf("%+v: ", payerR.Wallet())
 
-	payeeR, _ := userRepo.FindByID(context.TODO(), payee.ID())
+	payeeR, _ := createUserRepo.FindByID(context.TODO(), vo.Uuid(u2.ID))
 	fmt.Println(" \n\npayee")
 	fmt.Printf("%+v: ", payeeR.Wallet())
 
 	fmt.Println("\n\ntransfer")
 	fmt.Printf("%+v: ", transfer)
+	b, _ := json.Marshal(transfer)
+	fmt.Println(string(b))
 }
