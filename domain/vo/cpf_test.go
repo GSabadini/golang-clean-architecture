@@ -5,44 +5,50 @@ import (
 	"testing"
 )
 
-func TestNewEmail(t *testing.T) {
+func TestNewCPF(t *testing.T) {
 	type args struct {
 		value string
 	}
-
 	tests := []struct {
 		name    string
 		args    args
-		want    Email
+		want    CPF
 		wantErr bool
 	}{
 		{
-			name:    "Test new valid email",
-			args:    args{value: "test@test.com"},
-			want:    Email{value: "test@test.com"},
+			name: "Test new valid cpf",
+			args: args{
+				value: "070.910.549-45",
+			},
+			want:    CPF{"070.910.549-45"},
 			wantErr: false,
 		},
 		{
-			name:    "Test new valid email",
-			args:    args{value: "yyyyyy@xxxxxx.com"},
-			want:    Email{value: "yyyyyy@xxxxxx.com"},
+			name: "Test new valid cpf",
+			args: args{
+				value: "876.066.350-21",
+			},
+			want:    CPF{"876.066.350-21"},
 			wantErr: false,
 		},
 		{
-			name:    "Test new invalid email",
-			args:    args{value: "xxxxxxxx.com"},
+			name: "Test new invalid cpf",
+			args: args{
+				value: "070.910",
+			},
 			wantErr: true,
 		},
 		{
-			name:    "Test new invalid email",
-			args:    args{value: "test#test.com"},
+			name: "Test new invalid cpf",
+			args: args{
+				value: "549-45",
+			},
 			wantErr: true,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewEmail(tt.args.value)
+			got, err := NewCPF(tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return
@@ -55,11 +61,10 @@ func TestNewEmail(t *testing.T) {
 	}
 }
 
-func TestEmail_Equals(t *testing.T) {
+func TestCPF_Equals(t *testing.T) {
 	type fields struct {
 		value string
 	}
-
 	type args struct {
 		value Value
 	}
@@ -70,63 +75,62 @@ func TestEmail_Equals(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "Email value equals",
+			name: "CPF value equals",
 			fields: fields{
-				value: "test@test.com",
+				value: "876.066.350-21",
 			},
 			args: args{
-				value: Email{"test@test.com"},
+				value: CPF{"876.066.350-21"},
 			},
 			want: true,
 		},
 		{
-			name: "Email value equals",
+			name: "CPF value equals",
 			fields: fields{
-				value: "xxxxxx@xxxxxx.com",
+				value: "664.789.720-89",
 			},
 			args: args{
-				value: Email{"xxxxxx@xxxxxx.com"},
+				value: CPF{"664.789.720-89"},
 			},
 			want: true,
 		},
 		{
-			name: "Email value not equals",
+			name: "CPF value not equals",
 			fields: fields{
-				value: "test@test.com",
+				value: "876.066.350-21",
 			},
 			args: args{
-				value: Email{"test1@test.com"},
+				value: CPF{"426.423.030-63"},
 			},
 			want: false,
 		},
 		{
-			name: "Email value not equals",
+			name: "CPF value not equals",
 			fields: fields{
-				value: "xxxx@yyyy.com",
+				value: "876.066.350-21",
 			},
 			args: args{
-				value: Email{"yyyy@xxxx.com"},
+				value: CPF{"572.398.610-40"},
 			},
 			want: false,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e, err := NewEmail(tt.fields.value)
+			cpf, err := NewCPF(tt.fields.value)
 			if err != nil {
 				t.Errorf("[TestCase '%s'] Err: '%v'", tt.name, err)
 				return
 			}
 
-			if got := e.Equals(tt.args.value); got != tt.want {
+			if got := cpf.Equals(tt.args.value); got != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestEmail_Value(t *testing.T) {
+func TestCPF_Value(t *testing.T) {
 	type fields struct {
 		value string
 	}
@@ -138,28 +142,27 @@ func TestEmail_Value(t *testing.T) {
 		{
 			name: "Get value",
 			fields: fields{
-				value: "test@test.com",
+				value: "664.789.720-89",
 			},
-			want: "test@test.com",
+			want: "664.789.720-89",
 		},
 		{
 			name: "Get value",
 			fields: fields{
-				value: "test@example.com",
+				value: "398.473.760-26",
 			},
-			want: "test@example.com",
+			want: "398.473.760-26",
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e, err := NewEmail(tt.fields.value)
+			cpf, err := NewCPF(tt.fields.value)
 			if err != nil {
 				t.Errorf("[TestCase '%s'] Err: '%v'", tt.name, err)
 				return
 			}
 
-			if got := e.Value(); got != tt.want {
+			if got := cpf.Value(); got != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
 			}
 		})

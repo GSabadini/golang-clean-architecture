@@ -11,7 +11,7 @@ type CreateUserRepository struct {
 	db *sql.DB
 }
 
-func NewCreateUser(db *sql.DB) CreateUserRepository {
+func NewCreateUserRepository(db *sql.DB) CreateUserRepository {
 	return CreateUserRepository{
 		db: db,
 	}

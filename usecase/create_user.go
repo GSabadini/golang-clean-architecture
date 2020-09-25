@@ -2,8 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -27,10 +25,6 @@ type CreateUserInput struct {
 	Password vo.Password
 	Wallet   *entity.Wallet
 	Type     entity.TypeUser
-}
-
-func NewCreateUserInput(fullName vo.FullName, document entity.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
-	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
 type CreateUserOutput struct {
@@ -61,8 +55,13 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 }
 
 func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
-	var u, err = entity.NewUser(
-		vo.Uuid(fmt.Sprintf("i.ID-%d", rand.Intn(20))),
+	uuid, err := vo.NewUuid(entity.NewUUID())
+	if err != nil {
+		return c.pre.Output(entity.User{}), err
+	}
+
+	u, err := entity.NewUser(
+		uuid,
 		i.FullName,
 		i.Email,
 		i.Password,

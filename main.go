@@ -17,8 +17,16 @@ import (
 func main() {
 	email, err := vo.NewEmail("gfacina@hotmail.com")
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		panic(err)
 	}
+
+	uuid, err := vo.NewUuid(entity.NewUUID())
+	if err != nil {
+		//fmt.Println(err)
+		panic(err)
+	}
+	fmt.Print(uuid)
 
 	payer := usecase.NewCreateUserInput(
 		"Gabriel Facina",
@@ -62,6 +70,16 @@ func main() {
 		payee,
 	)
 
+	payerID, err := vo.NewUuid(u1.ID)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	payeeID, err := vo.NewUuid(u2.ID)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	createTransferRepo := &db.TransferInMen{}
 	createTransfer := usecase.NewCreateTransferInteractor(
 		createTransferRepo,
@@ -75,9 +93,9 @@ func main() {
 	transfer, err := createTransfer.Execute(
 		context.TODO(),
 		usecase.CreateTransferInput{
-			ID:        "",
-			PayerID:   vo.Uuid(u1.ID),
-			PayeeID:   vo.Uuid(u2.ID),
+			ID:        uuid,
+			PayerID:   payerID,
+			PayeeID:   payeeID,
 			Value:     vo.NewMoneyBRL(100),
 			CreatedAt: time.Time{},
 		})
@@ -85,11 +103,11 @@ func main() {
 		fmt.Println(err)
 	}
 
-	payerR, _ := createUserRepo.FindByID(context.TODO(), vo.Uuid(u1.ID))
+	payerR, _ := createUserRepo.FindByID(context.TODO(), payerID)
 	fmt.Println(" \n\npayer")
 	fmt.Printf("%+v: ", payerR.Wallet())
 
-	payeeR, _ := createUserRepo.FindByID(context.TODO(), vo.Uuid(u2.ID))
+	payeeR, _ := createUserRepo.FindByID(context.TODO(), payeeID)
 	fmt.Println(" \n\npayee")
 	fmt.Printf("%+v: ", payeeR.Wallet())
 

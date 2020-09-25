@@ -11,7 +11,7 @@ type CreateTransferRepository struct {
 	db *sql.DB
 }
 
-func NewCreateTransfer(db *sql.DB) CreateTransferRepository {
+func NewCreateTransferRepository(db *sql.DB) CreateTransferRepository {
 	return CreateTransferRepository{
 		db: db,
 	}

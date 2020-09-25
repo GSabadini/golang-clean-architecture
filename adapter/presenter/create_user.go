@@ -9,7 +9,7 @@ type CreateUserPresenter struct{}
 
 func (c CreateUserPresenter) Output(u entity.User) usecase.CreateUserOutput {
 	return usecase.CreateUserOutput{
-		ID:       string(u.ID()),
+		ID:       u.ID().String(),
 		FullName: string(u.FullName()),
 		Document: usecase.DocumentUserOutput{
 			Type:   string(u.Document().Type),

@@ -39,7 +39,7 @@ func (e Email) Value() string {
 
 // String returns string representation of the Email
 func (e Email) String() string {
-	return string(e.value)
+	return e.value
 }
 
 // Equals checks that two Email are the same

@@ -11,7 +11,7 @@ type FindUserByIDRepository struct {
 	db *sql.DB
 }
 
-func NewFindUserByIDUser(db *sql.DB) FindUserByIDRepository {
+func NewFindUserByIDUserRepository(db *sql.DB) FindUserByIDRepository {
 	return FindUserByIDRepository{
 		db: db,
 	}

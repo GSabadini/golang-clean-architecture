@@ -76,8 +76,13 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		return c.pre.Output(entity.Transfer{}), err
 	}
 
+	uuid, err := vo.NewUuid(entity.NewUUID())
+	if err != nil {
+		return c.pre.Output(entity.Transfer{}), err
+	}
+
 	transfer, err := c.createTransferRepo.Create(ctx, entity.NewTransfer(
-		"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+		uuid,
 		i.PayerID,
 		i.PayeeID,
 		i.Value,
