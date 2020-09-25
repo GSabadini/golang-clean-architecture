@@ -17,6 +17,7 @@ type FindUserByID interface {
 	Execute(context.Context, vo.Uuid) (FindUserByIDOutput, error)
 }
 
+//Output data
 type FindUserByIDOutput struct {
 	ID       vo.Uuid         `json:"id"`
 	FullName vo.FullName     `json:"full_name"`

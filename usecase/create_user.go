@@ -18,6 +18,7 @@ type CreateUserPresenter interface {
 	Output(entity.User) CreateUserOutput
 }
 
+//Input data
 type CreateUserInput struct {
 	FullName vo.FullName
 	Document entity.Document
@@ -31,6 +32,7 @@ func NewCreateUserInput(fullName vo.FullName, document entity.Document, email vo
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
+//Output data
 type CreateUserOutput struct {
 	ID       string             `json:"id"`
 	FullName string             `json:"full_name"`
@@ -41,6 +43,7 @@ type CreateUserOutput struct {
 	Type     string             `json:"type"`
 }
 
+//Output data
 type DocumentUserOutput struct {
 	Type   string `json:"type"`
 	Number string `json:"number"`
