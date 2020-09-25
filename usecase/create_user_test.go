@@ -51,7 +51,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			fields: fields{
 				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
-						"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+						vo.NewUuidStaticTest(),
 						"Test testing",
 						vo.Email{},
 						"passw",
@@ -68,14 +68,14 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					result: CreateUserOutput{
 						ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 						FullName: "Test testing",
-						Document: entity.Document{
-							Type:   entity.CNPJ,
+						Document: DocumentUserOutput{
+							Type:   entity.CNPJ.String(),
 							Number: "34018708000191",
 						},
-						Email:    vo.Email{},
+						Email:    "",
 						Password: "passw",
 						Wallet:   nil,
-						Type:     entity.CUSTOM,
+						Type:     entity.CUSTOM.String(),
 					},
 				},
 			},
@@ -96,14 +96,14 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			want: CreateUserOutput{
 				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 				FullName: "Test testing",
-				Document: entity.Document{
-					Type:   entity.CNPJ,
+				Document: DocumentUserOutput{
+					Type:   entity.CNPJ.String(),
 					Number: "34018708000191",
 				},
-				Email:    vo.Email{},
+				Email:    "",
 				Password: "passw",
 				Wallet:   nil,
-				Type:     entity.CUSTOM,
+				Type:     entity.CUSTOM.String(),
 			},
 			wantErr: false,
 		},
@@ -112,7 +112,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			fields: fields{
 				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
-						"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+						vo.NewUuidStaticTest(),
 						"Test testing",
 						vo.Email{},
 						"passw",
@@ -140,7 +140,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.Email{},
 					Password: "passw",
 					Wallet:   nil,
-					Type:     "CUSTOM",
+					Type:     entity.CUSTOM,
 				},
 			},
 			want:    CreateUserOutput{},

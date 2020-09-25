@@ -22,6 +22,10 @@ const (
 
 type TypeUser string
 
+func (t TypeUser) String() string {
+	return string(t)
+}
+
 func (t TypeUser) toUpper() TypeUser {
 	return TypeUser(strings.ToUpper(string(t)))
 }

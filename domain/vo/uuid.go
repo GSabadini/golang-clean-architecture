@@ -47,3 +47,8 @@ func (e Uuid) Equals(value Value) bool {
 	o, ok := value.(Uuid)
 	return ok && e.value == o.value
 }
+
+// NewUuidStaticTest create new Uuid
+func NewUuidStaticTest() Uuid {
+	return Uuid{value: "0db298eb-c8e7-4829-84b7-c1036b4f0791"}
+}

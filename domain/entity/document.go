@@ -13,6 +13,10 @@ const (
 
 type TypeDocument string
 
+func (t TypeDocument) String() string {
+	return string(t)
+}
+
 type Document struct {
 	//kind   TypeDocument
 	Type   TypeDocument

@@ -27,7 +27,7 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create custom user",
 			args: args{
-				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				ID:       vo.NewUuidStaticTest(),
 				fullName: "Test testing",
 				email:    vo.Email{},
 				password: "123",
@@ -40,7 +40,7 @@ func TestNewUser(t *testing.T) {
 				createdAt: time.Time{},
 			},
 			want: User{
-				id:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:       vo.NewUuidStaticTest(),
 				fullName: "Test testing",
 				email:    vo.Email{},
 				password: "123",
@@ -57,7 +57,7 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create merchant user",
 			args: args{
-				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				ID:       vo.NewUuidStaticTest(),
 				fullName: "Test testing",
 				email:    vo.Email{},
 				password: "123",
@@ -70,7 +70,7 @@ func TestNewUser(t *testing.T) {
 				createdAt: time.Time{},
 			},
 			want: User{
-				id:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:       vo.NewUuidStaticTest(),
 				fullName: "Test testing",
 				email:    vo.Email{},
 				password: "123",
@@ -87,7 +87,7 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create invalid user",
 			args: args{
-				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				ID:       vo.NewUuidStaticTest(),
 				fullName: "Test testing",
 				email:    vo.Email{},
 				password: "123",
@@ -173,7 +173,7 @@ func TestUser_CanTransfer(t *testing.T) {
 		{
 			name: "Test whether custom type user can transfer",
 			args: args{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -188,7 +188,7 @@ func TestUser_CanTransfer(t *testing.T) {
 		{
 			name: "Test whether merchant type user can transfer",
 			args: args{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -249,7 +249,7 @@ func TestUser_Deposit(t *testing.T) {
 		{
 			name: "Test deposit 100",
 			argsUser: argsUser{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -267,7 +267,7 @@ func TestUser_Deposit(t *testing.T) {
 		{
 			name: "Test deposit 1000",
 			argsUser: argsUser{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -334,7 +334,7 @@ func TestUser_Withdraw(t *testing.T) {
 		{
 			name: "Test withdraw 100",
 			argsUser: argsUser{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -352,7 +352,7 @@ func TestUser_Withdraw(t *testing.T) {
 		{
 			name: "Test withdraw 50",
 			argsUser: argsUser{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
@@ -370,7 +370,7 @@ func TestUser_Withdraw(t *testing.T) {
 		{
 			name: "Test withdraw insufficient balance",
 			argsUser: argsUser{
-				id:        "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				id:        vo.NewUuidStaticTest(),
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",

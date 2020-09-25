@@ -48,7 +48,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			fields: fields{
 				repo: findUserByIDRepoStub{
 					result: entity.NewCustomUser(
-						"0db298eb-c8e7-4829-84b7-c1036b4f0791",
+						vo.NewUuidStaticTest(),
 						"Test testing",
 						vo.Email{},
 						"passw",
@@ -63,7 +63,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				},
 				pre: findUserByIDPresenterStub{
 					result: FindUserByIDOutput{
-						ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+						ID:       vo.NewUuidStaticTest(),
 						FullName: "Test testing",
 						Document: entity.Document{
 							Type:   entity.CPF,
@@ -78,10 +78,10 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			},
 			args: args{
 				ctx: nil,
-				ID:  "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				ID:  vo.NewUuidStaticTest(),
 			},
 			want: FindUserByIDOutput{
-				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+				ID:       vo.NewUuidStaticTest(),
 				FullName: "Test testing",
 				Document: entity.Document{
 					Type:   entity.CPF,

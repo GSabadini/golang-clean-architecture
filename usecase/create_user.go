@@ -27,6 +27,10 @@ type CreateUserInput struct {
 	Type     entity.TypeUser
 }
 
+func NewCreateUserInput(fullName vo.FullName, document entity.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
+	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
+}
+
 type CreateUserOutput struct {
 	ID       string             `json:"id"`
 	FullName string             `json:"full_name"`
