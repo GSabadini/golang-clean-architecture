@@ -15,7 +15,7 @@ func TestNewUser(t *testing.T) {
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  TypeUser
+		typeUser  vo.TypeUser
 		createdAt time.Time
 	}
 	tests := []struct {
@@ -33,7 +33,7 @@ func TestNewUser(t *testing.T) {
 				password:  "123",
 				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
+				typeUser:  vo.CUSTOM,
 				createdAt: time.Time{},
 			},
 			want: User{
@@ -42,9 +42,9 @@ func TestNewUser(t *testing.T) {
 				email:     vo.Email{},
 				password:  "123",
 				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
-				roles:     Roles{canTransfer: true},
+				roles:     vo.Roles{CanTransfer: true},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
+				typeUser:  vo.CUSTOM,
 				createdAt: time.Time{},
 			},
 		},
@@ -57,7 +57,7 @@ func TestNewUser(t *testing.T) {
 				password:  "123",
 				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  MERCHANT,
+				typeUser:  vo.MERCHANT,
 				createdAt: time.Time{},
 			},
 			want: User{
@@ -66,9 +66,9 @@ func TestNewUser(t *testing.T) {
 				email:     vo.Email{},
 				password:  "123",
 				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
-				roles:     Roles{canTransfer: false},
+				roles:     vo.Roles{CanTransfer: false},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  MERCHANT,
+				typeUser:  vo.MERCHANT,
 				createdAt: time.Time{},
 			},
 		},
@@ -85,7 +85,7 @@ func TestNewUser(t *testing.T) {
 				createdAt: time.Time{},
 			},
 			want:    User{},
-			wantErr: ErrInvalidTypeUser,
+			wantErr: vo.ErrInvalidTypeUser,
 		},
 	}
 	for _, tt := range tests {
@@ -115,23 +115,23 @@ func TestNewUser(t *testing.T) {
 func TestTypeUser_toUpper(t *testing.T) {
 	tests := []struct {
 		name string
-		t    TypeUser
-		want TypeUser
+		t    vo.TypeUser
+		want vo.TypeUser
 	}{
 		{
 			name: "Test upper custom type",
 			t:    "cUstOm",
-			want: CUSTOM,
+			want: vo.CUSTOM,
 		},
 		{
 			name: "Test upper merchant type",
 			t:    "merchant",
-			want: MERCHANT,
+			want: vo.MERCHANT,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.t.toUpper(); got != tt.want {
+			if got := tt.t.ToUpper(); got != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%+v' | Want: '%+v'", tt.name, got, tt.want)
 			}
 		})
@@ -146,8 +146,8 @@ func TestUser_CanTransfer(t *testing.T) {
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  TypeUser
-		roles     Roles
+		typeUser  vo.TypeUser
+		roles     vo.Roles
 		createdAt time.Time
 	}
 	tests := []struct {
@@ -164,8 +164,8 @@ func TestUser_CanTransfer(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    nil,
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			want: true,
@@ -179,8 +179,8 @@ func TestUser_CanTransfer(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    nil,
-				typeUser:  MERCHANT,
-				roles:     Roles{},
+				typeUser:  vo.MERCHANT,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			want: false,
@@ -218,8 +218,8 @@ func TestUser_Deposit(t *testing.T) {
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  TypeUser
-		roles     Roles
+		typeUser  vo.TypeUser
+		roles     vo.Roles
 		createdAt time.Time
 	}
 	type args struct {
@@ -240,8 +240,8 @@ func TestUser_Deposit(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
@@ -258,8 +258,8 @@ func TestUser_Deposit(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
@@ -302,8 +302,8 @@ func TestUser_Withdraw(t *testing.T) {
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  TypeUser
-		roles     Roles
+		typeUser  vo.TypeUser
+		roles     vo.Roles
 		createdAt time.Time
 	}
 	type args struct {
@@ -325,8 +325,8 @@ func TestUser_Withdraw(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
@@ -343,8 +343,8 @@ func TestUser_Withdraw(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
@@ -361,8 +361,8 @@ func TestUser_Withdraw(t *testing.T) {
 				password:  "123",
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-				typeUser:  CUSTOM,
-				roles:     Roles{},
+				typeUser:  vo.CUSTOM,
+				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{

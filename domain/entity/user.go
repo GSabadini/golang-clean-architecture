@@ -3,7 +3,6 @@ package entity
 import (
 	"context"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
@@ -11,24 +10,7 @@ import (
 
 var (
 	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
-
-	ErrInvalidTypeUser = errors.New("invalid type user")
 )
-
-const (
-	CUSTOM   TypeUser = "CUSTOM"
-	MERCHANT TypeUser = "MERCHANT"
-)
-
-type TypeUser string
-
-func (t TypeUser) String() string {
-	return string(t)
-}
-
-func (t TypeUser) toUpper() TypeUser {
-	return TypeUser(strings.ToUpper(string(t)))
-}
 
 type CreateUserRepository interface {
 	Create(context.Context, User) (User, error)
@@ -49,8 +31,8 @@ type User struct {
 	password  vo.Password
 	document  vo.Document
 	wallet    *vo.Wallet
-	typeUser  TypeUser
-	roles     Roles
+	typeUser  vo.TypeUser
+	roles     vo.Roles
 	createdAt time.Time
 }
 
@@ -61,11 +43,11 @@ func NewUser(
 	password vo.Password,
 	document vo.Document,
 	wallet *vo.Wallet,
-	typeUser TypeUser,
+	typeUser vo.TypeUser,
 	createdAt time.Time,
 ) (User, error) {
-	switch typeUser.toUpper() {
-	case CUSTOM:
+	switch typeUser.ToUpper() {
+	case vo.CUSTOM:
 		return NewCustomUser(
 			ID,
 			fullName,
@@ -75,7 +57,7 @@ func NewUser(
 			wallet,
 			createdAt,
 		), nil
-	case MERCHANT:
+	case vo.MERCHANT:
 		return NewMerchantUser(
 			ID,
 			fullName,
@@ -87,7 +69,7 @@ func NewUser(
 		), nil
 	}
 
-	return User{}, ErrInvalidTypeUser
+	return User{}, vo.ErrInvalidTypeUser
 }
 
 func NewCustomUser(
@@ -106,9 +88,9 @@ func NewCustomUser(
 		email:    email,
 		password: password,
 		wallet:   wallet,
-		typeUser: CUSTOM,
-		roles: Roles{
-			canTransfer: true,
+		typeUser: vo.CUSTOM,
+		roles: vo.Roles{
+			CanTransfer: true,
 		},
 		createdAt: createdAt,
 	}
@@ -130,9 +112,9 @@ func NewMerchantUser(
 		email:    email,
 		password: password,
 		wallet:   wallet,
-		typeUser: MERCHANT,
-		roles: Roles{
-			canTransfer: false,
+		typeUser: vo.MERCHANT,
+		roles: vo.Roles{
+			CanTransfer: false,
 		},
 		createdAt: createdAt,
 	}
@@ -153,7 +135,7 @@ func (u User) Deposit(money vo.Money) {
 }
 
 func (u User) CanTransfer() bool {
-	return u.Roles().CanTransfer()
+	return u.Roles().CanTransfer
 }
 
 func (u User) ID() vo.Uuid {
@@ -172,11 +154,11 @@ func (u User) Email() vo.Email {
 	return u.email
 }
 
-func (u User) Roles() Roles {
+func (u User) Roles() vo.Roles {
 	return u.roles
 }
 
-func (u User) TypeUser() TypeUser {
+func (u User) TypeUser() vo.TypeUser {
 	return u.typeUser
 }
 
