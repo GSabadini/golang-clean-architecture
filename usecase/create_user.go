@@ -24,11 +24,11 @@ type CreateUserInput struct {
 	Document vo.Document
 	Email    vo.Email
 	Password vo.Password
-	Wallet   *entity.Wallet
+	Wallet   *vo.Wallet
 	Type     entity.TypeUser
 }
 
-func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
+func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t entity.TypeUser) CreateUserInput {
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 

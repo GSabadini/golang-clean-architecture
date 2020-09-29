@@ -48,7 +48,7 @@ type User struct {
 	email     vo.Email
 	password  vo.Password
 	document  vo.Document
-	wallet    *Wallet
+	wallet    *vo.Wallet
 	typeUser  TypeUser
 	roles     Roles
 	createdAt time.Time
@@ -60,7 +60,7 @@ func NewUser(
 	email vo.Email,
 	password vo.Password,
 	document vo.Document,
-	wallet *Wallet,
+	wallet *vo.Wallet,
 	typeUser TypeUser,
 	createdAt time.Time,
 ) (User, error) {
@@ -96,7 +96,7 @@ func NewCustomUser(
 	email vo.Email,
 	password vo.Password,
 	document vo.Document,
-	wallet *Wallet,
+	wallet *vo.Wallet,
 	createdAt time.Time,
 ) User {
 	return User{
@@ -120,7 +120,7 @@ func NewMerchantUser(
 	email vo.Email,
 	password vo.Password,
 	document vo.Document,
-	wallet *Wallet,
+	wallet *vo.Wallet,
 	createdAt time.Time,
 ) User {
 	return User{
@@ -180,7 +180,7 @@ func (u User) TypeUser() TypeUser {
 	return u.typeUser
 }
 
-func (u User) Wallet() *Wallet {
+func (u User) Wallet() *vo.Wallet {
 	return u.wallet
 }
 

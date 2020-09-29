@@ -33,7 +33,7 @@ func main() {
 		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
 		"passw",
-		entity.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
+		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.CUSTOM,
 	)
 	if err != nil {
@@ -45,7 +45,7 @@ func main() {
 		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
 		"passw",
-		entity.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
+		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.MERCHANT,
 	)
 	if err != nil {
