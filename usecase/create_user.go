@@ -68,7 +68,7 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 }
 
 func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
-	uuid, err := vo.NewUuid(entity.NewUUID())
+	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		return c.pre.Output(entity.User{}), err
 	}

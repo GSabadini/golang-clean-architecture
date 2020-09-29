@@ -8,7 +8,6 @@ import (
 
 	"github.com/GSabadini/go-challenge/adapter/http"
 	"github.com/GSabadini/go-challenge/adapter/presenter"
-	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
 	"github.com/GSabadini/go-challenge/usecase"
@@ -17,11 +16,10 @@ import (
 func main() {
 	email, err := vo.NewEmail("gfacina@hotmail.com")
 	if err != nil {
-		//fmt.Println(err)
 		panic(err)
 	}
 
-	uuid, err := vo.NewUuid(entity.NewUUID())
+	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		//fmt.Println(err)
 		panic(err)
@@ -29,10 +27,10 @@ func main() {
 	fmt.Print(uuid)
 
 	payer := usecase.NewCreateUserInput(
-		"Gabriel Facina",
+		vo.NewFullName("Gabriel Facina"),
 		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
-		"passw",
+		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		vo.CUSTOM,
 	)
@@ -41,10 +39,10 @@ func main() {
 	}
 
 	payee := usecase.NewCreateUserInput(
-		"Gabriel Facina",
+		vo.NewFullName("Gabriel Facina"),
 		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
-		"passw",
+		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		vo.MERCHANT,
 	)

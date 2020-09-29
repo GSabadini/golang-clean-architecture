@@ -10,13 +10,13 @@ type CreateUserPresenter struct{}
 func (c CreateUserPresenter) Output(u entity.User) usecase.CreateUserOutput {
 	return usecase.CreateUserOutput{
 		ID:       u.ID().Value(),
-		FullName: string(u.FullName()),
+		FullName: u.FullName().Value(),
 		Document: usecase.CreateUserDocumentOutput{
 			Type:  u.Document().Type().String(),
 			Value: u.Document().Value(),
 		},
 		Email:    u.Email().Value(),
-		Password: string(u.Password()),
+		Password: u.Password().Value(),
 		Wallet: usecase.CreateUserWalletOutput{
 			Currency: u.Wallet().Money().Currency().String(),
 			Amount:   u.Wallet().Money().Amount().Value(),

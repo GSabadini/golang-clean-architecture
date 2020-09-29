@@ -52,9 +52,9 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
-						"Test testing",
+						vo.NewFullName("Test testing"),
 						vo.Email{},
-						"passw",
+						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 						nil,
 						time.Now(),
@@ -79,10 +79,10 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			args: args{
 				ctx: nil,
 				i: CreateUserInput{
-					FullName: "Test testing",
+					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.Email{},
-					Password: "passw",
+					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
 					Type:     "CUSTOM",
 				},
@@ -107,9 +107,9 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
-						"Test testing",
+						vo.NewFullName("Test testing"),
 						vo.Email{},
-						"passw",
+						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 						nil,
 						time.Now(),
@@ -123,10 +123,10 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			args: args{
 				ctx: nil,
 				i: CreateUserInput{
-					FullName: "Test testing",
+					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.Email{},
-					Password: "passw",
+					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
 					Type:     vo.CUSTOM,
 				},

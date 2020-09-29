@@ -22,12 +22,6 @@ func NewMoneyBRL(amount Amount) Money {
 	}
 }
 
-// Equals checks that two Money are the same
-func (m Money) Equals(value Value) bool {
-	o, ok := value.(Money)
-	return ok && m.amount == o.amount && m.currency == o.currency
-}
-
 // Amount return value Amount
 func (m Money) Amount() Amount {
 	return m.amount
@@ -52,4 +46,10 @@ func (m Money) Sub(amount Amount) Money {
 		currency: m.currency,
 		amount:   Amount{value: m.amount.Value() - amount.Value()},
 	}
+}
+
+// Equals checks that two Money are the same
+func (m Money) Equals(value Value) bool {
+	o, ok := value.(Money)
+	return ok && m.amount == o.amount && m.currency == o.currency
 }

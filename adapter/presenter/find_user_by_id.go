@@ -10,7 +10,7 @@ type FindUserByIDPresenter struct{}
 func (f FindUserByIDPresenter) Output(u entity.User) usecase.FindUserByIDOutput {
 	return usecase.FindUserByIDOutput{
 		ID:       u.ID().Value(),
-		FullName: string(u.FullName()),
+		FullName: u.FullName().Value(),
 		Document: usecase.FindUserByIDDocumentOutput{
 			Type:  u.Document().Type().String(),
 			Value: u.Document().Value(),

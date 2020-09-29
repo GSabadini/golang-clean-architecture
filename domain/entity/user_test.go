@@ -28,9 +28,9 @@ func TestNewUser(t *testing.T) {
 			name: "Test create custom user",
 			args: args{
 				ID:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,
@@ -38,9 +38,9 @@ func TestNewUser(t *testing.T) {
 			},
 			want: User{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
 				roles:     vo.Roles{CanTransfer: true},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
@@ -52,9 +52,9 @@ func TestNewUser(t *testing.T) {
 			name: "Test create merchant user",
 			args: args{
 				ID:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.MERCHANT,
@@ -62,9 +62,9 @@ func TestNewUser(t *testing.T) {
 			},
 			want: User{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
 				roles:     vo.Roles{CanTransfer: false},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
@@ -76,9 +76,9 @@ func TestNewUser(t *testing.T) {
 			name: "Test create invalid user",
 			args: args{
 				ID:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.NewDocumentTest(vo.CNPJ, "07010965836"),
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  "INVALID",
@@ -112,32 +112,6 @@ func TestNewUser(t *testing.T) {
 	}
 }
 
-func TestTypeUser_toUpper(t *testing.T) {
-	tests := []struct {
-		name string
-		t    vo.TypeUser
-		want vo.TypeUser
-	}{
-		{
-			name: "Test upper custom type",
-			t:    "cUstOm",
-			want: vo.CUSTOM,
-		},
-		{
-			name: "Test upper merchant type",
-			t:    "merchant",
-			want: vo.MERCHANT,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.t.ToUpper(); got != tt.want {
-				t.Errorf("[TestCase '%s'] Got: '%+v' | Want: '%+v'", tt.name, got, tt.want)
-			}
-		})
-	}
-}
-
 func TestUser_CanTransfer(t *testing.T) {
 	type args struct {
 		id        vo.Uuid
@@ -159,9 +133,9 @@ func TestUser_CanTransfer(t *testing.T) {
 			name: "Test whether custom type user can transfer",
 			args: args{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    nil,
 				typeUser:  vo.CUSTOM,
@@ -174,9 +148,9 @@ func TestUser_CanTransfer(t *testing.T) {
 			name: "Test whether merchant type user can transfer",
 			args: args{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    nil,
 				typeUser:  vo.MERCHANT,
@@ -235,9 +209,9 @@ func TestUser_Deposit(t *testing.T) {
 			name: "Test deposit 100",
 			argsUser: argsUser{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,
@@ -253,9 +227,9 @@ func TestUser_Deposit(t *testing.T) {
 			name: "Test deposit 1000",
 			argsUser: argsUser{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,
@@ -320,9 +294,9 @@ func TestUser_Withdraw(t *testing.T) {
 			name: "Test withdraw 100",
 			argsUser: argsUser{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,
@@ -338,9 +312,9 @@ func TestUser_Withdraw(t *testing.T) {
 			name: "Test withdraw 50",
 			argsUser: argsUser{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,
@@ -356,9 +330,9 @@ func TestUser_Withdraw(t *testing.T) {
 			name: "Test withdraw insufficient balance",
 			argsUser: argsUser{
 				id:        vo.NewUuidStaticTest(),
-				fullName:  "Test testing",
+				fullName:  vo.NewFullName("Test testing"),
 				email:     vo.Email{},
-				password:  "123",
+				password:  vo.NewPassword("123"),
 				document:  vo.Document{},
 				wallet:    vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 				typeUser:  vo.CUSTOM,

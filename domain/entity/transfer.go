@@ -19,7 +19,13 @@ type Transfer struct {
 	createdAt time.Time
 }
 
-func NewTransfer(ID vo.Uuid, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money, createdAt time.Time) Transfer {
+func NewTransfer(
+	ID vo.Uuid,
+	payerID vo.Uuid,
+	payeeID vo.Uuid,
+	value vo.Money,
+	createdAt time.Time,
+) Transfer {
 	return Transfer{
 		id:        ID,
 		payer:     payerID,

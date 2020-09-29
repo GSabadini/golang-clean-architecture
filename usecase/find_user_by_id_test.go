@@ -49,9 +49,9 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				repo: findUserByIDRepoStub{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
-						"Test testing",
+						vo.NewFullName("Test testing"),
 						vo.Email{},
-						"passw",
+						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CPF, "07091054954"),
 						nil,
 						time.Now(),

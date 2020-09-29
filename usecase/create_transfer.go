@@ -78,7 +78,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		return c.pre.Output(entity.Transfer{}), err
 	}
 
-	uuid, err := vo.NewUuid(entity.NewUUID())
+	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		return c.pre.Output(entity.Transfer{}), err
 	}
