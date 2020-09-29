@@ -60,7 +60,7 @@ func TestNewCurrency(t *testing.T) {
 
 func TestCurrency_Equals(t *testing.T) {
 	type fields struct {
-		value TypeCurrency
+		value string
 	}
 	type args struct {
 		value Value
@@ -71,38 +71,47 @@ func TestCurrency_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test currency value equals",
+			fields: fields{
+				value: "BRL",
+			},
+			args: args{
+				value: Currency{value: BRL},
+			},
+			want: true,
+		},
+		{
+			name: "Test currency value equals",
+			fields: fields{
+				value: "USD",
+			},
+			args: args{
+				value: Currency{value: USD},
+			},
+			want: true,
+		},
+		{
+			name: "Test currency not value equals",
+			fields: fields{
+				value: "USD",
+			},
+			args: args{
+				value: Currency{value: BRL},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := Currency{
-				value: tt.fields.value,
+			currency, err := NewCurrency(tt.fields.value)
+			if err != nil {
+				t.Errorf("[TestCase '%s'] Err: '%v'", tt.name, err)
+				return
 			}
-			if got := c.Equals(tt.args.value); got != tt.want {
-				t.Errorf("Equals() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func TestCurrency_Value(t *testing.T) {
-	type fields struct {
-		value TypeCurrency
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   TypeCurrency
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := Currency{
-				value: tt.fields.value,
-			}
-			if got := c.Value(); got != tt.want {
-				t.Errorf("Value() = %v, want %v", got, tt.want)
+			if got := currency.Equals(tt.args.value); got != tt.want {
+				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
 			}
 		})
 	}
