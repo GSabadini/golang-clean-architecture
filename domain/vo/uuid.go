@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidUuid return invalid Uuid
 	ErrInvalidUuid = errors.New("invalid uuid")
 
 	rxUuid = regexp.MustCompile(`[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}`)
@@ -48,7 +47,7 @@ func (e Uuid) Equals(value Value) bool {
 	return ok && e.value == o.value
 }
 
-// NewUuidStaticTest create new Uuid
+// NewUuidStaticTest create new Uuid static
 func NewUuidStaticTest() Uuid {
 	return Uuid{value: "0db298eb-c8e7-4829-84b7-c1036b4f0791"}
 }

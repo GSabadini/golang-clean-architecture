@@ -9,16 +9,24 @@ var (
 	errInvalidAmount = errors.New("invalid Amount")
 )
 
+// Amount structure
 type Amount struct {
 	value int64
 }
 
+// NewAmount create new Amount
 func NewAmount(value int64) (Amount, error) {
-	if value < 0 {
+	var a = Amount{value: value}
+
+	if !a.validate() {
 		return Amount{}, errInvalidAmount
 	}
 
-	return Amount{value: value}, nil
+	return a, nil
+}
+
+func (a Amount) validate() bool {
+	return a.value >= 0
 }
 
 // Value return value Amount
@@ -37,6 +45,7 @@ func (a Amount) Equals(value Value) bool {
 	return ok && a.value == o.value
 }
 
+// NewAmountTest create new Amount for testing
 func NewAmountTest(value int64) Amount {
 	return Amount{value: value}
 }

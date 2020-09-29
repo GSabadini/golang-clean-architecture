@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidCPF return invalid CPF
 	ErrInvalidCPF = errors.New("invalid cpf")
 
 	rxCPFClear = regexp.MustCompile(`[^0-9]`)
@@ -14,12 +13,12 @@ var (
 	rxCPF = regexp.MustCompile(`^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$`)
 )
 
-//Cpf structure
+// Cpf structure
 type Cpf struct {
 	value string
 }
 
-// NewCPF create new CPF
+// NewCPF create new Cpf
 func NewCPF(value string) (Cpf, error) {
 	var cpf = Cpf{value: value}
 
@@ -38,17 +37,17 @@ func (c Cpf) clear() string {
 	return rxCPFClear.ReplaceAllString(c.value, "")
 }
 
-// Value return value CPF
+// Value return value Cpf
 func (c Cpf) Value() string {
 	return c.value
 }
 
-// String returns string representation of the CPF
+// String returns string representation of the Cpf
 func (c Cpf) String() string {
 	return c.value
 }
 
-// Equals checks that two CPF are the same
+// Equals checks that two Cpf are the same
 func (c Cpf) Equals(value Value) bool {
 	o, ok := value.(Cpf)
 	return ok && c.value == o.value

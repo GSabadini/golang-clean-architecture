@@ -6,26 +6,25 @@ import (
 )
 
 var (
-	// ErrInvalidCNPJ return invalid Cnpj
 	ErrInvalidCNPJ = errors.New("invalid cnpj")
 
 	rxCNPJ = regexp.MustCompile(`^\d{2}\.?\d{3}\.?\d{3}\/?(:?\d{3}[1-9]|\d{2}[1-9]\d|\d[1-9]\d{2}|[1-9]\d{3})-?\d{2}$`)
 )
 
-//Cnpj structure
+// Cnpj structure
 type Cnpj struct {
 	value string
 }
 
 // NewCNPJ create new Cnpj
 func NewCNPJ(value string) (Cnpj, error) {
-	var cnpj = Cnpj{value: value}
+	var c = Cnpj{value: value}
 
-	if !cnpj.validate() {
+	if !c.validate() {
 		return Cnpj{}, ErrInvalidCNPJ
 	}
 
-	return cnpj, nil
+	return c, nil
 }
 
 func (c Cnpj) validate() bool {

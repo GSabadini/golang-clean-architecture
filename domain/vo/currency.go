@@ -6,29 +6,20 @@ var (
 	ErrInvalidCurrency = errors.New("invalid currency")
 )
 
-type TypeCurrency string
-
-const (
-	BRL TypeCurrency = "BRL"
-	USD TypeCurrency = "USD"
-)
-
-func (tc TypeCurrency) String() string {
-	return string(tc)
-}
-
+// Currency structure
 type Currency struct {
 	value TypeCurrency
 }
 
+// NewCurrency create new Currency
 func NewCurrency(value string) (Currency, error) {
-	var currency = Currency{value: TypeCurrency(value)}
+	var c = Currency{value: TypeCurrency(value)}
 
-	if !currency.validate() {
+	if !c.validate() {
 		return Currency{}, ErrInvalidCurrency
 	}
 
-	return currency, nil
+	return c, nil
 }
 
 func (c Currency) validate() bool {

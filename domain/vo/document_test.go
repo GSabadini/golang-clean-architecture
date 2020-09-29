@@ -52,18 +52,18 @@ func TestNewDocument(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		//{
-		//	name: "Test new valid document",
-		//	args: args{
-		//		typeDoc: "CPNJ",
-		//		value:  "20770438000166",
-		//	},
-		//	want: Document{
-		//		typeDoc: CNPJ,
-		//		value:  "20770438000166",
-		//	},
-		//	wantErr: false,
-		//},
+		{
+			name: "Test new valid document",
+			args: args{
+				typeDoc: "CNPJ",
+				value:   "20770438000166",
+			},
+			want: Document{
+				typeDoc: CNPJ,
+				value:   "20770438000166",
+			},
+			wantErr: false,
+		},
 		{
 			name: "Test new invalid document",
 			args: args{

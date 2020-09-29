@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidEmail return invalid Email
 	ErrInvalidEmail = errors.New("invalid email")
 
 	rxEmail = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -19,13 +18,13 @@ type Email struct {
 
 // NewEmail create new Email
 func NewEmail(value string) (Email, error) {
-	var email = Email{value: value}
+	var e = Email{value: value}
 
-	if !email.validate() {
+	if !e.validate() {
 		return Email{}, ErrInvalidEmail
 	}
 
-	return email, nil
+	return e, nil
 }
 
 func (e Email) validate() bool {

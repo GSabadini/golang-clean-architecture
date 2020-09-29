@@ -1,5 +1,6 @@
 package vo
 
+// Money structure
 type Money struct {
 	currency Currency
 	amount   Amount
