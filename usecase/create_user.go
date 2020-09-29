@@ -21,32 +21,38 @@ type CreateUserPresenter interface {
 //Input data
 type CreateUserInput struct {
 	FullName vo.FullName
-	Document entity.Document
+	Document vo.Document
 	Email    vo.Email
 	Password vo.Password
 	Wallet   *entity.Wallet
 	Type     entity.TypeUser
 }
 
-func NewCreateUserInput(fullName vo.FullName, document entity.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
+func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *entity.Wallet, t entity.TypeUser) CreateUserInput {
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
 //Output data
 type CreateUserOutput struct {
-	ID       string             `json:"id"`
-	FullName string             `json:"full_name"`
-	Document DocumentUserOutput `json:"document"`
-	Email    string             `json:"email"`
-	Password string             `json:"password"`
-	Wallet   *entity.Wallet     `json:"wallet"`
-	Type     string             `json:"type"`
+	ID       string                   `json:"id"`
+	FullName string                   `json:"full_name"`
+	Document CreateUserDocumentOutput `json:"document"`
+	Email    string                   `json:"email"`
+	Password string                   `json:"password"`
+	Wallet   CreateUserWalletOutput   `json:"wallet"`
+	Type     string                   `json:"type"`
 }
 
 //Output data
-type DocumentUserOutput struct {
-	Type   string `json:"type"`
-	Number string `json:"number"`
+type CreateUserDocumentOutput struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+//Output data
+type CreateUserWalletOutput struct {
+	Currency string `json:"currency"`
+	Amount   int64  `json:"amount"`
 }
 
 type CreateUserInteractor struct {

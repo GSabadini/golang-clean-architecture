@@ -19,13 +19,24 @@ type FindUserByID interface {
 
 //Output data
 type FindUserByIDOutput struct {
-	ID       vo.Uuid         `json:"id"`
-	FullName vo.FullName     `json:"full_name"`
-	Document entity.Document `json:"document"`
-	Email    vo.Email        `json:"email"`
-	Password vo.Password     `json:"password"`
-	Wallet   *entity.Wallet  `json:"wallet"`
-	Type     entity.TypeUser `json:"type"`
+	ID       string                     `json:"id"`
+	FullName string                     `json:"full_name"`
+	Document FindUserByIDDocumentOutput `json:"document"`
+	Email    string                     `json:"email"`
+	Wallet   FindUserByIDWalletOutput   `json:"wallet"`
+	Type     string                     `json:"type"`
+}
+
+//Output data
+type FindUserByIDDocumentOutput struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+//Output data
+type FindUserByIDWalletOutput struct {
+	Currency string `json:"currency"`
+	Amount   int64  `json:"amount"`
 }
 
 type FindUserByIDInteractor struct {

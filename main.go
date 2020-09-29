@@ -30,10 +30,10 @@ func main() {
 
 	payer := usecase.NewCreateUserInput(
 		"Gabriel Facina",
-		entity.Document{Type: entity.CPF, Number: "102476239"},
+		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
 		"passw",
-		entity.NewWallet(vo.NewMoneyBRL(100)),
+		entity.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.CUSTOM,
 	)
 	if err != nil {
@@ -42,10 +42,10 @@ func main() {
 
 	payee := usecase.NewCreateUserInput(
 		"Gabriel Facina",
-		entity.Document{Type: entity.CPF, Number: "1231231231"},
+		vo.NewDocumentTest("CPF", "1231231231"),
 		email,
 		"passw",
-		entity.NewWallet(vo.NewMoneyBRL(100)),
+		entity.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.MERCHANT,
 	)
 	if err != nil {
@@ -96,7 +96,7 @@ func main() {
 			ID:        uuid,
 			PayerID:   payerID,
 			PayeeID:   payeeID,
-			Value:     vo.NewMoneyBRL(100),
+			Value:     vo.NewMoneyBRL(vo.NewAmountTest(100)),
 			CreatedAt: time.Time{},
 		})
 	if err != nil {

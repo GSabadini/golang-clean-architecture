@@ -55,10 +55,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						"Test testing",
 						vo.Email{},
 						"passw",
-						entity.Document{
-							Type:   entity.CNPJ,
-							Number: "34018708000191",
-						},
+						vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 						nil,
 						time.Now(),
 					),
@@ -68,13 +65,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					result: CreateUserOutput{
 						ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 						FullName: "Test testing",
-						Document: DocumentUserOutput{
-							Type:   entity.CNPJ.String(),
-							Number: "34018708000191",
+						Document: CreateUserDocumentOutput{
+							Type:  vo.CNPJ.String(),
+							Value: "34018708000191",
 						},
 						Email:    "",
 						Password: "passw",
-						Wallet:   nil,
+						Wallet:   CreateUserWalletOutput{},
 						Type:     entity.CUSTOM.String(),
 					},
 				},
@@ -83,10 +80,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				ctx: nil,
 				i: CreateUserInput{
 					FullName: "Test testing",
-					Document: entity.Document{
-						Type:   entity.CNPJ,
-						Number: "34018708000191",
-					},
+					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.Email{},
 					Password: "passw",
 					Wallet:   nil,
@@ -96,13 +90,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			want: CreateUserOutput{
 				ID:       "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 				FullName: "Test testing",
-				Document: DocumentUserOutput{
-					Type:   entity.CNPJ.String(),
-					Number: "34018708000191",
+				Document: CreateUserDocumentOutput{
+					Type:  vo.CNPJ.String(),
+					Value: "34018708000191",
 				},
 				Email:    "",
 				Password: "passw",
-				Wallet:   nil,
+				Wallet:   CreateUserWalletOutput{},
 				Type:     entity.CUSTOM.String(),
 			},
 			wantErr: false,
@@ -116,10 +110,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						"Test testing",
 						vo.Email{},
 						"passw",
-						entity.Document{
-							Type:   entity.CNPJ,
-							Number: "34018708000191",
-						},
+						vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 						nil,
 						time.Now(),
 					),
@@ -133,10 +124,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				ctx: nil,
 				i: CreateUserInput{
 					FullName: "Test testing",
-					Document: entity.Document{
-						Type:   entity.CNPJ,
-						Number: "34018708000191",
-					},
+					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.Email{},
 					Password: "passw",
 					Wallet:   nil,

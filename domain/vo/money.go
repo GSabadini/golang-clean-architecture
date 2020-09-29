@@ -1,22 +1,12 @@
 package vo
 
-type Currency string
-
-func (c Currency) String() string {
-	return string(c)
-}
-
-const (
-	BRL Currency = "BRL"
-)
-
 type Money struct {
 	currency Currency
-	amount   int64
+	amount   Amount
 }
 
 // NewMoney create new Money
-func NewMoney(currency Currency, amount int64) Money {
+func NewMoney(currency Currency, amount Amount) Money {
 	return Money{
 		currency: currency,
 		amount:   amount,
@@ -24,9 +14,9 @@ func NewMoney(currency Currency, amount int64) Money {
 }
 
 // NewMoneyBRL create new Money with currency BRL
-func NewMoneyBRL(amount int64) Money {
+func NewMoneyBRL(amount Amount) Money {
 	return Money{
-		currency: BRL,
+		currency: Currency{value: BRL},
 		amount:   amount,
 	}
 }
@@ -37,8 +27,8 @@ func (m Money) Equals(value Value) bool {
 	return ok && m.amount == o.amount && m.currency == o.currency
 }
 
-// Amount return value amount
-func (m Money) Amount() int64 {
+// Amount return value Amount
+func (m Money) Amount() Amount {
 	return m.amount
 }
 
@@ -47,18 +37,18 @@ func (m Money) Currency() Currency {
 	return m.currency
 }
 
-// Add value in amount
-func (m Money) Add(amount int64) Money {
+// Add value in Amount
+func (m Money) Add(amount Amount) Money {
 	return Money{
 		currency: m.currency,
-		amount:   m.amount + amount,
+		amount:   Amount{value: m.amount.Value() + amount.Value()},
 	}
 }
 
-// Sub value in amount
-func (m Money) Sub(amount int64) Money {
+// Sub value in Amount
+func (m Money) Sub(amount Amount) Money {
 	return Money{
 		currency: m.currency,
-		amount:   m.amount - amount,
+		amount:   Amount{value: m.amount.Value() - amount.Value()},
 	}
 }

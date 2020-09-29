@@ -43,16 +43,14 @@ type UpdateUserWalletRepository interface {
 }
 
 type User struct {
-	id       vo.Uuid
-	fullName vo.FullName
-	email    vo.Email
-	password vo.Password
-
-	document Document
-	wallet   *Wallet
-	typeUser TypeUser
-	roles    Roles
-
+	id        vo.Uuid
+	fullName  vo.FullName
+	email     vo.Email
+	password  vo.Password
+	document  vo.Document
+	wallet    *Wallet
+	typeUser  TypeUser
+	roles     Roles
 	createdAt time.Time
 }
 
@@ -61,7 +59,7 @@ func NewUser(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document Document,
+	document vo.Document,
 	wallet *Wallet,
 	typeUser TypeUser,
 	createdAt time.Time,
@@ -97,7 +95,7 @@ func NewCustomUser(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document Document,
+	document vo.Document,
 	wallet *Wallet,
 	createdAt time.Time,
 ) User {
@@ -121,7 +119,7 @@ func NewMerchantUser(
 	fullName vo.FullName,
 	email vo.Email,
 	password vo.Password,
-	document Document,
+	document vo.Document,
 	wallet *Wallet,
 	createdAt time.Time,
 ) User {
@@ -141,7 +139,7 @@ func NewMerchantUser(
 }
 
 func (u User) Withdraw(money vo.Money) error {
-	if u.Wallet().Money().Amount() < money.Amount() {
+	if u.Wallet().Money().Amount().Value() < money.Amount().Value() {
 		return ErrInsufficientBalance
 	}
 
@@ -186,7 +184,7 @@ func (u User) Wallet() *Wallet {
 	return u.wallet
 }
 
-func (u User) Document() Document {
+func (u User) Document() vo.Document {
 	return u.document
 }
 

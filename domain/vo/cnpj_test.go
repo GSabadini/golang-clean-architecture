@@ -5,65 +5,65 @@ import (
 	"testing"
 )
 
-func TestNewCPF(t *testing.T) {
+func TestNewCNPJ(t *testing.T) {
 	type args struct {
 		value string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    Cpf
+		want    Cnpj
 		wantErr bool
 	}{
 		{
-			name: "Test new valid cpf",
+			name: "Test new valid cnpj",
 			args: args{
-				value: "070.910.549-45",
+				value: "20.770.438/0001-66",
 			},
-			want:    Cpf{"070.910.549-45"},
+			want:    Cnpj{"20.770.438/0001-66"},
 			wantErr: false,
 		},
 		{
-			name: "Test new valid cpf",
+			name: "Test new valid cnpj",
 			args: args{
-				value: "876.066.350-21",
+				value: "15.412.832/0001-92",
 			},
-			want:    Cpf{"876.066.350-21"},
+			want:    Cnpj{"15.412.832/0001-92"},
 			wantErr: false,
 		},
 		{
-			name: "Test new valid cpf",
+			name: "Test new valid cnpj",
 			args: args{
-				value: "87606635021",
+				value: "15412832000192",
 			},
-			want:    Cpf{"87606635021"},
+			want:    Cnpj{"15412832000192"},
 			wantErr: false,
 		},
 		{
-			name: "Test new invalid cpf",
+			name: "Test new invalid cnpj",
 			args: args{
-				value: "070.910",
+				value: "070910/004-45",
 			},
 			wantErr: true,
 		},
 		{
-			name: "Test new invalid cpf",
+			name: "Test new invalid cnpj",
 			args: args{
-				value: "549-45",
+				value: "00000/549-45",
 			},
 			wantErr: true,
 		},
 		{
-			name: "Test new invalid cpf",
+			name: "Test new invalid cnpj",
 			args: args{
-				value: "549211231231245",
+				value: "549454554454545454545",
 			},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewCPF(tt.args.value)
+			got, err := NewCNPJ(tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return
@@ -76,7 +76,7 @@ func TestNewCPF(t *testing.T) {
 	}
 }
 
-func TestCPF_Equals(t *testing.T) {
+func TestCNPJ_Equals(t *testing.T) {
 	type fields struct {
 		value string
 	}
@@ -90,82 +90,72 @@ func TestCPF_Equals(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "CPF value equals",
+			name: "Cnpj value equals",
 			fields: fields{
-				value: "876.066.350-21",
+				value: "20.770.438/0001-66",
 			},
 			args: args{
-				value: Cpf{"876.066.350-21"},
+				value: Cnpj{"20.770.438/0001-66"},
 			},
 			want: true,
 		},
 		{
-			name: "CPF value equals",
+			name: "Cnpj value equals",
 			fields: fields{
-				value: "664.789.720-89",
+				value: "20770438000166",
 			},
 			args: args{
-				value: Cpf{"664.789.720-89"},
+				value: Cnpj{"20770438000166"},
 			},
 			want: true,
 		},
 		{
-			name: "CPF value equals",
+			name: "Cnpj value equals",
 			fields: fields{
-				value: "66478972089",
+				value: "98.521.079/0001-09",
 			},
 			args: args{
-				value: Cpf{"66478972089"},
+				value: Cnpj{"98.521.079/0001-09"},
 			},
 			want: true,
 		},
 		{
-			name: "CPF value not equals",
+			name: "Cnpj value not equals",
 			fields: fields{
-				value: "876.066.350-21",
+				value: "15.412.832/0001-92",
 			},
 			args: args{
-				value: Cpf{"426.423.030-63"},
+				value: Cnpj{"90.691.635/0001-75"},
 			},
 			want: false,
 		},
 		{
-			name: "CPF value not equals",
+			name: "Cnpj value not equals",
 			fields: fields{
-				value: "876.066.350-21",
+				value: "90.691.635/0001-75",
 			},
 			args: args{
-				value: Cpf{"572.398.610-40"},
-			},
-			want: false,
-		},
-		{
-			name: "CPF value not equals",
-			fields: fields{
-				value: "876.066.350-21",
-			},
-			args: args{
-				value: Cpf{"87606635021"},
+				value: Cnpj{"15.412.832/0001-92"},
 			},
 			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cpf, err := NewCPF(tt.fields.value)
+			cnpj, err := NewCNPJ(tt.fields.value)
 			if err != nil {
 				t.Errorf("[TestCase '%s'] Err: '%v'", tt.name, err)
 				return
 			}
 
-			if got := cpf.Equals(tt.args.value); got != tt.want {
+			if got := cnpj.Equals(tt.args.value); got != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestCPF_Value(t *testing.T) {
+func TestCNPJ_Value(t *testing.T) {
 	type fields struct {
 		value string
 	}
@@ -177,27 +167,27 @@ func TestCPF_Value(t *testing.T) {
 		{
 			name: "Get value",
 			fields: fields{
-				value: "664.789.720-89",
+				value: "90.691.635/0001-75",
 			},
-			want: "664.789.720-89",
+			want: "90.691.635/0001-75",
 		},
 		{
 			name: "Get value",
 			fields: fields{
-				value: "398.473.760-26",
+				value: "90691635000175",
 			},
-			want: "398.473.760-26",
+			want: "90691635000175",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cpf, err := NewCPF(tt.fields.value)
+			cnpj, err := NewCNPJ(tt.fields.value)
 			if err != nil {
 				t.Errorf("[TestCase '%s'] Err: '%v'", tt.name, err)
 				return
 			}
 
-			if got := cpf.Value(); got != tt.want {
+			if got := cnpj.Value(); got != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
 			}
 		})

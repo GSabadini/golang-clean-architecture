@@ -13,7 +13,7 @@ func TestNewUser(t *testing.T) {
 		fullName  vo.FullName
 		email     vo.Email
 		password  vo.Password
-		document  Document
+		document  vo.Document
 		wallet    *Wallet
 		typeUser  TypeUser
 		createdAt time.Time
@@ -27,29 +27,23 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create custom user",
 			args: args{
-				ID:       vo.NewUuidStaticTest(),
-				fullName: "Test testing",
-				email:    vo.Email{},
-				password: "123",
-				document: Document{
-					Type:   CPF,
-					Number: "07010965836",
-				},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				ID:        vo.NewUuidStaticTest(),
+				fullName:  "Test testing",
+				email:     vo.Email{},
+				password:  "123",
+				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				createdAt: time.Time{},
 			},
 			want: User{
-				id:       vo.NewUuidStaticTest(),
-				fullName: "Test testing",
-				email:    vo.Email{},
-				password: "123",
-				document: Document{
-					Type:   CPF,
-					Number: "07010965836",
-				},
+				id:        vo.NewUuidStaticTest(),
+				fullName:  "Test testing",
+				email:     vo.Email{},
+				password:  "123",
+				document:  vo.NewDocumentTest(vo.CPF, "07010965836"),
 				roles:     Roles{canTransfer: true},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				createdAt: time.Time{},
 			},
@@ -57,29 +51,23 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create merchant user",
 			args: args{
-				ID:       vo.NewUuidStaticTest(),
-				fullName: "Test testing",
-				email:    vo.Email{},
-				password: "123",
-				document: Document{
-					Type:   CNPJ,
-					Number: "07010965836",
-				},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				ID:        vo.NewUuidStaticTest(),
+				fullName:  "Test testing",
+				email:     vo.Email{},
+				password:  "123",
+				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  MERCHANT,
 				createdAt: time.Time{},
 			},
 			want: User{
-				id:       vo.NewUuidStaticTest(),
-				fullName: "Test testing",
-				email:    vo.Email{},
-				password: "123",
-				document: Document{
-					Type:   CNPJ,
-					Number: "07010965836",
-				},
+				id:        vo.NewUuidStaticTest(),
+				fullName:  "Test testing",
+				email:     vo.Email{},
+				password:  "123",
+				document:  vo.NewDocumentTest(vo.CNPJ, "90.691.635/0001-75"),
 				roles:     Roles{canTransfer: false},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  MERCHANT,
 				createdAt: time.Time{},
 			},
@@ -87,15 +75,12 @@ func TestNewUser(t *testing.T) {
 		{
 			name: "Test create invalid user",
 			args: args{
-				ID:       vo.NewUuidStaticTest(),
-				fullName: "Test testing",
-				email:    vo.Email{},
-				password: "123",
-				document: Document{
-					Type:   CNPJ,
-					Number: "07010965836",
-				},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				ID:        vo.NewUuidStaticTest(),
+				fullName:  "Test testing",
+				email:     vo.Email{},
+				password:  "123",
+				document:  vo.NewDocumentTest(vo.CNPJ, "07010965836"),
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  "INVALID",
 				createdAt: time.Time{},
 			},
@@ -159,7 +144,7 @@ func TestUser_CanTransfer(t *testing.T) {
 		fullName  vo.FullName
 		email     vo.Email
 		password  vo.Password
-		document  Document
+		document  vo.Document
 		wallet    *Wallet
 		typeUser  TypeUser
 		roles     Roles
@@ -177,7 +162,7 @@ func TestUser_CanTransfer(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
+				document:  vo.Document{},
 				wallet:    nil,
 				typeUser:  CUSTOM,
 				roles:     Roles{},
@@ -192,7 +177,7 @@ func TestUser_CanTransfer(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
+				document:  vo.Document{},
 				wallet:    nil,
 				typeUser:  MERCHANT,
 				roles:     Roles{},
@@ -231,7 +216,7 @@ func TestUser_Deposit(t *testing.T) {
 		fullName  vo.FullName
 		email     vo.Email
 		password  vo.Password
-		document  Document
+		document  vo.Document
 		wallet    *Wallet
 		typeUser  TypeUser
 		roles     Roles
@@ -253,14 +238,14 @@ func TestUser_Deposit(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				document:  vo.Document{},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				roles:     Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
-				money: vo.NewMoneyBRL(100),
+				money: vo.NewMoneyBRL(vo.NewAmountTest(100)),
 			},
 			want: 200,
 		},
@@ -271,14 +256,14 @@ func TestUser_Deposit(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				document:  vo.Document{},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				roles:     Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
-				money: vo.NewMoneyBRL(1000),
+				money: vo.NewMoneyBRL(vo.NewAmountTest(1000)),
 			},
 			want: 1100,
 		},
@@ -302,7 +287,7 @@ func TestUser_Deposit(t *testing.T) {
 
 			got.Deposit(tt.args.money)
 
-			if got.Wallet().Money().Amount() != tt.want {
+			if got.Wallet().Money().Amount().Value() != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%+v' | Want: '%+v'", tt.name, got.Wallet().Money().Amount(), tt.want)
 			}
 		})
@@ -315,7 +300,7 @@ func TestUser_Withdraw(t *testing.T) {
 		fullName  vo.FullName
 		email     vo.Email
 		password  vo.Password
-		document  Document
+		document  vo.Document
 		wallet    *Wallet
 		typeUser  TypeUser
 		roles     Roles
@@ -338,14 +323,14 @@ func TestUser_Withdraw(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				document:  vo.Document{},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				roles:     Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
-				money: vo.NewMoneyBRL(100),
+				money: vo.NewMoneyBRL(vo.NewAmountTest(100)),
 			},
 			want: 0,
 		},
@@ -356,14 +341,14 @@ func TestUser_Withdraw(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				document:  vo.Document{},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				roles:     Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
-				money: vo.NewMoneyBRL(50),
+				money: vo.NewMoneyBRL(vo.NewAmountTest(50)),
 			},
 			want: 50,
 		},
@@ -374,14 +359,14 @@ func TestUser_Withdraw(t *testing.T) {
 				fullName:  "Test testing",
 				email:     vo.Email{},
 				password:  "123",
-				document:  Document{},
-				wallet:    &Wallet{money: vo.NewMoneyBRL(100)},
+				document:  vo.Document{},
+				wallet:    &Wallet{money: vo.NewMoneyBRL(vo.NewAmountTest(100))},
 				typeUser:  CUSTOM,
 				roles:     Roles{},
 				createdAt: time.Time{},
 			},
 			args: args{
-				money: vo.NewMoneyBRL(1000),
+				money: vo.NewMoneyBRL(vo.NewAmountTest(1000)),
 			},
 			wantErr: ErrInsufficientBalance,
 		},
@@ -409,7 +394,7 @@ func TestUser_Withdraw(t *testing.T) {
 				return
 			}
 
-			if (err == nil) && (got.Wallet().Money().Amount() != tt.want) {
+			if (err == nil) && (got.Wallet().Money().Amount().Value() != tt.want) {
 				t.Errorf("[TestCase '%s'] Got: '%+v' | Want: '%+v'", tt.name, got.Wallet().Money().Amount(), tt.want)
 			}
 		})
