@@ -1,11 +1,11 @@
 package vo
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 )
 
 var (
-	ErrInvalidTypeDocument = errors.New("invalid type document")
+	ErrInvalidDocument = errors.New("invalid document")
 )
 
 // Document structure
@@ -21,20 +21,33 @@ func NewDocument(t string, value string) (Document, error) {
 		value:   value,
 	}
 
-	if !doc.validate() {
-		return Document{}, ErrInvalidTypeDocument
+	if err := doc.validate(); err != nil {
+		return Document{}, errors.Wrap(ErrInvalidDocument, err.Error())
 	}
 
 	return doc, nil
 }
 
-func (d Document) validate() bool {
+func (d *Document) validate() error {
 	switch d.typeDoc {
-	case CPF, CNPJ:
-		return true
-	}
+	case CPF:
+		cpf, err := NewCPF(d.value)
+		if err != nil {
+			return err
+		}
+		d.value = cpf.String()
 
-	return false
+		return nil
+	case CNPJ:
+		cpf, err := NewCNPJ(d.value)
+		if err != nil {
+			return err
+		}
+		d.value = cpf.String()
+
+		return nil
+	}
+	return ErrInvalidTypeDocument
 }
 
 // Value return value Document

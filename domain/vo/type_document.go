@@ -1,11 +1,18 @@
 package vo
 
-import "strings"
+import (
+	"github.com/pkg/errors"
+	"strings"
+)
 
 const (
 	// Document types
 	CPF  TypeDocument = "CPF"
 	CNPJ TypeDocument = "CNPJ"
+)
+
+var (
+	ErrInvalidTypeDocument = errors.New("invalid type document")
 )
 
 // TypeDocument define document types
