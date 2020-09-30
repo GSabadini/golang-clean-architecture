@@ -10,10 +10,12 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
+//Authorizer port
 type Authorizer interface {
 	Authorized(entity.Transfer) (bool, error)
 }
 
+//Notifier port
 type Notifier interface {
 	Notify(entity.Transfer) error
 }

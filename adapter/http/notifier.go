@@ -2,16 +2,14 @@ package http
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/GSabadini/go-challenge/domain/entity"
 )
 
 type Notifier struct {
-	client http.Client
+	client HTTPGetter
 }
 
-func NewNotifier(client http.Client) Notifier {
+func NewNotifier(client HTTPGetter) Notifier {
 	return Notifier{
 		client: client,
 	}

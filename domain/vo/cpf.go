@@ -3,6 +3,7 @@ package vo
 import (
 	"errors"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -34,7 +35,7 @@ func (c Cpf) validate() bool {
 }
 
 func (c Cpf) clear() string {
-	return rxCPFClear.ReplaceAllString(c.value, "")
+	return strings.Replace(strings.Replace(c.value, ".", "", -1), "-", "", -1)
 }
 
 // Value return value Cpf

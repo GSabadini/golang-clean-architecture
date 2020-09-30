@@ -15,14 +15,14 @@ type Document struct {
 }
 
 // NewDocument create new Document
-func NewDocument(t string, value string) (Document, error) {
+func NewDocument(typeDoc TypeDocument, value string) (Document, error) {
 	var doc = Document{
-		typeDoc: TypeDocument(t),
+		typeDoc: typeDoc,
 		value:   value,
 	}
 
 	if err := doc.validate(); err != nil {
-		return Document{}, errors.Wrap(ErrInvalidDocument, err.Error())
+		return Document{}, errors.Wrap(err, ErrInvalidDocument.Error())
 	}
 
 	return doc, nil
@@ -39,14 +39,15 @@ func (d *Document) validate() error {
 
 		return nil
 	case CNPJ:
-		cpf, err := NewCNPJ(d.value)
+		cnpj, err := NewCNPJ(d.value)
 		if err != nil {
 			return err
 		}
-		d.value = cpf.String()
+		d.value = cnpj.String()
 
 		return nil
 	}
+
 	return ErrInvalidTypeDocument
 }
 
@@ -58,6 +59,12 @@ func (d Document) Value() string {
 // Type return type Document
 func (d Document) Type() TypeDocument {
 	return d.typeDoc
+}
+
+// Equals checks that two Document are the same
+func (d Document) Equals(value Value) bool {
+	o, ok := value.(Document)
+	return ok && d.typeDoc == o.typeDoc && d.value == o.value
 }
 
 // NewDocumentTest create new Document for testing
