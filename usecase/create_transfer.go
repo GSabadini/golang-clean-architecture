@@ -95,13 +95,16 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		time.Now(),
 	))
 	if err != nil {
+		//c.updateUserWalletRepo.Rollback()
+		//c.createTransferRepo.Rollback()
 		return c.pre.Output(entity.Transfer{}), err
 	}
 
 	ok, err := c.authorizer.Authorized(transfer)
 	if err != nil || !ok {
 		//c.updateUserWalletRepo.Rollback()
-		return c.pre.Output(entity.Transfer{}), err
+		//c.createTransferRepo.Rollback()
+		//return c.pre.Output(entity.Transfer{}), err
 	}
 
 	err = c.notifier.Notify(transfer)

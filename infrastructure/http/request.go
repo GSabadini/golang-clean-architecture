@@ -54,22 +54,20 @@ func (r *Request) Do(method, url, contentType string, body io.Reader) (*http.Res
 	if r.retry.attempts > 0 {
 		fn := func() (*http.Response, error) {
 			res, err := r.client.Do(req)
-			fmt.Println(res)
-
 			if err != nil {
 				return res, err
 			}
 
-			for _, httpCode := range r.retry.httpCodes {
-				if res.StatusCode == httpCode {
-					return nil, fmt.Errorf("failed to request: %v ", http.StatusText(httpCode))
+			for _, statusCode := range r.retry.statusCodes {
+				if res.StatusCode == statusCode {
+					return nil, fmt.Errorf("failed to request: %v ", http.StatusText(statusCode))
 				}
 			}
 
 			return res, err
 		}
 
-		return r.retry.Do(fn, r.retry.attempts, r.retry.sleep)
+		return r.retry.Do(fn)
 	}
 
 	return r.client.Do(req)
@@ -86,9 +84,9 @@ func WithRoundTripper(rt http.RoundTripper) RequestOption {
 func WithRetry(attempts int, sleep time.Duration, statusCode []int) RequestOption {
 	return func(r *Request) {
 		r.retry = Retry{
-			attempts:  attempts,
-			sleep:     sleep,
-			httpCodes: statusCode,
+			attempts:    attempts,
+			sleep:       sleep,
+			statusCodes: statusCode,
 		}
 	}
 }

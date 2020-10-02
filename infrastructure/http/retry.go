@@ -13,9 +13,9 @@ var (
 type (
 	// Retry is mechanism the application retry.
 	Retry struct {
-		attempts  int
-		sleep     time.Duration
-		httpCodes []int
+		attempts    int
+		sleep       time.Duration
+		statusCodes []int
 	}
 
 	// Func is the function to be executed and eventually retried.
@@ -27,14 +27,14 @@ type (
 )
 
 // Do wraps Func and returns *http.Response and error as returning arguments.
-func (r Retry) Do(fn HTTPFunc, attempts int, sleep time.Duration) (*http.Response, error) {
+func (r Retry) Do(fn HTTPFunc) (*http.Response, error) {
 	var res *http.Response
 
 	err := retry(func() error {
 		var err error
 		res, err = fn()
 		return err
-	}, attempts, sleep)
+	}, r.attempts, r.sleep)
 
 	return res, err
 }

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/GSabadini/go-challenge/domain/entity"
 	infrahttp "github.com/GSabadini/go-challenge/infrastructure/http"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -86,7 +89,10 @@ func main() {
 		createUserRepo,
 		createUserRepo,
 		presenter.CreateTransferPresenter{},
-		adapterhttp.Authorizer{},
+		adapterhttp.NewAuthorizer(adapterhttp.NewHTTPGetterStub(
+			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"Autorizado"}`)))},
+			nil,
+		)),
 		adapterhttp.Notifier{},
 	)
 
@@ -116,7 +122,6 @@ func main() {
 	b, _ := json.Marshal(transfer)
 	fmt.Println(string(b))
 
-	//fmt.Println("\n\n\n")
 	fmt.Println("--------------------------------------------------")
 	transfer1, err := createTransfer.Execute(
 		context.TODO(),
@@ -153,6 +158,6 @@ func main() {
 		),
 	)
 
-	r, err := auth.Authorized1()
+	r, err := auth.Authorized(entity.Transfer{})
 	fmt.Println(r, err)
 }

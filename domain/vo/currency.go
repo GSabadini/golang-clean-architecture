@@ -6,10 +6,12 @@ var (
 	ErrInvalidCurrency = errors.New("invalid currency")
 )
 
-// Currency structure
-type Currency struct {
-	value TypeCurrency
-}
+type (
+	// Currency structure
+	Currency struct {
+		value TypeCurrency
+	}
+)
 
 // NewCurrency create new Currency
 func NewCurrency(value string) (Currency, error) {
