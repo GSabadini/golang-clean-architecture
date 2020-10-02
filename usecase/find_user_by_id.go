@@ -7,42 +7,44 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-//Output port
-type FindUserByIDPresenter interface {
-	Output(entity.User) FindUserByIDOutput
-}
+type (
+	// Output port
+	FindUserByIDPresenter interface {
+		Output(entity.User) FindUserByIDOutput
+	}
 
-//Input port
-type FindUserByID interface {
-	Execute(context.Context, vo.Uuid) (FindUserByIDOutput, error)
-}
+	// Input port
+	FindUserByID interface {
+		Execute(context.Context, vo.Uuid) (FindUserByIDOutput, error)
+	}
 
-//Output data
-type FindUserByIDOutput struct {
-	ID       string                     `json:"id"`
-	FullName string                     `json:"full_name"`
-	Document FindUserByIDDocumentOutput `json:"document"`
-	Email    string                     `json:"email"`
-	Wallet   FindUserByIDWalletOutput   `json:"wallet"`
-	Type     string                     `json:"type"`
-}
+	// Output data
+	FindUserByIDOutput struct {
+		ID       string                     `json:"id"`
+		FullName string                     `json:"full_name"`
+		Document FindUserByIDDocumentOutput `json:"document"`
+		Email    string                     `json:"email"`
+		Wallet   FindUserByIDWalletOutput   `json:"wallet"`
+		Type     string                     `json:"type"`
+	}
 
-//Output data
-type FindUserByIDDocumentOutput struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
-}
+	// Output data
+	FindUserByIDDocumentOutput struct {
+		Type  string `json:"type"`
+		Value string `json:"value"`
+	}
 
-//Output data
-type FindUserByIDWalletOutput struct {
-	Currency string `json:"currency"`
-	Amount   int64  `json:"amount"`
-}
+	// Output data
+	FindUserByIDWalletOutput struct {
+		Currency string `json:"currency"`
+		Amount   int64  `json:"amount"`
+	}
 
-type FindUserByIDInteractor struct {
-	repo entity.FindUserByIDRepository
-	pre  FindUserByIDPresenter
-}
+	FindUserByIDInteractor struct {
+		repo entity.FindUserByIDRepository
+		pre  FindUserByIDPresenter
+	}
+)
 
 func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByIDInteractor {
 	return FindUserByIDInteractor{

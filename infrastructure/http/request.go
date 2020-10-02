@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	reqTimeout = time.Second * 5
+	defaulTimeout = time.Second * 5
 )
 
 type (
@@ -18,16 +18,11 @@ type (
 
 	// Request is the application http request.
 	Request struct {
-		client *http.Client
+		client  *http.Client
+		retry   Retry
+		timeout time.Duration
 	}
 )
-
-// WithRoundTripper receives the http.RoundTripper implementation.
-func WithRoundTripper(rt http.RoundTripper) RequestOption {
-	return func(r *Request) {
-		r.client.Transport = rt
-	}
-}
 
 // NewRequest returns a new configured Request.
 func NewRequest(opts ...RequestOption) *Request {
@@ -47,10 +42,59 @@ func (r *Request) Do(method, url, contentType string, body io.Reader) (*http.Res
 
 	req.Header.Set("Content-Type", contentType)
 
-	ctx, cancel := context.WithTimeout(req.Context(), reqTimeout)
+	if r.timeout == 0 {
+		r.timeout = defaulTimeout
+	}
+
+	ctx, cancel := context.WithTimeout(req.Context(), r.timeout)
 	defer cancel()
 
 	req = req.WithContext(ctx)
 
+	if r.retry.attempts > 0 {
+		fn := func() (*http.Response, error) {
+			res, err := r.client.Do(req)
+			fmt.Println(res)
+
+			if err != nil {
+				return res, err
+			}
+
+			for _, httpCode := range r.retry.httpCodes {
+				if res.StatusCode == httpCode {
+					return nil, fmt.Errorf("failed to request: %v ", http.StatusText(httpCode))
+				}
+			}
+
+			return res, err
+		}
+
+		return r.retry.Do(fn, r.retry.attempts, r.retry.sleep)
+	}
+
 	return r.client.Do(req)
+}
+
+// WithRoundTripper receives the http.RoundTripper implementation.
+func WithRoundTripper(rt http.RoundTripper) RequestOption {
+	return func(r *Request) {
+		r.client.Transport = rt
+	}
+}
+
+// WithRetry receives the http.RoundTripper implementation.
+func WithRetry(attempts int, sleep time.Duration, statusCode []int) RequestOption {
+	return func(r *Request) {
+		r.retry = Retry{
+			attempts:  attempts,
+			sleep:     sleep,
+			httpCodes: statusCode,
+		}
+	}
+}
+
+func WithTimeout(t time.Duration) RequestOption {
+	return func(r *Request) {
+		r.timeout = t
+	}
 }

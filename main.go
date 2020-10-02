@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	infrahttp "github.com/GSabadini/go-challenge/infrastructure/http"
+	"net/http"
 	"time"
 
-	"github.com/GSabadini/go-challenge/adapter/http"
+	adapterhttp "github.com/GSabadini/go-challenge/adapter/http"
 	"github.com/GSabadini/go-challenge/adapter/presenter"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
@@ -84,8 +86,8 @@ func main() {
 		createUserRepo,
 		createUserRepo,
 		presenter.CreateTransferPresenter{},
-		http.Authorizer{},
-		http.Notifier{},
+		adapterhttp.Authorizer{},
+		adapterhttp.Notifier{},
 	)
 
 	transfer, err := createTransfer.Execute(
@@ -141,4 +143,16 @@ func main() {
 	fmt.Printf("%+v: ", transfer1)
 	b1, _ := json.Marshal(transfer1)
 	fmt.Println(string(b1))
+
+	auth := adapterhttp.NewAuthorizer(
+		infrahttp.NewClient(
+			infrahttp.NewRequest(
+				infrahttp.WithRetry(3, 400*time.Millisecond, []int{http.StatusInternalServerError}),
+				infrahttp.WithTimeout(5*time.Second),
+			),
+		),
+	)
+
+	r, err := auth.Authorized1()
+	fmt.Println(r, err)
 }

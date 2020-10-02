@@ -12,29 +12,31 @@ var (
 	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
 )
 
-type CreateUserRepository interface {
-	Create(context.Context, User) (User, error)
-}
+type (
+	CreateUserRepository interface {
+		Create(context.Context, User) (User, error)
+	}
 
-type FindUserByIDRepository interface {
-	FindByID(context.Context, vo.Uuid) (User, error)
-}
+	FindUserByIDRepository interface {
+		FindByID(context.Context, vo.Uuid) (User, error)
+	}
 
-type UpdateUserWalletRepository interface {
-	UpdateWallet(context.Context, vo.Uuid, vo.Money) error
-}
+	UpdateUserWalletRepository interface {
+		UpdateWallet(context.Context, vo.Uuid, vo.Money) error
+	}
 
-type User struct {
-	id        vo.Uuid
-	fullName  vo.FullName
-	email     vo.Email
-	password  vo.Password
-	document  vo.Document
-	wallet    *vo.Wallet
-	typeUser  vo.TypeUser
-	roles     vo.Roles
-	createdAt time.Time
-}
+	User struct {
+		id        vo.Uuid
+		fullName  vo.FullName
+		email     vo.Email
+		password  vo.Password
+		document  vo.Document
+		wallet    *vo.Wallet
+		typeUser  vo.TypeUser
+		roles     vo.Roles
+		createdAt time.Time
+	}
+)
 
 func NewUser(
 	ID vo.Uuid,

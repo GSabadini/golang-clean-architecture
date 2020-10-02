@@ -8,56 +8,58 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-//Input port
-type CreateUserUseCase interface {
-	Execute(CreateUserInput) (CreateUserOutput, error)
-}
+type (
+	// Input port
+	CreateUserUseCase interface {
+		Execute(CreateUserInput) (CreateUserOutput, error)
+	}
 
-//Output port
-type CreateUserPresenter interface {
-	Output(entity.User) CreateUserOutput
-}
+	// Output port
+	CreateUserPresenter interface {
+		Output(entity.User) CreateUserOutput
+	}
 
-//Input data
-type CreateUserInput struct {
-	FullName vo.FullName
-	Document vo.Document
-	Email    vo.Email
-	Password vo.Password
-	Wallet   *vo.Wallet
-	Type     vo.TypeUser
-}
+	// Input data
+	CreateUserInput struct {
+		FullName vo.FullName
+		Document vo.Document
+		Email    vo.Email
+		Password vo.Password
+		Wallet   *vo.Wallet
+		Type     vo.TypeUser
+	}
+
+	// Output data
+	CreateUserOutput struct {
+		ID       string                   `json:"id"`
+		FullName string                   `json:"full_name"`
+		Document CreateUserDocumentOutput `json:"document"`
+		Email    string                   `json:"email"`
+		Password string                   `json:"password"`
+		Wallet   CreateUserWalletOutput   `json:"wallet"`
+		Type     string                   `json:"type"`
+	}
+
+	// Output data
+	CreateUserDocumentOutput struct {
+		Type  string `json:"type"`
+		Value string `json:"value"`
+	}
+
+	// Output data
+	CreateUserWalletOutput struct {
+		Currency string `json:"currency"`
+		Amount   int64  `json:"amount"`
+	}
+
+	CreateUserInteractor struct {
+		repo entity.CreateUserRepository
+		pre  CreateUserPresenter
+	}
+)
 
 func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t vo.TypeUser) CreateUserInput {
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
-}
-
-//Output data
-type CreateUserOutput struct {
-	ID       string                   `json:"id"`
-	FullName string                   `json:"full_name"`
-	Document CreateUserDocumentOutput `json:"document"`
-	Email    string                   `json:"email"`
-	Password string                   `json:"password"`
-	Wallet   CreateUserWalletOutput   `json:"wallet"`
-	Type     string                   `json:"type"`
-}
-
-//Output data
-type CreateUserDocumentOutput struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
-}
-
-//Output data
-type CreateUserWalletOutput struct {
-	Currency string `json:"currency"`
-	Amount   int64  `json:"amount"`
-}
-
-type CreateUserInteractor struct {
-	repo entity.CreateUserRepository
-	pre  CreateUserPresenter
 }
 
 func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserInteractor {

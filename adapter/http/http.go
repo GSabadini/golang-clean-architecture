@@ -9,6 +9,7 @@ type (
 	HTTPClient interface {
 		HTTPGetter
 	}
+
 	// HTTPGetter holds fields and dependencies for executing an http GET request
 	HTTPGetter interface {
 		// Get executes a GET http request

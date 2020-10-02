@@ -10,59 +10,61 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-//Authorizer port
-type Authorizer interface {
-	Authorized(entity.Transfer) (bool, error)
-}
+type (
+	// Authorizer port
+	Authorizer interface {
+		Authorized(entity.Transfer) (bool, error)
+	}
 
-//Notifier port
-type Notifier interface {
-	Notify(entity.Transfer) error
-}
+	// Notifier port
+	Notifier interface {
+		Notify(entity.Transfer) error
+	}
 
-//Output port
-type CreateTransferPresenter interface {
-	Output(entity.Transfer) CreateTransferOutput
-}
+	// Output port
+	CreateTransferPresenter interface {
+		Output(entity.Transfer) CreateTransferOutput
+	}
 
-//Input port
-type CreateTransferUseCase interface {
-	Execute(context.Context, CreateTransferInput) (CreateTransferOutput, error)
-}
+	// Input port
+	CreateTransferUseCase interface {
+		Execute(context.Context, CreateTransferInput) (CreateTransferOutput, error)
+	}
 
-//Input data
-type CreateTransferInput struct {
-	ID        vo.Uuid
-	PayerID   vo.Uuid
-	PayeeID   vo.Uuid
-	Value     vo.Money
-	CreatedAt time.Time
-}
+	// Input data
+	CreateTransferInput struct {
+		ID        vo.Uuid
+		PayerID   vo.Uuid
+		PayeeID   vo.Uuid
+		Value     vo.Money
+		CreatedAt time.Time
+	}
 
-//Output data
-type CreateTransferOutput struct {
-	ID        string `json:"id"`
-	PayerID   string `json:"payer"`
-	PayeeID   string `json:"payee"`
-	Value     int64  `json:"value"`
-	CreatedAt string `json:"created_at"`
-}
+	// Output data
+	CreateTransferOutput struct {
+		ID        string `json:"id"`
+		PayerID   string `json:"payer"`
+		PayeeID   string `json:"payee"`
+		Value     int64  `json:"value"`
+		CreatedAt string `json:"created_at"`
+	}
 
-type CreateTransferInteractor struct {
-	createTransferRepo   entity.CreateTransferRepository
-	updateUserWalletRepo entity.UpdateUserWalletRepository
-	findUserByIDRepo     entity.FindUserByIDRepository
-	pre                  CreateTransferPresenter
-	externalAuthorizer   Authorizer
-	notifier             Notifier
-}
+	CreateTransferInteractor struct {
+		createTransferRepo   entity.CreateTransferRepository
+		updateUserWalletRepo entity.UpdateUserWalletRepository
+		findUserByIDRepo     entity.FindUserByIDRepository
+		pre                  CreateTransferPresenter
+		authorizer           Authorizer
+		notifier             Notifier
+	}
+)
 
 func NewCreateTransferInteractor(
 	createTransferRepo entity.CreateTransferRepository,
 	updateUserWalletRepo entity.UpdateUserWalletRepository,
 	findUserByIDRepo entity.FindUserByIDRepository,
 	pre CreateTransferPresenter,
-	externalAuthorizer Authorizer,
+	authorizer Authorizer,
 	notifier Notifier,
 ) CreateTransferInteractor {
 	return CreateTransferInteractor{
@@ -70,7 +72,7 @@ func NewCreateTransferInteractor(
 		updateUserWalletRepo: updateUserWalletRepo,
 		findUserByIDRepo:     findUserByIDRepo,
 		pre:                  pre,
-		externalAuthorizer:   externalAuthorizer,
+		authorizer:           authorizer,
 		notifier:             notifier,
 	}
 }
@@ -96,7 +98,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		return c.pre.Output(entity.Transfer{}), err
 	}
 
-	ok, err := c.externalAuthorizer.Authorized(transfer)
+	ok, err := c.authorizer.Authorized(transfer)
 	if err != nil || !ok {
 		//c.updateUserWalletRepo.Rollback()
 		return c.pre.Output(entity.Transfer{}), err

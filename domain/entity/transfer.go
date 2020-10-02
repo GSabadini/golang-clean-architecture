@@ -7,17 +7,19 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-type CreateTransferRepository interface {
-	Create(context.Context, Transfer) (Transfer, error)
-}
+type (
+	CreateTransferRepository interface {
+		Create(context.Context, Transfer) (Transfer, error)
+	}
 
-type Transfer struct {
-	id        vo.Uuid
-	payer     vo.Uuid
-	payee     vo.Uuid
-	value     vo.Money
-	createdAt time.Time
-}
+	Transfer struct {
+		id        vo.Uuid
+		payer     vo.Uuid
+		payee     vo.Uuid
+		value     vo.Money
+		createdAt time.Time
+	}
+)
 
 func NewTransfer(
 	ID vo.Uuid,
