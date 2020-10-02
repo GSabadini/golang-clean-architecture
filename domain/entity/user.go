@@ -3,14 +3,35 @@ package entity
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
+const (
+	CUSTOM   TypeUser = "CUSTOM"
+	MERCHANT TypeUser = "MERCHANT"
+)
+
 var (
+	ErrInvalidTypeUser = errors.New("invalid type user")
+
 	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
 )
+
+type (
+	// TypeUser define user types
+	TypeUser string
+)
+
+func (t TypeUser) String() string {
+	return string(t)
+}
+
+func (t TypeUser) ToUpper() TypeUser {
+	return TypeUser(strings.ToUpper(string(t)))
+}
 
 type (
 	CreateUserRepository interface {
@@ -32,7 +53,7 @@ type (
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  vo.TypeUser
+		typeUser  TypeUser
 		roles     vo.Roles
 		createdAt time.Time
 	}
@@ -45,11 +66,11 @@ func NewUser(
 	password vo.Password,
 	document vo.Document,
 	wallet *vo.Wallet,
-	typeUser vo.TypeUser,
+	typeUser TypeUser,
 	createdAt time.Time,
 ) (User, error) {
 	switch typeUser.ToUpper() {
-	case vo.CUSTOM:
+	case CUSTOM:
 		return NewCustomUser(
 			ID,
 			fullName,
@@ -59,7 +80,7 @@ func NewUser(
 			wallet,
 			createdAt,
 		), nil
-	case vo.MERCHANT:
+	case MERCHANT:
 		return NewMerchantUser(
 			ID,
 			fullName,
@@ -71,7 +92,7 @@ func NewUser(
 		), nil
 	}
 
-	return User{}, vo.ErrInvalidTypeUser
+	return User{}, ErrInvalidTypeUser
 }
 
 func NewCustomUser(
@@ -90,7 +111,7 @@ func NewCustomUser(
 		email:    email,
 		password: password,
 		wallet:   wallet,
-		typeUser: vo.CUSTOM,
+		typeUser: CUSTOM,
 		roles: vo.Roles{
 			CanTransfer: true,
 		},
@@ -114,7 +135,7 @@ func NewMerchantUser(
 		email:    email,
 		password: password,
 		wallet:   wallet,
-		typeUser: vo.MERCHANT,
+		typeUser: MERCHANT,
 		roles: vo.Roles{
 			CanTransfer: false,
 		},
@@ -160,7 +181,7 @@ func (u User) Roles() vo.Roles {
 	return u.roles
 }
 
-func (u User) TypeUser() vo.TypeUser {
+func (u User) TypeUser() TypeUser {
 	return u.typeUser
 }
 

@@ -2,10 +2,10 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
+	"os"
+
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/pkg/errors"
-	"os"
 )
 
 const (
@@ -48,8 +48,6 @@ func (a Authorizer) Authorized(_ entity.Transfer) (bool, error) {
 	if b.Message != autorizado {
 		return false, errAuthorizationDenied
 	}
-
-	fmt.Println("Autorizado")
 
 	return true, nil
 }

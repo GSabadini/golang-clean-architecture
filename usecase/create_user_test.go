@@ -72,7 +72,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						Email:    "",
 						Password: "passw",
 						Wallet:   CreateUserWalletOutput{},
-						Type:     vo.CUSTOM.String(),
+						Type:     entity.CUSTOM.String(),
 					},
 				},
 			},
@@ -97,12 +97,12 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Email:    "",
 				Password: "passw",
 				Wallet:   CreateUserWalletOutput{},
-				Type:     vo.CUSTOM.String(),
+				Type:     entity.CUSTOM.String(),
 			},
 			wantErr: false,
 		},
 		{
-			name: "Create custom user error",
+			name: "Create custom user db error",
 			fields: fields{
 				repo: createUserRepoStub{
 					result: entity.NewCustomUser(
@@ -114,7 +114,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						nil,
 						time.Now(),
 					),
-					err: errors.New("fail"),
+					err: errors.New("fail db"),
 				},
 				pre: createUserPresenterStub{
 					result: CreateUserOutput{},
@@ -128,7 +128,40 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.Email{},
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     vo.CUSTOM,
+					Type:     entity.CUSTOM,
+				},
+			},
+			want:    CreateUserOutput{},
+			wantErr: true,
+		},
+		{
+			name: "Create custom user type user error",
+			fields: fields{
+				repo: createUserRepoStub{
+					result: entity.NewCustomUser(
+						vo.NewUuidStaticTest(),
+						vo.NewFullName("Test testing"),
+						vo.Email{},
+						vo.NewPassword("passw"),
+						vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
+						nil,
+						time.Now(),
+					),
+					err: errors.New("fail db"),
+				},
+				pre: createUserPresenterStub{
+					result: CreateUserOutput{},
+				},
+			},
+			args: args{
+				ctx: nil,
+				i: CreateUserInput{
+					FullName: vo.NewFullName("Test testing"),
+					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
+					Email:    vo.Email{},
+					Password: vo.NewPassword("passw"),
+					Wallet:   nil,
+					Type:     "Test",
 				},
 			},
 			want:    CreateUserOutput{},

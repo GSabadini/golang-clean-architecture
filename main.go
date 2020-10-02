@@ -37,7 +37,7 @@ func main() {
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-		vo.CUSTOM,
+		entity.CUSTOM,
 	)
 	if err != nil {
 		fmt.Println(err)
@@ -49,7 +49,7 @@ func main() {
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
-		vo.MERCHANT,
+		entity.MERCHANT,
 	)
 	if err != nil {
 		fmt.Println(err)

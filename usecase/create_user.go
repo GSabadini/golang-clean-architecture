@@ -26,7 +26,7 @@ type (
 		Email    vo.Email
 		Password vo.Password
 		Wallet   *vo.Wallet
-		Type     vo.TypeUser
+		Type     entity.TypeUser
 	}
 
 	// Output data
@@ -58,7 +58,7 @@ type (
 	}
 )
 
-func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t vo.TypeUser) CreateUserInput {
+func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t entity.TypeUser) CreateUserInput {
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
@@ -70,6 +70,7 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 }
 
 func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
+	// @@todo rever
 	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		return c.pre.Output(entity.User{}), err

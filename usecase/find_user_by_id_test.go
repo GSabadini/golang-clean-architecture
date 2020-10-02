@@ -8,6 +8,7 @@ import (
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/pkg/errors"
 )
 
 type findUserByIDRepoStub struct {
@@ -44,12 +45,12 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Create user success",
+			name: "Find custom user by id success",
 			fields: fields{
 				repo: findUserByIDRepoStub{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
-						vo.NewFullName("Test testing"),
+						vo.NewFullName("Custom user"),
 						vo.Email{},
 						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CPF, "07091054954"),
@@ -61,7 +62,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				pre: findUserByIDPresenterStub{
 					result: FindUserByIDOutput{
 						ID:       vo.NewUuidStaticTest().Value(),
-						FullName: "Test testing",
+						FullName: "Custom user",
 						Document: FindUserByIDDocumentOutput{
 							Type:  "CPF",
 							Value: "07091054954",
@@ -78,7 +79,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
-				FullName: "Test testing",
+				FullName: "Custom user",
 				Document: FindUserByIDDocumentOutput{
 					Type:  "CPF",
 					Value: "07091054954",
@@ -88,6 +89,68 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				Type:   "CUSTOM",
 			},
 			wantErr: false,
+		},
+		{
+			name: "Find merchant user by id success",
+			fields: fields{
+				repo: findUserByIDRepoStub{
+					result: entity.NewMerchantUser(
+						vo.NewUuidStaticTest(),
+						vo.NewFullName("Merchant user"),
+						vo.Email{},
+						vo.NewPassword("passw"),
+						vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
+						nil,
+						time.Now(),
+					),
+					err: nil,
+				},
+				pre: findUserByIDPresenterStub{
+					result: FindUserByIDOutput{
+						ID:       vo.NewUuidStaticTest().Value(),
+						FullName: "Merchant user",
+						Document: FindUserByIDDocumentOutput{
+							Type:  "CNPJ",
+							Value: "20.770.438/0001-66",
+						},
+						Email:  vo.Email{}.Value(),
+						Wallet: FindUserByIDWalletOutput{},
+						Type:   "MERCHANT",
+					},
+				},
+			},
+			args: args{
+				ctx: nil,
+				ID:  vo.NewUuidStaticTest(),
+			},
+			want: FindUserByIDOutput{
+				ID:       vo.NewUuidStaticTest().Value(),
+				FullName: "Merchant user",
+				Document: FindUserByIDDocumentOutput{
+					Type:  "CNPJ",
+					Value: "20.770.438/0001-66",
+				},
+				Email:  vo.Email{}.Value(),
+				Wallet: FindUserByIDWalletOutput{},
+				Type:   "MERCHANT",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Find merchant user by id db error",
+			fields: fields{
+				repo: findUserByIDRepoStub{
+					result: entity.User{},
+					err:    errors.New("fail db"),
+				},
+				pre: findUserByIDPresenterStub{},
+			},
+			args: args{
+				ctx: nil,
+				ID:  vo.NewUuidStaticTest(),
+			},
+			want:    FindUserByIDOutput{},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

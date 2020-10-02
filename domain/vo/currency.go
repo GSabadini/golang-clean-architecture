@@ -2,6 +2,21 @@ package vo
 
 import "errors"
 
+const (
+	// Currency types
+	BRL TypeCurrency = "BRL"
+	USD TypeCurrency = "USD"
+)
+
+type (
+	// TypeCurrency define currency types
+	TypeCurrency string
+)
+
+func (tc TypeCurrency) String() string {
+	return string(tc)
+}
+
 var (
 	ErrInvalidCurrency = errors.New("invalid currency")
 )

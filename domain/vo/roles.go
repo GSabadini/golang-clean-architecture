@@ -1,5 +1,6 @@
 package vo
 
+// @TODO
 type Roles struct {
 	CanTransfer bool
 }

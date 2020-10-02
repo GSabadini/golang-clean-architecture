@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+
 	"github.com/GSabadini/go-challenge/domain/entity"
 )
 

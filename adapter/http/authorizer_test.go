@@ -2,7 +2,6 @@ package http
 
 import (
 	"bytes"
-	"errors"
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"io/ioutil"
 	"net/http"
@@ -24,7 +23,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Test success",
+			name: "Test authorized success",
 			fields: fields{
 				client: HTTPGetterStub{
 					res: &http.Response{
@@ -42,11 +41,11 @@ func TestAuthorizer_Authorized(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Test error",
+			name: "Test authorized error",
 			fields: fields{
 				client: HTTPGetterStub{
 					res: &http.Response{},
-					err: errors.New("fail"),
+					err: errAuthorizationDenied,
 				},
 			},
 			args: args{
