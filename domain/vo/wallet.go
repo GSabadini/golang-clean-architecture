@@ -24,12 +24,12 @@ func (w *Wallet) Add(amount Amount) Money {
 // Sub value in money value amount
 func (w *Wallet) Sub(amount Amount) Money {
 	w.money = w.money.Sub(amount)
-	return w.money.Sub(amount)
+	return w.money
 }
 
 // Equals checks that two Wallet are the same
-func (w Wallet) Equals(value Value) bool {
-	o, ok := value.(Wallet)
+func (w *Wallet) Equals(value Value) bool {
+	o, ok := value.(*Wallet)
 	return ok && w.money == o.money
 }
 

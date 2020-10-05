@@ -30,6 +30,21 @@ func TestNewMoney(t *testing.T) {
 				amount: Amount{value: 100},
 			},
 		},
+		{
+			name: "Test new valid money",
+			args: args{
+				currency: Currency{
+					value: USD,
+				},
+				amount: Amount{value: 10},
+			},
+			want: Money{
+				currency: Currency{
+					value: USD,
+				},
+				amount: Amount{value: 10},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,7 +100,54 @@ func TestMoney_Add(t *testing.T) {
 		args   args
 		want   Money
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test add money",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 100,
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 100,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 200,
+				},
+			},
+		},
+		{
+			name: "Test add money",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 10,
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 10,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 20,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,7 +173,54 @@ func TestMoney_Sub(t *testing.T) {
 		args   args
 		want   Money
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test sub money",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 100,
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 100,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 0,
+				},
+			},
+		},
+		{
+			name: "Test sub money",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 1050,
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 1000,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 50,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -137,7 +246,94 @@ func TestMoney_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Money value equals",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 0,
+				},
+			},
+			args: args{
+				value: Money{
+					currency: Currency{
+						value: BRL,
+					},
+					amount: Amount{
+						value: 0,
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "Money value equals",
+			fields: fields{
+				currency: Currency{
+					value: USD,
+				},
+				amount: Amount{
+					value: 2020,
+				},
+			},
+			args: args{
+				value: Money{
+					currency: Currency{
+						value: USD,
+					},
+					amount: Amount{
+						value: 2020,
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "Money value not equals",
+			fields: fields{
+				currency: Currency{
+					value: USD,
+				},
+				amount: Amount{
+					value: 2020,
+				},
+			},
+			args: args{
+				value: Money{
+					currency: Currency{
+						value: USD,
+					},
+					amount: Amount{
+						value: 20,
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "Money value not equals",
+			fields: fields{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 2020,
+				},
+			},
+			args: args{
+				value: Money{
+					currency: Currency{
+						value: USD,
+					},
+					amount: Amount{
+						value: 2020,
+					},
+				},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

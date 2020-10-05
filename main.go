@@ -93,7 +93,10 @@ func main() {
 			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"Autorizado"}`)))},
 			nil,
 		)),
-		adapterhttp.Notifier{},
+		adapterhttp.NewNotifier(adapterhttp.NewHTTPGetterStub(
+			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"Enviado"}`)))},
+			nil,
+		)),
 	)
 
 	transfer, err := createTransfer.Execute(
@@ -123,31 +126,31 @@ func main() {
 	fmt.Println(string(b))
 
 	fmt.Println("--------------------------------------------------")
-	transfer1, err := createTransfer.Execute(
-		context.TODO(),
-		usecase.CreateTransferInput{
-			ID:        uuid,
-			PayerID:   payeeID,
-			PayeeID:   payerID,
-			Value:     vo.NewMoneyBRL(vo.NewAmountTest(100)),
-			CreatedAt: time.Time{},
-		})
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	payerR1, _ := createUserRepo.FindByID(context.TODO(), payerID)
-	fmt.Println(" \n\npayer")
-	fmt.Printf("%+v: ", payerR1.Wallet())
-
-	payeeR1, _ := createUserRepo.FindByID(context.TODO(), payeeID)
-	fmt.Println(" \n\npayee")
-	fmt.Printf("%+v: ", payeeR1.Wallet())
-
-	fmt.Println("\n\ntransfer")
-	fmt.Printf("%+v: ", transfer1)
-	b1, _ := json.Marshal(transfer1)
-	fmt.Println(string(b1))
+	//transfer1, err := createTransfer.Execute(
+	//	context.TODO(),
+	//	usecase.CreateTransferInput{
+	//		ID:        uuid,
+	//		PayerID:   payeeID,
+	//		PayeeID:   payerID,
+	//		Value:     vo.NewMoneyBRL(vo.NewAmountTest(100)),
+	//		CreatedAt: time.Time{},
+	//	})
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//payerR1, _ := createUserRepo.FindByID(context.TODO(), payerID)
+	//fmt.Println(" \n\npayer")
+	//fmt.Printf("%+v: ", payerR1.Wallet())
+	//
+	//payeeR1, _ := createUserRepo.FindByID(context.TODO(), payeeID)
+	//fmt.Println(" \n\npayee")
+	//fmt.Printf("%+v: ", payeeR1.Wallet())
+	//
+	//fmt.Println("\n\ntransfer")
+	//fmt.Printf("%+v: ", transfer1)
+	//b1, _ := json.Marshal(transfer1)
+	//fmt.Println(string(b1))
 
 	auth := adapterhttp.NewAuthorizer(
 		infrahttp.NewClient(

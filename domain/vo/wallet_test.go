@@ -18,7 +18,58 @@ func TestWallet_Add(t *testing.T) {
 		args   args
 		want   Money
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test add value in money",
+			fields: fields{
+				money: Money{
+					currency: Currency{
+						value: BRL,
+					},
+					amount: Amount{
+						value: 100,
+					},
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 100,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 200,
+				},
+			},
+		},
+		{
+			name: "Test add value in money",
+			fields: fields{
+				money: Money{
+					currency: Currency{
+						value: BRL,
+					},
+					amount: Amount{
+						value: 999,
+					},
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 250,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 1249,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -43,7 +94,58 @@ func TestWallet_Sub(t *testing.T) {
 		args   args
 		want   Money
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test sub value in money",
+			fields: fields{
+				money: Money{
+					currency: Currency{
+						value: BRL,
+					},
+					amount: Amount{
+						value: 200,
+					},
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 100,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 100,
+				},
+			},
+		},
+		{
+			name: "Test sub value in money",
+			fields: fields{
+				money: Money{
+					currency: Currency{
+						value: BRL,
+					},
+					amount: Amount{
+						value: 100,
+					},
+				},
+			},
+			args: args{
+				amount: Amount{
+					value: 100,
+				},
+			},
+			want: Money{
+				currency: Currency{
+					value: BRL,
+				},
+				amount: Amount{
+					value: 0,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,6 +157,7 @@ func TestWallet_Sub(t *testing.T) {
 	}
 }
 
+// @todo
 func TestWallet_Equals(t *testing.T) {
 	type fields struct {
 		money Money
@@ -68,7 +171,30 @@ func TestWallet_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+		//{
+		//	name: "Wallet value equals",
+		//	fields: fields{
+		//		money: Money{
+		//			currency: Currency{
+		//				value: BRL,
+		//			},
+		//			amount: Amount{
+		//				value: 100,
+		//			},
+		//		},
+		//	},
+		//	args: args{
+		//		value: Money{
+		//			currency: Currency{
+		//				value: BRL,
+		//			},
+		//			amount: Amount{
+		//				value: 100,
+		//			},
+		//		},
+		//	},
+		//	want: true,
+		//},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

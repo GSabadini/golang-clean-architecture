@@ -1,14 +1,30 @@
 package http
 
 import (
-	"fmt"
+	"encoding/json"
+	"os"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/pkg/errors"
 )
 
-type Notifier struct {
-	client HTTPGetter
-}
+const (
+	enviado = "Enviado"
+)
+
+var (
+	errFailedToNotify = errors.New("failed to notify")
+)
+
+type (
+	Notifier struct {
+		client HTTPGetter
+	}
+
+	NotifierResponse struct {
+		Message string
+	}
+)
 
 func NewNotifier(client HTTPGetter) Notifier {
 	return Notifier{
@@ -17,6 +33,21 @@ func NewNotifier(client HTTPGetter) Notifier {
 }
 
 func (n Notifier) Notify(t entity.Transfer) error {
-	fmt.Println("Notificado")
+	r, err := n.client.Get(os.Getenv("NOTIFY_URI"))
+	//r, err := a.client.Get("https://run.mocky.io/v3/ed736a57-0c29-4433-92af-42228052e5ae")
+	if err != nil {
+		return errors.Wrap(err, errFailedToNotify.Error())
+	}
+
+	b := &NotifierResponse{}
+	err = json.NewDecoder(r.Body).Decode(&b)
+	if err != nil {
+		return errors.Wrap(err, errFailedToNotify.Error())
+	}
+
+	if b.Message != enviado {
+		return errFailedToNotify
+	}
+
 	return nil
 }

@@ -9,58 +9,55 @@ import (
 	"testing"
 )
 
-func TestAuthorizer_Authorized(t *testing.T) {
+func TestNotifier_Notify(t *testing.T) {
 	type fields struct {
 		client HTTPGetter
 	}
 	type args struct {
-		transfer entity.Transfer
+		t entity.Transfer
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		args    args
-		want    bool
 		wantErr bool
 	}{
 		{
-			name: "Test authorized success",
+			name: "Test notify success",
 			fields: fields{
 				client: HTTPGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
-							bytes.NewReader([]byte(`{"message":"Autorizado"}`)),
+							bytes.NewReader([]byte(`{"message":"Enviado"}`)),
 						),
 					},
 					err: nil,
 				},
 			},
 			args: args{
-				transfer: entity.Transfer{},
+				t: entity.Transfer{},
 			},
-			want:    true,
 			wantErr: false,
 		},
 		{
-			name: "Test authorized error response",
+			name: "Test notify error response",
 			fields: fields{
 				client: HTTPGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
-							bytes.NewReader([]byte(`{"message":"fail"}`)),
+							bytes.NewReader([]byte(`{"message":"Enviad1o"}`)),
 						),
 					},
 					err: nil,
 				},
 			},
 			args: args{
-				transfer: entity.Transfer{},
+				t: entity.Transfer{},
 			},
-			want:    false,
 			wantErr: true,
 		},
 		{
-			name: "Test authorized error",
+			name: "Test notify error",
 			fields: fields{
 				client: HTTPGetterStub{
 					res: &http.Response{},
@@ -68,25 +65,17 @@ func TestAuthorizer_Authorized(t *testing.T) {
 				},
 			},
 			args: args{
-				transfer: entity.Transfer{},
+				t: entity.Transfer{},
 			},
-			want:    false,
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := NewAuthorizer(tt.fields.client)
-			got, err := a.Authorized(tt.args.transfer)
-			if (err != nil) != tt.wantErr {
+			n := NewNotifier(tt.fields.client)
+			if err := n.Notify(tt.args.t); (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
-				return
 			}
-
-			if got != tt.want {
-				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'", tt.name, got, tt.want)
-			}
-
 		})
 	}
 }
