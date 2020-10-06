@@ -6,8 +6,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: fresh
     env_file:
       - .env
     volumes:
       - .:/app
+
+  mongodb:
+    container_name: mongodb
+    image: "mongo:3.6.2"
+    ports:
+      - 27017:27017
+    volumes:
+      - ./script/mongodb:/docker-entrypoint-initdb.d

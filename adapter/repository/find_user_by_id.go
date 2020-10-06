@@ -2,20 +2,108 @@ package repository
 
 import (
 	"context"
-	"database/sql"
+	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/go-challenge/infrastructure/db"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type FindUserByIDRepository struct {
-	db *sql.DB
-}
+type (
+	// Bson data
+	findUserByIDBSON struct {
+		ID        string                   `bson:"id"`
+		FullName  string                   `bson:"full_name"`
+		Email     string                   `bson:"email"`
+		Password  string                   `bson:"password"`
+		Document  findUserByIDDocumentBSON `bson:"document"`
+		Wallet    findUserByIDWalletBSON   `bson:"wallet"`
+		Roles     findUserByIDRolesBSON    `bson:"roles"`
+		Type      string                   `bson:"type"`
+		CreatedAt time.Time                `bson:"created_at"`
+	}
 
-func NewFindUserByIDUserRepository(db *sql.DB) FindUserByIDRepository {
-	return FindUserByIDRepository{
-		db: db,
+	// Bson data
+	findUserByIDDocumentBSON struct {
+		Type  string `bson:"type"`
+		Value string `bson:"value"`
+	}
+
+	// Bson data
+	findUserByIDWalletBSON struct {
+		Currency string `bson:"currency"`
+		Amount   int64  `bson:"amount"`
+	}
+
+	// Bson data
+	findUserByIDRolesBSON struct {
+		CanTransfer bool `bson:"can_transfer"`
+	}
+
+	findUserByIDRepository struct {
+		handler    *db.MongoHandler
+		collection string
+	}
+)
+
+// NewFindUserByIDUserRepository creates new findUserByIDRepository with its dependencies
+func NewFindUserByIDUserRepository(handler *db.MongoHandler) entity.FindUserByIDRepository {
+	return findUserByIDRepository{
+		handler:    handler,
+		collection: "users",
 	}
 }
-func (f FindUserByIDRepository) FindByID(ctx context.Context, u entity.User) (entity.User, error) {
-	panic("implement me")
+
+// FindByID performs findOne into the database
+func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entity.User, error) {
+	var (
+		userBSON = &findUserByIDBSON{}
+		query    = bson.M{"id": ID.Value()}
+	)
+
+	var err = f.handler.Db().Collection(f.collection).
+		FindOne(
+			ctx,
+			query,
+		).Decode(userBSON)
+	if err != nil {
+		switch err {
+		case mongo.ErrNoDocuments:
+			//return entity.User{}, domain.ErrAccountNotFound
+			return entity.User{}, err
+		default:
+			return entity.User{}, errors.Wrap(err, "error fetching user")
+		}
+	}
+
+	//@todo
+	uuid, err := vo.NewUuid(userBSON.ID)
+	email, err := vo.NewEmail(userBSON.Email)
+	fullName := vo.NewFullName(userBSON.FullName)
+	password := vo.NewPassword(userBSON.Password)
+	doc, err := vo.NewDocument(vo.TypeDocument(userBSON.Document.Type), "07091054954")
+	currency, err := vo.NewCurrency(userBSON.Wallet.Currency)
+	amount, err := vo.NewAmount(userBSON.Wallet.Amount)
+	wallet := vo.NewWallet(vo.NewMoney(currency, amount))
+	if err != nil {
+		return entity.User{}, err
+	}
+	user, err := entity.NewUser(
+		uuid,
+		fullName,
+		email,
+		password,
+		doc,
+		wallet,
+		entity.TypeUser(userBSON.Type),
+		userBSON.CreatedAt,
+	)
+	if err != nil {
+		return entity.User{}, err
+	}
+
+	return user, nil
 }

@@ -163,4 +163,16 @@ func main() {
 
 	r, err := auth.Authorized(entity.Transfer{})
 	fmt.Println(r, err)
+
+	//conn, err := db.NewMongoHandler()
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//repoTr := repository.NewUpdateUserWalletRepository(conn)
+	//uuid, _ = vo.NewUuid("0db298eb-c8e7-4829-84b7-c1036b4f0791")
+	//err = repoTr.UpdateWallet(context.TODO(), uuid, vo.NewMoneyBRL(vo.NewAmountTest(99999)))
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
 }

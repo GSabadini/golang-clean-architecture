@@ -22,9 +22,10 @@ type (
 	FindUserByIDOutput struct {
 		ID       string                     `json:"id"`
 		FullName string                     `json:"full_name"`
-		Document FindUserByIDDocumentOutput `json:"document"`
 		Email    string                     `json:"email"`
+		Document FindUserByIDDocumentOutput `json:"document"`
 		Wallet   FindUserByIDWalletOutput   `json:"wallet"`
+		Roles    FindUserByIDRolesOutput    `json:"roles"`
 		Type     string                     `json:"type"`
 	}
 
@@ -38,6 +39,11 @@ type (
 	FindUserByIDWalletOutput struct {
 		Currency string `json:"currency"`
 		Amount   int64  `json:"amount"`
+	}
+
+	// Output data
+	FindUserByIDRolesOutput struct {
+		CanTransfer bool `json:"can_transfer"`
 	}
 
 	FindUserByIDInteractor struct {

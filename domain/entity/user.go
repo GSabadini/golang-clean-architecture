@@ -107,14 +107,14 @@ func NewCustomUser(
 	return User{
 		id:       ID,
 		fullName: fullName,
-		document: document,
 		email:    email,
 		password: password,
+		document: document,
 		wallet:   wallet,
-		typeUser: CUSTOM,
 		roles: vo.Roles{
 			CanTransfer: true,
 		},
+		typeUser:  CUSTOM,
 		createdAt: createdAt,
 	}
 }
@@ -131,14 +131,14 @@ func NewMerchantUser(
 	return User{
 		id:       ID,
 		fullName: fullName,
-		document: document,
 		email:    email,
 		password: password,
+		document: document,
 		wallet:   wallet,
-		typeUser: MERCHANT,
 		roles: vo.Roles{
 			CanTransfer: false,
 		},
+		typeUser:  MERCHANT,
 		createdAt: createdAt,
 	}
 }

@@ -33,11 +33,12 @@ type (
 	CreateUserOutput struct {
 		ID       string                   `json:"id"`
 		FullName string                   `json:"full_name"`
-		Document CreateUserDocumentOutput `json:"document"`
 		Email    string                   `json:"email"`
 		Password string                   `json:"password"`
+		Document CreateUserDocumentOutput `json:"document"`
 		Wallet   CreateUserWalletOutput   `json:"wallet"`
-		Type     string                   `json:"type"`
+		Roles    CreateUserRolesOutput
+		Type     string `json:"type"`
 	}
 
 	// Output data
@@ -50,6 +51,11 @@ type (
 	CreateUserWalletOutput struct {
 		Currency string `json:"currency"`
 		Amount   int64  `json:"amount"`
+	}
+
+	// Output data
+	CreateUserRolesOutput struct {
+		CanTransfer bool `json:"can_transfer"`
 	}
 
 	CreateUserInteractor struct {
