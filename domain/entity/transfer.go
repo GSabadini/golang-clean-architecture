@@ -2,6 +2,7 @@ package entity
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
@@ -10,6 +11,7 @@ import (
 type (
 	CreateTransferRepository interface {
 		Create(context.Context, Transfer) (Transfer, error)
+		WithTransaction(context.Context, func(mongo.SessionContext) error) error
 	}
 
 	Transfer struct {

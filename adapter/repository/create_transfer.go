@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
@@ -47,4 +49,29 @@ func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer)
 	}
 
 	return t, nil
+}
+
+func (c createTransferRepository) WithTransaction(ctx context.Context, fn func(mongo.SessionContext) error) error {
+	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
+		err := fn(sessCtx)
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+
+	session, err := c.handler.Client().StartSession()
+	if err != nil {
+		return err
+	}
+	defer session.EndSession(ctx)
+
+	result, err := session.WithTransaction(ctx, callback)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("result: %v\n", result)
+
+	return nil
 }

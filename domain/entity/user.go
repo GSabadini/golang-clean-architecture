@@ -18,6 +18,8 @@ var (
 	ErrInvalidTypeUser = errors.New("invalid type user")
 
 	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
+
+	ErrNotFoundUser = errors.New("not found user")
 )
 
 type (

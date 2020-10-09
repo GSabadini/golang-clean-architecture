@@ -4,18 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	_ "encoding/json"
 	"fmt"
+	adapterhttp "github.com/GSabadini/go-challenge/adapter/http"
+	"github.com/GSabadini/go-challenge/adapter/logger"
+	"github.com/GSabadini/go-challenge/adapter/presenter"
+	"github.com/GSabadini/go-challenge/adapter/repository"
 	"github.com/GSabadini/go-challenge/domain/entity"
-	infrahttp "github.com/GSabadini/go-challenge/infrastructure/http"
+	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/go-challenge/infrastructure/db"
+	infralogger "github.com/GSabadini/go-challenge/infrastructure/logger"
+	"github.com/GSabadini/go-challenge/usecase"
 	"io/ioutil"
 	"net/http"
 	"time"
-
-	adapterhttp "github.com/GSabadini/go-challenge/adapter/http"
-	"github.com/GSabadini/go-challenge/adapter/presenter"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/infrastructure/db"
-	"github.com/GSabadini/go-challenge/usecase"
 )
 
 func main() {
@@ -33,34 +35,38 @@ func main() {
 
 	payer := usecase.NewCreateUserInput(
 		vo.NewFullName("Gabriel Facina"),
-		vo.NewDocumentTest("CPF", "1231231231"),
+		vo.NewDocumentTest("CPF", "07091054954"),
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.CUSTOM,
 	)
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	payee := usecase.NewCreateUserInput(
 		vo.NewFullName("Gabriel Facina"),
-		vo.NewDocumentTest("CPF", "1231231231"),
+		vo.NewDocumentTest("CPF", "07091054954"),
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.MERCHANT,
 	)
+
+	conn, err := db.NewMongoHandler()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	createUserRepo := &db.UserInMen{}
+	fmt.Println(conn.Db().Name())
+
+	createUserRepo := repository.NewCreateUserRepository(conn)
 	createUserUC := usecase.NewCreateUserInteractor(createUserRepo, presenter.CreateUserPresenter{})
-	u1, _ := createUserUC.Execute(
+	u1, err := createUserUC.Execute(
 		context.TODO(),
 		payer,
 	)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	b2, err := json.Marshal(u1)
 	if err != nil {
@@ -73,6 +79,12 @@ func main() {
 		payee,
 	)
 
+	b3, err := json.Marshal(u2)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(b3), "b3333")
+
 	payerID, err := vo.NewUuid(u1.ID)
 	if err != nil {
 		fmt.Println(err)
@@ -83,14 +95,16 @@ func main() {
 		fmt.Println(err)
 	}
 
-	createTransferRepo := &db.TransferInMen{}
+	createTransferRepo := repository.NewCreateTransferRepository(conn)
+	updateWalletRepo := repository.NewUpdateUserWalletRepository(conn)
+	findUser := repository.NewFindUserByIDUserRepository(conn)
 	createTransfer := usecase.NewCreateTransferInteractor(
 		createTransferRepo,
-		createUserRepo,
-		createUserRepo,
+		updateWalletRepo,
+		findUser,
 		presenter.CreateTransferPresenter{},
 		adapterhttp.NewAuthorizer(adapterhttp.NewHTTPGetterStub(
-			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"Autorizado"}`)))},
+			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"1Autorizado"}`)))},
 			nil,
 		)),
 		adapterhttp.NewNotifier(adapterhttp.NewHTTPGetterStub(
@@ -109,14 +123,14 @@ func main() {
 			CreatedAt: time.Time{},
 		})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err, "EEEEEER")
 	}
 
-	payerR, _ := createUserRepo.FindByID(context.TODO(), payerID)
+	payerR, _ := findUser.FindByID(context.TODO(), payerID)
 	fmt.Println(" \n\npayer")
 	fmt.Printf("%+v: ", payerR.Wallet())
 
-	payeeR, _ := createUserRepo.FindByID(context.TODO(), payeeID)
+	payeeR, _ := findUser.FindByID(context.TODO(), payeeID)
 	fmt.Println(" \n\npayee")
 	fmt.Printf("%+v: ", payeeR.Wallet())
 
@@ -152,17 +166,17 @@ func main() {
 	//b1, _ := json.Marshal(transfer1)
 	//fmt.Println(string(b1))
 
-	auth := adapterhttp.NewAuthorizer(
-		infrahttp.NewClient(
-			infrahttp.NewRequest(
-				infrahttp.WithRetry(3, 400*time.Millisecond, []int{http.StatusInternalServerError}),
-				infrahttp.WithTimeout(5*time.Second),
-			),
-		),
-	)
-
-	r, err := auth.Authorized(entity.Transfer{})
-	fmt.Println(r, err)
+	//auth := adapterhttp.NewAuthorizer(
+	//	infrahttp.NewClient(
+	//		infrahttp.NewRequest(
+	//			infrahttp.WithRetry(3, 400*time.Millisecond, []int{http.StatusInternalServerError}),
+	//			infrahttp.WithTimeout(5*time.Second),
+	//		),
+	//	),
+	//)
+	//
+	//r, err := auth.Authorized(entity.Transfer{})
+	//fmt.Println(r, err)
 
 	//conn, err := db.NewMongoHandler()
 	//if err != nil {
@@ -175,4 +189,14 @@ func main() {
 	//if err != nil {
 	//	fmt.Println(err)
 	//}
+
+	log := logger.NewLogrusLogger(infralogger.NewLogrus())
+
+	//l1 := logger.NewLoggerAdapter(logger.NewLogrusLogger(infralogger.NewLogrus()))
+	//l1.Adapter.Infof("HUASDUHASD")
+	log.Infof("AHHAHAHAH")
+	log.WithFields(logger.Fields{
+		"key":         "i.key",
+		"http_status": "i.httpStatus",
+	}).Infof("HAUHUAHU")
 }

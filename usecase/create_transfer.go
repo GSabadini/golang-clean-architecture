@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -49,7 +49,7 @@ type (
 		CreatedAt string `json:"created_at"`
 	}
 
-	CreateTransferInteractor struct {
+	createTransferInteractor struct {
 		createTransferRepo   entity.CreateTransferRepository
 		updateUserWalletRepo entity.UpdateUserWalletRepository
 		findUserByIDRepo     entity.FindUserByIDRepository
@@ -66,8 +66,8 @@ func NewCreateTransferInteractor(
 	pre CreateTransferPresenter,
 	authorizer Authorizer,
 	notifier Notifier,
-) CreateTransferInteractor {
-	return CreateTransferInteractor{
+) CreateTransferUseCase {
+	return createTransferInteractor{
 		createTransferRepo:   createTransferRepo,
 		updateUserWalletRepo: updateUserWalletRepo,
 		findUserByIDRepo:     findUserByIDRepo,
@@ -77,37 +77,42 @@ func NewCreateTransferInteractor(
 	}
 }
 
-func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferInput) (CreateTransferOutput, error) {
-	if err := c.process(ctx, i.PayerID, i.PayeeID, i.Value); err != nil {
-		return c.pre.Output(entity.Transfer{}), err
-	}
+func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferInput) (CreateTransferOutput, error) {
+	var transfer entity.Transfer
 
-	uuid, err := vo.NewUuid(vo.CreateUuid())
-	if err != nil {
-		return c.pre.Output(entity.Transfer{}), err
-	}
+	err := c.createTransferRepo.WithTransaction(ctx, func(sessCtx mongo.SessionContext) error {
+		if err := c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
+			return err
+		}
 
-	transfer, err := c.createTransferRepo.Create(ctx, entity.NewTransfer(
-		uuid,
-		i.PayerID,
-		i.PayeeID,
-		i.Value,
-		time.Now(),
-	))
-	if err != nil {
-		//c.updateUserWalletRepo.Rollback()
-		//c.createTransferRepo.Rollback()
-		return c.pre.Output(entity.Transfer{}), err
-	}
+		uuid, err := vo.NewUuid(vo.CreateUuid())
+		if err != nil {
+			return err
+		}
 
-	ok, err := c.authorizer.Authorized(transfer)
-	if err != nil || !ok {
-		//c.updateUserWalletRepo.Rollback()
-		//c.createTransferRepo.Rollback()
-		//return c.pre.Output(entity.Transfer{}), err
-	}
+		transfer, err = c.createTransferRepo.Create(sessCtx, entity.NewTransfer(
+			uuid,
+			i.PayerID,
+			i.PayeeID,
+			i.Value,
+			time.Now(),
+		))
+		if err != nil {
+			return err
+		}
 
-	err = c.notifier.Notify(transfer)
+		ok, err := c.authorizer.Authorized(transfer)
+		if err != nil || !ok {
+			return err
+		}
+
+		err = c.notifier.Notify(transfer)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 	if err != nil {
 		return c.pre.Output(entity.Transfer{}), err
 	}
@@ -115,7 +120,7 @@ func (c CreateTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 	return c.pre.Output(transfer), nil
 }
 
-func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
+func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
 	payer, err := c.findUserByIDRepo.FindByID(ctx, payerID)
 	if err != nil {
 		return err
@@ -137,27 +142,15 @@ func (c CreateTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	payee.Deposit(value)
 
-	/**
-	Start Transaction
-	*/
-
-	//c.updateUserWalletRepo.InitTransaction()
 	err = c.updateUserWalletRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
-	fmt.Println(payer.Wallet().Money())
 	if err != nil {
 		return err
 	}
 
 	err = c.updateUserWalletRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
 	if err != nil {
-		//c.updateUserWalletRepo.Rollback()
 		return err
 	}
-
-	//c.updateUserWalletRepo.Commit()
-	/**
-	End Transaction
-	*/
 
 	return nil
 }

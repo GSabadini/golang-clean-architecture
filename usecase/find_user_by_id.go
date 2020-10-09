@@ -46,20 +46,20 @@ type (
 		CanTransfer bool `json:"can_transfer"`
 	}
 
-	FindUserByIDInteractor struct {
+	findUserByIDInteractor struct {
 		repo entity.FindUserByIDRepository
 		pre  FindUserByIDPresenter
 	}
 )
 
-func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByIDInteractor {
-	return FindUserByIDInteractor{
+func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByID {
+	return findUserByIDInteractor{
 		repo: repo,
 		pre:  pre,
 	}
 }
 
-func (f FindUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
+func (f findUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
 	user, err := f.repo.FindByID(ctx, ID)
 	if err != nil {
 		return f.pre.Output(entity.User{}), err

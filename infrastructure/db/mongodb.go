@@ -13,6 +13,7 @@ import (
 type MongoHandler struct {
 	db      *mongo.Database
 	session mongo.Session
+	client  *mongo.Client
 }
 
 func NewMongoHandler() (*MongoHandler, error) {
@@ -20,12 +21,21 @@ func NewMongoHandler() (*MongoHandler, error) {
 	defer cancel()
 
 	uri := fmt.Sprintf(
-		"%s://@%s",
+		"%s://root:password123@%s,%s,%s/?replicaSet=%s",
 		os.Getenv("MONGODB_HOST"),
-		os.Getenv("MONGODB_HOST"),
+		"mongodb-primary",
+		"mongodb-secondary",
+		"mongodb-arbiter",
+		"replicaset",
 	)
 
-	clientOpts := options.Client().ApplyURI(uri).SetDirect(true)
+	fmt.Println(uri)
+
+	clientOpts := options.Client().
+		ApplyURI(uri)
+		//SetDirect(true).
+		//SetHosts([]string{"mongodb-primary", "mongodb-secondary", "mongodb-arbiter"}).
+		//SetReplicaSet("replicaset")
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		panic(err)
@@ -36,15 +46,20 @@ func NewMongoHandler() (*MongoHandler, error) {
 		panic(err)
 	}
 
-	session, err := client.StartSession()
-	if err != nil {
-		panic(err)
-	}
+	//session, err := client.StartSession()
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	return &MongoHandler{
-		db:      client.Database(os.Getenv("MONGODB_DATABASE")),
-		session: session,
+		db: client.Database(os.Getenv("MONGODB_DATABASE")),
+		//session: session,
+		client: client,
 	}, nil
+}
+
+func (m *MongoHandler) Client() *mongo.Client {
+	return m.client
 }
 
 func (m *MongoHandler) Session() mongo.Session {

@@ -11,7 +11,7 @@ import (
 type (
 	// Input port
 	CreateUserUseCase interface {
-		Execute(CreateUserInput) (CreateUserOutput, error)
+		Execute(context.Context, CreateUserInput) (CreateUserOutput, error)
 	}
 
 	// Output port
@@ -58,7 +58,7 @@ type (
 		CanTransfer bool `json:"can_transfer"`
 	}
 
-	CreateUserInteractor struct {
+	createUserInteractor struct {
 		repo entity.CreateUserRepository
 		pre  CreateUserPresenter
 	}
@@ -68,15 +68,14 @@ func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Ema
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
-func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserInteractor {
-	return CreateUserInteractor{
+func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserUseCase {
+	return createUserInteractor{
 		repo: repo,
 		pre:  pre,
 	}
 }
 
-func (c CreateUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
-	// @@todo rever
+func (c createUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
 	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		return c.pre.Output(entity.User{}), err

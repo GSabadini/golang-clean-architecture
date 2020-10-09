@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -72,26 +73,50 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
-			//return entity.User{}, domain.ErrAccountNotFound
-			return entity.User{}, err
+			return entity.User{}, entity.ErrNotFoundUser
 		default:
+			fmt.Println(err.Error())
 			return entity.User{}, errors.Wrap(err, "error fetching user")
 		}
 	}
 
 	//@todo
 	uuid, err := vo.NewUuid(userBSON.ID)
-	email, err := vo.NewEmail(userBSON.Email)
-	fullName := vo.NewFullName(userBSON.FullName)
-	password := vo.NewPassword(userBSON.Password)
-	doc, err := vo.NewDocument(vo.TypeDocument(userBSON.Document.Type), "07091054954")
-	currency, err := vo.NewCurrency(userBSON.Wallet.Currency)
-	amount, err := vo.NewAmount(userBSON.Wallet.Amount)
-	wallet := vo.NewWallet(vo.NewMoney(currency, amount))
 	if err != nil {
+		fmt.Println("assadasdaqq456")
 		return entity.User{}, err
 	}
-	user, err := entity.NewUser(
+
+	email, err := vo.NewEmail(userBSON.Email)
+	if err != nil {
+		fmt.Println("assadasdaqq767")
+		return entity.User{}, err
+	}
+
+	fullName := vo.NewFullName(userBSON.FullName)
+	password := vo.NewPassword(userBSON.Password)
+
+	doc, err := vo.NewDocument(vo.TypeDocument(userBSON.Document.Type), userBSON.Document.Value)
+	if err != nil {
+		fmt.Println("assadasdaqq76711")
+		return entity.User{}, err
+	}
+
+	currency, err := vo.NewCurrency(userBSON.Wallet.Currency)
+	if err != nil {
+		fmt.Println("assadasdaqq312")
+		return entity.User{}, err
+	}
+
+	amount, err := vo.NewAmount(userBSON.Wallet.Amount)
+	if err != nil {
+		fmt.Println("assadasdaqq123")
+		return entity.User{}, err
+	}
+
+	wallet := vo.NewWallet(vo.NewMoney(currency, amount))
+
+	u, err := entity.NewUser(
 		uuid,
 		fullName,
 		email,
@@ -102,8 +127,9 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 		userBSON.CreatedAt,
 	)
 	if err != nil {
+		fmt.Println("assadasdaqq")
 		return entity.User{}, err
 	}
 
-	return user, nil
+	return u, nil
 }

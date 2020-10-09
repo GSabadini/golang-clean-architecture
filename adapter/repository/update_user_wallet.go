@@ -2,13 +2,12 @@ package repository
 
 import (
 	"context"
+	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/GSabadini/go-challenge/domain/entity"
 )
 
 type (
@@ -36,8 +35,7 @@ func (u updateUserWalletRepository) UpdateWallet(ctx context.Context, ID vo.Uuid
 	if _, err := u.handler.Db().Collection(u.collection).UpdateOne(ctx, query, update); err != nil {
 		switch err {
 		case mongo.ErrNilDocument:
-			//return errors.Wrap(domain.ErrAccountNotFound, "error updating account balance")
-			return errors.Wrap(err, "error updating the value of the wallet")
+			return errors.Wrap(entity.ErrNotFoundUser, "error updating the value of the wallet")
 		default:
 			return errors.Wrap(err, "error updating the value of the wallet")
 		}

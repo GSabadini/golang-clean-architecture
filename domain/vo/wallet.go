@@ -11,7 +11,7 @@ func NewWallet(money Money) *Wallet {
 }
 
 // Money return value money
-func (w *Wallet) Money() Money {
+func (w Wallet) Money() Money {
 	return w.money
 }
 

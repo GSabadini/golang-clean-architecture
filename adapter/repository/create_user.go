@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
@@ -19,7 +20,7 @@ type (
 		Wallet    createUserWalletBSON   `bson:"wallet"`
 		Roles     createUserRolesBSON    `bson:"roles"`
 		Type      string                 `bson:"type"`
-		CreatedAt string                 `bson:"created_at"`
+		CreatedAt time.Time              `bson:"created_at"`
 	}
 
 	// Bson data
@@ -68,7 +69,8 @@ func (c createUserRepository) Create(ctx context.Context, u entity.User) (entity
 			Currency: u.Wallet().Money().Currency().String(),
 			Amount:   u.Wallet().Money().Amount().Value(),
 		},
-		Type: u.TypeUser().String(),
+		Type:      u.TypeUser().String(),
+		CreatedAt: u.CreatedAt(),
 	}
 
 	if _, err := c.handler.Db().Collection(c.collection).InsertOne(ctx, bson); err != nil {
