@@ -5,9 +5,15 @@ import (
 	"github.com/GSabadini/go-challenge/usecase"
 )
 
-type FindUserByIDPresenter struct{}
+type findUserByIDPresenter struct{}
 
-func (f FindUserByIDPresenter) Output(u entity.User) usecase.FindUserByIDOutput {
+// NewFindUserByIDPresenter creates new findUserByIDPresenter
+func NewFindUserByIDPresenter() usecase.FindUserByIDPresenter {
+	return findUserByIDPresenter{}
+}
+
+// Output returns the user fetch response by ID
+func (f findUserByIDPresenter) Output(u entity.User) usecase.FindUserByIDOutput {
 	return usecase.FindUserByIDOutput{
 		ID:       u.ID().Value(),
 		FullName: u.FullName().Value(),
@@ -23,6 +29,7 @@ func (f FindUserByIDPresenter) Output(u entity.User) usecase.FindUserByIDOutput 
 		Roles: usecase.FindUserByIDRolesOutput{
 			CanTransfer: u.Roles().CanTransfer,
 		},
-		Type: u.TypeUser().String(),
+		Type:      u.TypeUser().String(),
+		CreatedAt: u.CreatedAt().String(),
 	}
 }

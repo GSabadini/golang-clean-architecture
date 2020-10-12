@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -11,14 +10,14 @@ import (
 )
 
 type (
-	// Authorizer port
+	// Authorizer transfer port
 	Authorizer interface {
-		Authorized(entity.Transfer) (bool, error)
+		Authorized(context.Context, entity.Transfer) (bool, error)
 	}
 
-	// Notifier port
+	// Notifier transfer port
 	Notifier interface {
-		Notify(entity.Transfer) error
+		Notify(context.Context, entity.Transfer) error
 	}
 
 	// Output port
@@ -59,6 +58,7 @@ type (
 	}
 )
 
+// NewCreateTransferInteractor creates new createTransferInteractor with its dependencies
 func NewCreateTransferInteractor(
 	createTransferRepo entity.CreateTransferRepository,
 	updateUserWalletRepo entity.UpdateUserWalletRepository,
@@ -77,10 +77,11 @@ func NewCreateTransferInteractor(
 	}
 }
 
+// Execute orchestrates the use case
 func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferInput) (CreateTransferOutput, error) {
 	var transfer entity.Transfer
 
-	err := c.createTransferRepo.WithTransaction(ctx, func(sessCtx mongo.SessionContext) error {
+	err := c.createTransferRepo.WithTransaction(ctx, func(sessCtx context.Context) error {
 		if err := c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
 			return err
 		}
@@ -101,13 +102,14 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 			return err
 		}
 
-		ok, err := c.authorizer.Authorized(transfer)
+		ok, err := c.authorizer.Authorized(sessCtx, transfer)
 		if err != nil || !ok {
 			return err
 		}
 
-		err = c.notifier.Notify(transfer)
+		err = c.notifier.Notify(sessCtx, transfer)
 		if err != nil {
+			//@todo enfileirar
 			return err
 		}
 
@@ -127,7 +129,7 @@ func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 	}
 
 	if !payer.CanTransfer() {
-		return errors.New("!authorized")
+		return errors.New("unauthorized user type")
 	}
 
 	payee, err := c.findUserByIDRepo.FindByID(ctx, payeeID)

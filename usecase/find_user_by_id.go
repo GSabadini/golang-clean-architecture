@@ -20,13 +20,14 @@ type (
 
 	// Output data
 	FindUserByIDOutput struct {
-		ID       string                     `json:"id"`
-		FullName string                     `json:"full_name"`
-		Email    string                     `json:"email"`
-		Document FindUserByIDDocumentOutput `json:"document"`
-		Wallet   FindUserByIDWalletOutput   `json:"wallet"`
-		Roles    FindUserByIDRolesOutput    `json:"roles"`
-		Type     string                     `json:"type"`
+		ID        string                     `json:"id"`
+		FullName  string                     `json:"full_name"`
+		Email     string                     `json:"email"`
+		Document  FindUserByIDDocumentOutput `json:"document"`
+		Wallet    FindUserByIDWalletOutput   `json:"wallet"`
+		Roles     FindUserByIDRolesOutput    `json:"roles"`
+		Type      string                     `json:"type"`
+		CreatedAt string                     `json:"created_at"`
 	}
 
 	// Output data
@@ -52,6 +53,7 @@ type (
 	}
 )
 
+// NewFindUserByIDInteractor creates new findUserByIDInteractor with its dependencies
 func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByID {
 	return findUserByIDInteractor{
 		repo: repo,
@@ -59,6 +61,7 @@ func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserB
 	}
 }
 
+// Execute orchestrates the use case
 func (f findUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
 	user, err := f.repo.FindByID(ctx, ID)
 	if err != nil {

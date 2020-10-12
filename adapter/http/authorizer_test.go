@@ -2,11 +2,13 @@ package http
 
 import (
 	"bytes"
+	"context"
 	"errors"
-	"github.com/GSabadini/go-challenge/domain/entity"
 	"io/ioutil"
 	"net/http"
 	"testing"
+
+	"github.com/GSabadini/go-challenge/domain/entity"
 )
 
 func TestAuthorizer_Authorized(t *testing.T) {
@@ -26,7 +28,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized success",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"Autorizado"}`)),
@@ -44,7 +46,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized error response",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"fail"}`)),
@@ -62,7 +64,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized error",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{},
 					err: errors.New("failure client"),
 				},
@@ -77,7 +79,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := NewAuthorizer(tt.fields.client)
-			got, err := a.Authorized(tt.args.transfer)
+			got, err := a.Authorized(context.TODO(), tt.args.transfer)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

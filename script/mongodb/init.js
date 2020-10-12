@@ -1,4 +1,4 @@
-db = db.getSiblingDB('bank');
+db = db.getSiblingDB('challenge');
 
 db.createUser({
     user: 'dev',

@@ -2,7 +2,6 @@ package vo
 
 import (
 	"github.com/pkg/errors"
-	"strings"
 )
 
 const (
@@ -20,10 +19,11 @@ type (
 	TypeDocument string
 )
 
-func (t TypeDocument) toUpper() TypeDocument {
-	return TypeDocument(strings.ToUpper(string(t)))
-}
+//func (t TypeDocument) toUpper() TypeDocument {
+//	return TypeDocument(strings.ToUpper(string(t)))
+//}
 
+// String returns string representation of the TypeDocument
 func (t TypeDocument) String() string {
 	return string(t)
 }

@@ -31,14 +31,15 @@ type (
 
 	// Output data
 	CreateUserOutput struct {
-		ID       string                   `json:"id"`
-		FullName string                   `json:"full_name"`
-		Email    string                   `json:"email"`
-		Password string                   `json:"password"`
-		Document CreateUserDocumentOutput `json:"document"`
-		Wallet   CreateUserWalletOutput   `json:"wallet"`
-		Roles    CreateUserRolesOutput
-		Type     string `json:"type"`
+		ID        string                   `json:"id"`
+		FullName  string                   `json:"full_name"`
+		Email     string                   `json:"email"`
+		Password  string                   `json:"password"`
+		Document  CreateUserDocumentOutput `json:"document"`
+		Wallet    CreateUserWalletOutput   `json:"wallet"`
+		Roles     CreateUserRolesOutput
+		Type      string `json:"type"`
+		CreatedAt string `json:"created_at"`
 	}
 
 	// Output data
@@ -68,6 +69,7 @@ func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Ema
 	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
 }
 
+// NewCreateUserInteractor creates new createUserInteractor with its dependencies
 func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserUseCase {
 	return createUserInteractor{
 		repo: repo,
@@ -75,6 +77,7 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 	}
 }
 
+// Execute orchestrates the use case
 func (c createUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
 	uuid, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {

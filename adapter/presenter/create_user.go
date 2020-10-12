@@ -5,9 +5,15 @@ import (
 	"github.com/GSabadini/go-challenge/usecase"
 )
 
-type CreateUserPresenter struct{}
+type createUserPresenter struct{}
 
-func (c CreateUserPresenter) Output(u entity.User) usecase.CreateUserOutput {
+// NewCreateUserPresenter creates new createUserPresenter
+func NewCreateUserPresenter() usecase.CreateUserPresenter {
+	return createUserPresenter{}
+}
+
+// Output returns the user creation response
+func (c createUserPresenter) Output(u entity.User) usecase.CreateUserOutput {
 	return usecase.CreateUserOutput{
 		ID:       u.ID().Value(),
 		FullName: u.FullName().Value(),
@@ -24,6 +30,7 @@ func (c CreateUserPresenter) Output(u entity.User) usecase.CreateUserOutput {
 		Roles: usecase.CreateUserRolesOutput{
 			CanTransfer: u.Roles().CanTransfer,
 		},
-		Type: u.TypeUser().String(),
+		Type:      u.TypeUser().String(),
+		CreatedAt: u.CreatedAt().String(),
 	}
 }

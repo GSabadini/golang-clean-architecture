@@ -1,45 +1,44 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/usecase"
 	"github.com/pkg/errors"
 )
 
-const (
-	enviado = "Enviado"
-)
+const enviado = "Enviado"
 
-var (
-	errFailedToNotify = errors.New("failed to notify")
-)
+var errFailedToNotify = errors.New("failed to notify")
 
 type (
-	Notifier struct {
+	notifier struct {
 		client HTTPGetter
 	}
 
-	NotifierResponse struct {
+	notifierResponse struct {
 		Message string
 	}
 )
 
-func NewNotifier(client HTTPGetter) Notifier {
-	return Notifier{
+// NewNotifier creates new notifier with its dependencies
+func NewNotifier(client HTTPGetter) usecase.Notifier {
+	return notifier{
 		client: client,
 	}
 }
 
-func (n Notifier) Notify(t entity.Transfer) error {
+// Notify
+func (n notifier) Notify(_ context.Context, _ entity.Transfer) error {
 	r, err := n.client.Get(os.Getenv("NOTIFY_URI"))
-	//r, err := a.client.Get("https://run.mocky.io/v3/ed736a57-0c29-4433-92af-42228052e5ae")
 	if err != nil {
 		return errors.Wrap(err, errFailedToNotify.Error())
 	}
 
-	b := &NotifierResponse{}
+	b := &notifierResponse{}
 	err = json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
 		return errors.Wrap(err, errFailedToNotify.Error())

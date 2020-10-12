@@ -2,11 +2,13 @@ package http
 
 import (
 	"bytes"
+	"context"
 	"errors"
-	"github.com/GSabadini/go-challenge/domain/entity"
 	"io/ioutil"
 	"net/http"
 	"testing"
+
+	"github.com/GSabadini/go-challenge/domain/entity"
 )
 
 func TestNotifier_Notify(t *testing.T) {
@@ -25,7 +27,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify success",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"Enviado"}`)),
@@ -42,7 +44,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify error response",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"Enviad1o"}`)),
@@ -59,7 +61,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify error",
 			fields: fields{
-				client: HTTPGetterStub{
+				client: httpGetterStub{
 					res: &http.Response{},
 					err: errors.New("failure client"),
 				},
@@ -73,7 +75,7 @@ func TestNotifier_Notify(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			n := NewNotifier(tt.fields.client)
-			if err := n.Notify(tt.args.t); (err != nil) != tt.wantErr {
+			if err := n.Notify(context.TODO(), tt.args.t); (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 			}
 		})

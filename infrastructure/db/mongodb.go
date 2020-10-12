@@ -10,12 +10,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// MongoHandler defines the MongoDb handler
 type MongoHandler struct {
-	db      *mongo.Database
-	session mongo.Session
-	client  *mongo.Client
+	db     *mongo.Database
+	client *mongo.Client
 }
 
+// NewMongoHandler creates new MongoHandler
 func NewMongoHandler() (*MongoHandler, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -29,13 +30,7 @@ func NewMongoHandler() (*MongoHandler, error) {
 		"replicaset",
 	)
 
-	fmt.Println(uri)
-
-	clientOpts := options.Client().
-		ApplyURI(uri)
-		//SetDirect(true).
-		//SetHosts([]string{"mongodb-primary", "mongodb-secondary", "mongodb-arbiter"}).
-		//SetReplicaSet("replicaset")
+	clientOpts := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		panic(err)
@@ -46,26 +41,18 @@ func NewMongoHandler() (*MongoHandler, error) {
 		panic(err)
 	}
 
-	//session, err := client.StartSession()
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	return &MongoHandler{
-		db: client.Database(os.Getenv("MONGODB_DATABASE")),
-		//session: session,
+		db:     client.Database(os.Getenv("MONGODB_DATABASE")),
 		client: client,
 	}, nil
 }
 
+// Client returns the client property
 func (m *MongoHandler) Client() *mongo.Client {
 	return m.client
 }
 
-func (m *MongoHandler) Session() mongo.Session {
-	return m.session
-}
-
+// Db returns the db property
 func (m *MongoHandler) Db() *mongo.Database {
 	return m.db
 }

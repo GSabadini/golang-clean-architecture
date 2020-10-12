@@ -3,13 +3,10 @@ package vo
 import (
 	"errors"
 	"regexp"
-	"strings"
 )
 
 var (
 	ErrInvalidCPF = errors.New("invalid cpf")
-
-	rxCPFClear = regexp.MustCompile(`[^0-9]`)
 
 	rxCPF = regexp.MustCompile(`^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$`)
 )
@@ -32,10 +29,6 @@ func NewCPF(value string) (Cpf, error) {
 
 func (c Cpf) validate() bool {
 	return rxCPF.MatchString(c.value)
-}
-
-func (c Cpf) clear() string {
-	return strings.Replace(strings.Replace(c.value, ".", "", -1), "-", "", -1)
 }
 
 // Value return value Cpf

@@ -21,6 +21,7 @@ import (
 )
 
 func main() {
+
 	email, err := vo.NewEmail("gfacina@hotmail.com")
 	if err != nil {
 		panic(err)
@@ -59,7 +60,7 @@ func main() {
 	fmt.Println(conn.Db().Name())
 
 	createUserRepo := repository.NewCreateUserRepository(conn)
-	createUserUC := usecase.NewCreateUserInteractor(createUserRepo, presenter.CreateUserPresenter{})
+	createUserUC := usecase.NewCreateUserInteractor(createUserRepo, presenter.NewCreateUserPresenter())
 	u1, err := createUserUC.Execute(
 		context.TODO(),
 		payer,
@@ -102,9 +103,9 @@ func main() {
 		createTransferRepo,
 		updateWalletRepo,
 		findUser,
-		presenter.CreateTransferPresenter{},
+		presenter.NewCreateTransferPresenter(),
 		adapterhttp.NewAuthorizer(adapterhttp.NewHTTPGetterStub(
-			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"1Autorizado"}`)))},
+			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"!Autorizado"}`)))},
 			nil,
 		)),
 		adapterhttp.NewNotifier(adapterhttp.NewHTTPGetterStub(
@@ -190,12 +191,10 @@ func main() {
 	//	fmt.Println(err)
 	//}
 
-	log := logger.NewLogrusLogger(infralogger.NewLogrus())
+	logrus := logger.NewLoggerAdapter(infralogger.NewLogrus())
 
-	//l1 := logger.NewLoggerAdapter(logger.NewLogrusLogger(infralogger.NewLogrus()))
-	//l1.Adapter.Infof("HUASDUHASD")
-	log.Infof("AHHAHAHAH")
-	log.WithFields(logger.Fields{
+	logrus.Log().Infof("HAHAHAHA")
+	logrus.Log().WithFields(logger.Fields{
 		"key":         "i.key",
 		"http_status": "i.httpStatus",
 	}).Infof("HAUHUAHU")

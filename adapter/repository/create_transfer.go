@@ -2,12 +2,11 @@ package repository
 
 import (
 	"context"
-	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type (
@@ -51,7 +50,7 @@ func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer)
 	return t, nil
 }
 
-func (c createTransferRepository) WithTransaction(ctx context.Context, fn func(mongo.SessionContext) error) error {
+func (c createTransferRepository) WithTransaction(ctx context.Context, fn func(context.Context) error) error {
 	callback := func(sessCtx mongo.SessionContext) (interface{}, error) {
 		err := fn(sessCtx)
 		if err != nil {
@@ -66,12 +65,10 @@ func (c createTransferRepository) WithTransaction(ctx context.Context, fn func(m
 	}
 	defer session.EndSession(ctx)
 
-	result, err := session.WithTransaction(ctx, callback)
+	_, err = session.WithTransaction(ctx, callback)
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf("result: %v\n", result)
 
 	return nil
 }

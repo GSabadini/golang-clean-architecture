@@ -80,16 +80,13 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 		}
 	}
 
-	//@todo
 	uuid, err := vo.NewUuid(userBSON.ID)
 	if err != nil {
-		fmt.Println("assadasdaqq456")
 		return entity.User{}, err
 	}
 
 	email, err := vo.NewEmail(userBSON.Email)
 	if err != nil {
-		fmt.Println("assadasdaqq767")
 		return entity.User{}, err
 	}
 
@@ -98,19 +95,16 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 
 	doc, err := vo.NewDocument(vo.TypeDocument(userBSON.Document.Type), userBSON.Document.Value)
 	if err != nil {
-		fmt.Println("assadasdaqq76711")
 		return entity.User{}, err
 	}
 
 	currency, err := vo.NewCurrency(userBSON.Wallet.Currency)
 	if err != nil {
-		fmt.Println("assadasdaqq312")
 		return entity.User{}, err
 	}
 
 	amount, err := vo.NewAmount(userBSON.Wallet.Amount)
 	if err != nil {
-		fmt.Println("assadasdaqq123")
 		return entity.User{}, err
 	}
 
@@ -127,7 +121,6 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 		userBSON.CreatedAt,
 	)
 	if err != nil {
-		fmt.Println("assadasdaqq")
 		return entity.User{}, err
 	}
 

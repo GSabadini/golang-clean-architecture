@@ -1,45 +1,44 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/usecase"
 	"github.com/pkg/errors"
 )
 
-const (
-	autorizado = "Autorizado"
-)
+const autorizado = "Autorizado"
 
-var (
-	errAuthorizationDenied = errors.New("authorization denied")
-)
+var errAuthorizationDenied = errors.New("authorization denied")
 
 type (
-	Authorizer struct {
+	authorizer struct {
 		client HTTPGetter
 	}
 
-	AuthorizerResponse struct {
+	authorizerResponse struct {
 		Message string
 	}
 )
 
-func NewAuthorizer(client HTTPGetter) Authorizer {
-	return Authorizer{
+// NewAuthorizer creates new authorizer with its dependencies
+func NewAuthorizer(client HTTPGetter) usecase.Authorizer {
+	return authorizer{
 		client: client,
 	}
 }
 
-func (a Authorizer) Authorized(_ entity.Transfer) (bool, error) {
+// Authorized
+func (a authorizer) Authorized(_ context.Context, _ entity.Transfer) (bool, error) {
 	r, err := a.client.Get(os.Getenv("AUTHORIZER_URI"))
-	//r, err := a.client.Get("https://run.mocky.io/v3/ed736a57-0c29-4433-92af-42228052e5ae")
 	if err != nil {
 		return false, errors.Wrap(err, errAuthorizationDenied.Error())
 	}
 
-	b := &AuthorizerResponse{}
+	b := &authorizerResponse{}
 	err = json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
 		return false, errors.Wrap(err, errAuthorizationDenied.Error())

@@ -46,3 +46,8 @@ func (e Email) Equals(value Value) bool {
 	o, ok := value.(Email)
 	return ok && e.value == o.value
 }
+
+// NewEmailTest create new Email for test
+func NewEmailTest(e string) Email {
+	return Email{value: e}
+}

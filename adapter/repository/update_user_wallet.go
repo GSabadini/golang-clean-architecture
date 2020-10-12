@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
@@ -10,12 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type (
-	updateUserWalletRepository struct {
-		handler    *db.MongoHandler
-		collection string
-	}
-)
+type updateUserWalletRepository struct {
+	handler    *db.MongoHandler
+	collection string
+}
 
 // NewUpdateUserWalletRepository creates new updateUserWalletRepository with its dependencies
 func NewUpdateUserWalletRepository(handler *db.MongoHandler) entity.UpdateUserWalletRepository {

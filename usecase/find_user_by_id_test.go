@@ -11,20 +11,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-type findUserByIDRepoStub struct {
+type stubFindUserByIDRepo struct {
 	result entity.User
 	err    error
 }
 
-func (f findUserByIDRepoStub) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
+func (f stubFindUserByIDRepo) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
 	return f.result, f.err
 }
 
-type findUserByIDPresenterStub struct {
+type stubFindUserByIDPresenter struct {
 	result FindUserByIDOutput
 }
 
-func (f findUserByIDPresenterStub) Output(entity.User) FindUserByIDOutput {
+func (f stubFindUserByIDPresenter) Output(entity.User) FindUserByIDOutput {
 	return f.result
 }
 
@@ -47,7 +47,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		{
 			name: "Find custom user by id success",
 			fields: fields{
-				repo: findUserByIDRepoStub{
+				repo: stubFindUserByIDRepo{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Custom user"),
@@ -59,7 +59,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					),
 					err: nil,
 				},
-				pre: findUserByIDPresenterStub{
+				pre: stubFindUserByIDPresenter{
 					result: FindUserByIDOutput{
 						ID:       vo.NewUuidStaticTest().Value(),
 						FullName: "Custom user",
@@ -67,9 +67,10 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 							Type:  "CPF",
 							Value: "07091054954",
 						},
-						Email:  vo.Email{}.Value(),
-						Wallet: FindUserByIDWalletOutput{},
-						Type:   "CUSTOM",
+						Email:     vo.Email{}.Value(),
+						Wallet:    FindUserByIDWalletOutput{},
+						Type:      "CUSTOM",
+						CreatedAt: time.Time{}.String(),
 					},
 				},
 			},
@@ -84,16 +85,17 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					Type:  "CPF",
 					Value: "07091054954",
 				},
-				Email:  vo.Email{}.Value(),
-				Wallet: FindUserByIDWalletOutput{},
-				Type:   "CUSTOM",
+				Email:     vo.Email{}.Value(),
+				Wallet:    FindUserByIDWalletOutput{},
+				Type:      "CUSTOM",
+				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
 		},
 		{
 			name: "Find merchant user by id success",
 			fields: fields{
-				repo: findUserByIDRepoStub{
+				repo: stubFindUserByIDRepo{
 					result: entity.NewMerchantUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Merchant user"),
@@ -105,7 +107,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					),
 					err: nil,
 				},
-				pre: findUserByIDPresenterStub{
+				pre: stubFindUserByIDPresenter{
 					result: FindUserByIDOutput{
 						ID:       vo.NewUuidStaticTest().Value(),
 						FullName: "Merchant user",
@@ -113,9 +115,10 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 							Type:  "CNPJ",
 							Value: "20.770.438/0001-66",
 						},
-						Email:  vo.Email{}.Value(),
-						Wallet: FindUserByIDWalletOutput{},
-						Type:   "MERCHANT",
+						Email:     vo.Email{}.Value(),
+						Wallet:    FindUserByIDWalletOutput{},
+						Type:      "MERCHANT",
+						CreatedAt: time.Time{}.String(),
 					},
 				},
 			},
@@ -130,20 +133,21 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					Type:  "CNPJ",
 					Value: "20.770.438/0001-66",
 				},
-				Email:  vo.Email{}.Value(),
-				Wallet: FindUserByIDWalletOutput{},
-				Type:   "MERCHANT",
+				Email:     vo.Email{}.Value(),
+				Wallet:    FindUserByIDWalletOutput{},
+				Type:      "MERCHANT",
+				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
 		},
 		{
 			name: "Find merchant user by id db error",
 			fields: fields{
-				repo: findUserByIDRepoStub{
+				repo: stubFindUserByIDRepo{
 					result: entity.User{},
 					err:    errors.New("fail db"),
 				},
-				pre: findUserByIDPresenterStub{},
+				pre: stubFindUserByIDPresenter{},
 			},
 			args: args{
 				ctx: nil,
