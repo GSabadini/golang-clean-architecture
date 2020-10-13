@@ -44,7 +44,7 @@ func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer)
 	}
 
 	if _, err := c.handler.Db().Collection(c.collection).InsertOne(ctx, bson); err != nil {
-		return entity.Transfer{}, errors.Wrap(err, "error creating transfer")
+		return entity.Transfer{}, errors.Wrap(err, entity.ErrCreateTransfer.Error())
 	}
 
 	return t, nil

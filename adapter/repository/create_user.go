@@ -74,7 +74,7 @@ func (c createUserRepository) Create(ctx context.Context, u entity.User) (entity
 	}
 
 	if _, err := c.handler.Db().Collection(c.collection).InsertOne(ctx, bson); err != nil {
-		return entity.User{}, errors.Wrap(err, "error creating user")
+		return entity.User{}, errors.Wrap(err, entity.ErrCreateUser.Error())
 	}
 
 	return u, nil

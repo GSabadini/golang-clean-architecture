@@ -127,7 +127,7 @@ func TestUser_CanTransfer(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want bool
+		want error
 	}{
 		{
 			name: "Test whether custom type user can transfer",
@@ -142,7 +142,7 @@ func TestUser_CanTransfer(t *testing.T) {
 				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
-			want: true,
+			want: nil,
 		},
 		{
 			name: "Test whether merchant type user can transfer",
@@ -157,7 +157,7 @@ func TestUser_CanTransfer(t *testing.T) {
 				roles:     vo.Roles{},
 				createdAt: time.Time{},
 			},
-			want: false,
+			want: ErrNotAllowedTypeUser,
 		},
 	}
 	for _, tt := range tests {
@@ -177,7 +177,7 @@ func TestUser_CanTransfer(t *testing.T) {
 				return
 			}
 
-			if got := got.CanTransfer(); got != tt.want {
+			if err := got.CanTransfer(); err != tt.want {
 				t.Errorf("[TestCase '%s'] Got: '%+v' | Want: '%+v'", tt.name, got, tt.want)
 			}
 		})
@@ -342,7 +342,7 @@ func TestUser_Withdraw(t *testing.T) {
 			args: args{
 				money: vo.NewMoneyBRL(vo.NewAmountTest(1000)),
 			},
-			wantErr: ErrInsufficientBalance,
+			wantErr: ErrUserInsufficientBalance,
 		},
 	}
 	for _, tt := range tests {

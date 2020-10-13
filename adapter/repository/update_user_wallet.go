@@ -34,9 +34,9 @@ func (u updateUserWalletRepository) UpdateWallet(ctx context.Context, ID vo.Uuid
 	if _, err := u.handler.Db().Collection(u.collection).UpdateOne(ctx, query, update); err != nil {
 		switch err {
 		case mongo.ErrNilDocument:
-			return errors.Wrap(entity.ErrNotFoundUser, "error updating the value of the wallet")
+			return errors.Wrap(entity.ErrNotFoundUser, entity.ErrUpdateUserWallet.Error())
 		default:
-			return errors.Wrap(err, "error updating the value of the wallet")
+			return errors.Wrap(err, entity.ErrUpdateUserWallet.Error())
 		}
 	}
 

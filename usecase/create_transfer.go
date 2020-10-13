@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -79,24 +79,25 @@ func NewCreateTransferInteractor(
 
 // Execute orchestrates the use case
 func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferInput) (CreateTransferOutput, error) {
-	var transfer entity.Transfer
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 
-	err := c.createTransferRepo.WithTransaction(ctx, func(sessCtx context.Context) error {
-		if err := c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
-			return err
-		}
+	var (
+		transfer entity.Transfer
+		err      error
+	)
 
-		uuid, err := vo.NewUuid(vo.CreateUuid())
-		if err != nil {
+	err = c.createTransferRepo.WithTransaction(ctx, func(sessCtx context.Context) error {
+		if err = c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
 			return err
 		}
 
 		transfer, err = c.createTransferRepo.Create(sessCtx, entity.NewTransfer(
-			uuid,
+			i.ID,
 			i.PayerID,
 			i.PayeeID,
 			i.Value,
-			time.Now(),
+			i.CreatedAt,
 		))
 		if err != nil {
 			return err
@@ -110,7 +111,7 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		err = c.notifier.Notify(sessCtx, transfer)
 		if err != nil {
 			//@todo enfileirar
-			return err
+			return nil
 		}
 
 		return nil
@@ -128,8 +129,8 @@ func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 		return err
 	}
 
-	if !payer.CanTransfer() {
-		return errors.New("unauthorized user type")
+	if err := payer.CanTransfer(); err != nil {
+		return errors.Wrap(err, entity.ErrUnauthorizedTransfer.Error())
 	}
 
 	payee, err := c.findUserByIDRepo.FindByID(ctx, payeeID)

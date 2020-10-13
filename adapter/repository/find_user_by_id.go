@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
@@ -75,8 +74,7 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 		case mongo.ErrNoDocuments:
 			return entity.User{}, entity.ErrNotFoundUser
 		default:
-			fmt.Println(err.Error())
-			return entity.User{}, errors.Wrap(err, "error fetching user")
+			return entity.User{}, errors.Wrap(err, entity.ErrFindUserByID.Error())
 		}
 	}
 
@@ -89,9 +87,6 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 	if err != nil {
 		return entity.User{}, err
 	}
-
-	fullName := vo.NewFullName(userBSON.FullName)
-	password := vo.NewPassword(userBSON.Password)
 
 	doc, err := vo.NewDocument(vo.TypeDocument(userBSON.Document.Type), userBSON.Document.Value)
 	if err != nil {
@@ -112,9 +107,9 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 
 	u, err := entity.NewUser(
 		uuid,
-		fullName,
+		vo.NewFullName(userBSON.FullName),
 		email,
-		password,
+		vo.NewPassword(userBSON.Password),
 		doc,
 		wallet,
 		entity.TypeUser(userBSON.Type),

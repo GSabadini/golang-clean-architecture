@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
@@ -63,6 +64,9 @@ func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserB
 
 // Execute orchestrates the use case
 func (f findUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	user, err := f.repo.FindByID(ctx, ID)
 	if err != nil {
 		return f.pre.Output(entity.User{}), err

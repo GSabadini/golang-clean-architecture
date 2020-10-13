@@ -2,9 +2,16 @@ package entity
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
+)
+
+var (
+	ErrCreateTransfer = errors.New("error creating transfer")
+
+	ErrUnauthorizedTransfer = errors.New("unauthorized transfer")
 )
 
 type (

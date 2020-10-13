@@ -17,9 +17,7 @@ const (
 var (
 	ErrInvalidTypeUser = errors.New("invalid type user")
 
-	ErrInsufficientBalance = errors.New("user does not have sufficient balance")
-
-	ErrNotFoundUser = errors.New("not found user")
+	ErrNotAllowedTypeUser = errors.New("not allowed user type")
 )
 
 type (
@@ -36,6 +34,18 @@ func (t TypeUser) String() string {
 func (t TypeUser) ToUpper() TypeUser {
 	return TypeUser(strings.ToUpper(string(t)))
 }
+
+var (
+	ErrUserInsufficientBalance = errors.New("user does not have sufficient balance")
+
+	ErrNotFoundUser = errors.New("not found user")
+
+	ErrUpdateUserWallet = errors.New("error updating the value of the wallet")
+
+	ErrCreateUser = errors.New("error creating user")
+
+	ErrFindUserByID = errors.New("error fetching user by ID")
+)
 
 type (
 	// CreateUserRepository defines the operation of creating a transfer entity
@@ -157,7 +167,7 @@ func NewMerchantUser(
 // Withdraw remove value of money of wallet
 func (u User) Withdraw(money vo.Money) error {
 	if u.Wallet().Money().Amount().Value() < money.Amount().Value() {
-		return ErrInsufficientBalance
+		return ErrUserInsufficientBalance
 	}
 
 	u.Wallet().Sub(money.Amount())
@@ -171,8 +181,12 @@ func (u User) Deposit(money vo.Money) {
 }
 
 // CanTransfer returns whether it is possible to transfer
-func (u User) CanTransfer() bool {
-	return u.Roles().CanTransfer
+func (u User) CanTransfer() error {
+	if u.Roles().CanTransfer {
+		return nil
+	}
+
+	return ErrNotAllowedTypeUser
 }
 
 // ID returns the id property

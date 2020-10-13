@@ -21,12 +21,14 @@ type (
 
 	// Input data
 	CreateUserInput struct {
-		FullName vo.FullName
-		Document vo.Document
-		Email    vo.Email
-		Password vo.Password
-		Wallet   *vo.Wallet
-		Type     entity.TypeUser
+		ID        vo.Uuid
+		FullName  vo.FullName
+		Document  vo.Document
+		Email     vo.Email
+		Password  vo.Password
+		Wallet    *vo.Wallet
+		Type      entity.TypeUser
+		CreatedAt time.Time
 	}
 
 	// Output data
@@ -65,8 +67,8 @@ type (
 	}
 )
 
-func NewCreateUserInput(fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t entity.TypeUser) CreateUserInput {
-	return CreateUserInput{FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t}
+func NewCreateUserInput(id vo.Uuid, fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t entity.TypeUser, time time.Time) CreateUserInput {
+	return CreateUserInput{ID: id, FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t, CreatedAt: time}
 }
 
 // NewCreateUserInteractor creates new createUserInteractor with its dependencies
@@ -79,20 +81,18 @@ func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPre
 
 // Execute orchestrates the use case
 func (c createUserInteractor) Execute(ctx context.Context, i CreateUserInput) (CreateUserOutput, error) {
-	uuid, err := vo.NewUuid(vo.CreateUuid())
-	if err != nil {
-		return c.pre.Output(entity.User{}), err
-	}
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 
 	u, err := entity.NewUser(
-		uuid,
+		i.ID,
 		i.FullName,
 		i.Email,
 		i.Password,
 		i.Document,
 		i.Wallet,
 		i.Type,
-		time.Now(),
+		i.CreatedAt,
 	)
 	if err != nil {
 		return c.pre.Output(entity.User{}), err

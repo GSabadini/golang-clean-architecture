@@ -51,7 +51,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Custom user"),
-						vo.Email{},
+						vo.NewEmailTest("test@testing.com"),
 						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CPF, "07091054954"),
 						nil,
@@ -67,7 +67,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 							Type:  "CPF",
 							Value: "07091054954",
 						},
-						Email:     vo.Email{}.Value(),
+						Email:     "test@testing.com",
 						Wallet:    FindUserByIDWalletOutput{},
 						Type:      "CUSTOM",
 						CreatedAt: time.Time{}.String(),
@@ -75,8 +75,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
-				ID:  vo.NewUuidStaticTest(),
+				ID: vo.NewUuidStaticTest(),
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
@@ -85,7 +84,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					Type:  "CPF",
 					Value: "07091054954",
 				},
-				Email:     vo.Email{}.Value(),
+				Email:     "test@testing.com",
 				Wallet:    FindUserByIDWalletOutput{},
 				Type:      "CUSTOM",
 				CreatedAt: time.Time{}.String(),
@@ -99,7 +98,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					result: entity.NewMerchantUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Merchant user"),
-						vo.Email{},
+						vo.NewEmailTest("test@testing.com"),
 						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 						nil,
@@ -115,7 +114,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 							Type:  "CNPJ",
 							Value: "20.770.438/0001-66",
 						},
-						Email:     vo.Email{}.Value(),
+						Email:     "test@testing.com",
 						Wallet:    FindUserByIDWalletOutput{},
 						Type:      "MERCHANT",
 						CreatedAt: time.Time{}.String(),
@@ -123,8 +122,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
-				ID:  vo.NewUuidStaticTest(),
+				ID: vo.NewUuidStaticTest(),
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
@@ -133,7 +131,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 					Type:  "CNPJ",
 					Value: "20.770.438/0001-66",
 				},
-				Email:     vo.Email{}.Value(),
+				Email:     "test@testing.com",
 				Wallet:    FindUserByIDWalletOutput{},
 				Type:      "MERCHANT",
 				CreatedAt: time.Time{}.String(),
@@ -150,8 +148,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				pre: stubFindUserByIDPresenter{},
 			},
 			args: args{
-				ctx: nil,
-				ID:  vo.NewUuidStaticTest(),
+				ID: vo.NewUuidStaticTest(),
 			},
 			want:    FindUserByIDOutput{},
 			wantErr: true,
@@ -164,7 +161,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				tt.fields.pre,
 			)
 
-			got, err := f.Execute(tt.args.ctx, tt.args.ID)
+			got, err := f.Execute(context.TODO(), tt.args.ID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

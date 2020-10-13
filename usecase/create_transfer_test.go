@@ -95,8 +95,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		notifier             Notifier
 	}
 	type args struct {
-		ctx context.Context
-		i   CreateTransferInput
+		i CreateTransferInput
 	}
 	tests := []struct {
 		name    string
@@ -164,7 +163,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -229,7 +227,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -288,7 +285,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -347,7 +343,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -390,7 +385,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -441,7 +435,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -500,7 +493,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -559,7 +551,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -618,7 +609,6 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ctx: nil,
 				i: CreateTransferInput{
 					ID:        vo.NewUuidStaticTest(),
 					PayerID:   vo.NewUuidStaticTest(),
@@ -642,7 +632,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				tt.fields.notifier,
 			)
 
-			got, err := c.Execute(tt.args.ctx, tt.args.i)
+			got, err := c.Execute(context.TODO(), tt.args.i)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

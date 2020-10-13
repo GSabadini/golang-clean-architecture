@@ -27,29 +27,37 @@ func main() {
 		panic(err)
 	}
 
-	uuid, err := vo.NewUuid(vo.CreateUuid())
+	uuidP, err := vo.NewUuid(vo.CreateUuid())
 	if err != nil {
 		//fmt.Println(err)
 		panic(err)
 	}
-	fmt.Print(uuid)
 
 	payer := usecase.NewCreateUserInput(
+		uuidP,
 		vo.NewFullName("Gabriel Facina"),
 		vo.NewDocumentTest("CPF", "07091054954"),
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.CUSTOM,
+		time.Now(),
 	)
 
+	uuidPayee, err := vo.NewUuid(vo.CreateUuid())
+	if err != nil {
+		//fmt.Println(err)
+		panic(err)
+	}
 	payee := usecase.NewCreateUserInput(
+		uuidPayee,
 		vo.NewFullName("Gabriel Facina"),
 		vo.NewDocumentTest("CPF", "07091054954"),
 		email,
 		vo.NewPassword("passw"),
 		vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 		entity.MERCHANT,
+		time.Now(),
 	)
 
 	conn, err := db.NewMongoHandler()
@@ -105,7 +113,7 @@ func main() {
 		findUser,
 		presenter.NewCreateTransferPresenter(),
 		adapterhttp.NewAuthorizer(adapterhttp.NewHTTPGetterStub(
-			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"!Autorizado"}`)))},
+			&http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`{"message":"Autorizado"}`)))},
 			nil,
 		)),
 		adapterhttp.NewNotifier(adapterhttp.NewHTTPGetterStub(
@@ -114,14 +122,19 @@ func main() {
 		)),
 	)
 
+	uuidT, err := vo.NewUuid(vo.CreateUuid())
+	if err != nil {
+		//fmt.Println(err)
+		panic(err)
+	}
 	transfer, err := createTransfer.Execute(
 		context.TODO(),
 		usecase.CreateTransferInput{
-			ID:        uuid,
+			ID:        uuidT,
 			PayerID:   payerID,
 			PayeeID:   payeeID,
 			Value:     vo.NewMoneyBRL(vo.NewAmountTest(100)),
-			CreatedAt: time.Time{},
+			CreatedAt: time.Now(),
 		})
 	if err != nil {
 		fmt.Println(err, "EEEEEER")
@@ -139,33 +152,6 @@ func main() {
 	fmt.Printf("%+v: ", transfer)
 	b, _ := json.Marshal(transfer)
 	fmt.Println(string(b))
-
-	fmt.Println("--------------------------------------------------")
-	//transfer1, err := createTransfer.Execute(
-	//	context.TODO(),
-	//	usecase.CreateTransferInput{
-	//		ID:        uuid,
-	//		PayerID:   payeeID,
-	//		PayeeID:   payerID,
-	//		Value:     vo.NewMoneyBRL(vo.NewAmountTest(100)),
-	//		CreatedAt: time.Time{},
-	//	})
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//
-	//payerR1, _ := createUserRepo.FindByID(context.TODO(), payerID)
-	//fmt.Println(" \n\npayer")
-	//fmt.Printf("%+v: ", payerR1.Wallet())
-	//
-	//payeeR1, _ := createUserRepo.FindByID(context.TODO(), payeeID)
-	//fmt.Println(" \n\npayee")
-	//fmt.Printf("%+v: ", payeeR1.Wallet())
-	//
-	//fmt.Println("\n\ntransfer")
-	//fmt.Printf("%+v: ", transfer1)
-	//b1, _ := json.Marshal(transfer1)
-	//fmt.Println(string(b1))
 
 	//auth := adapterhttp.NewAuthorizer(
 	//	infrahttp.NewClient(
