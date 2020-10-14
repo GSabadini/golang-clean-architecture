@@ -69,13 +69,9 @@ func (s stubAuthorizer) Authorized(_ context.Context, _ entity.Transfer) (bool, 
 	return s.result, s.err
 }
 
-type stubNotifier struct {
-	err error
-}
+type stubNotifier struct{}
 
-func (s stubNotifier) Notify(_ context.Context, _ entity.Transfer) error {
-	return s.err
-}
+func (s stubNotifier) Notify(_ context.Context, _ entity.Transfer) {}
 
 type stubCreateTransferPresenter struct {
 	result CreateTransferOutput
@@ -158,9 +154,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -222,9 +216,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -280,9 +272,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: false,
 					err:    errors.New("authorization denied"),
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -338,9 +328,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -380,9 +368,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -430,9 +416,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -488,9 +472,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -546,9 +528,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{
@@ -604,9 +584,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					result: true,
 					err:    nil,
 				},
-				notifier: stubNotifier{
-					err: nil,
-				},
+				notifier: stubNotifier{},
 			},
 			args: args{
 				i: CreateTransferInput{

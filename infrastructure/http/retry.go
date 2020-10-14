@@ -1,7 +1,9 @@
 package http
 
 import (
+	"fmt"
 	"math/rand"
+	"net"
 	"net/http"
 	"time"
 )
@@ -16,21 +18,52 @@ type (
 		attempts    int
 		sleep       time.Duration
 		statusCodes []int
+		rt          http.RoundTripper
 	}
 
 	// Func is the function to be executed and eventually retried.
 	Func func() error
-
-	// HTTPFunc is the function to be executed and eventually retried.
-	// The only difference from Func is that it expects an *http.Response on the first returning argument.
-	HTTPFunc func() (*http.Response, error)
 )
 
-// Do wraps Func and returns *http.Response and error as returning arguments.
-func (r Retry) Do(fn HTTPFunc) (*http.Response, error) {
-	var res *http.Response
+// NewRetry returns a new configured CircuitBreaker with retry.
+func NewRetry(attempts int, statusCode []int, sleep time.Duration) *Retry {
+	rt := &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout:   10 * time.Second,
+			KeepAlive: 90 * time.Second,
+			DualStack: true,
+		}).DialContext,
+	}
 
-	err := retry(func() error {
+	return &Retry{
+		attempts:    attempts,
+		sleep:       sleep,
+		statusCodes: statusCode,
+		rt:          rt,
+	}
+}
+
+// RoundTrip decorates RoundTrip with a retry.
+func (r *Retry) RoundTrip(req *http.Request) (*http.Response, error) {
+	var res *http.Response
+	var err error
+
+	fn := func() (*http.Response, error) {
+		res, err := r.rt.RoundTrip(req)
+		if err != nil {
+			return res, err
+		}
+
+		for _, statusCode := range r.statusCodes {
+			if res.StatusCode == statusCode {
+				return nil, fmt.Errorf("failed to request: %v ", http.StatusText(statusCode))
+			}
+		}
+
+		return res, err
+	}
+
+	err = retry(func() error {
 		var err error
 		res, err = fn()
 		return err

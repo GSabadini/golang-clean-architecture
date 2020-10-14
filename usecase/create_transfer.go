@@ -10,14 +10,14 @@ import (
 )
 
 type (
-	// Authorizer transfer port
+	// Authorizer port
 	Authorizer interface {
 		Authorized(context.Context, entity.Transfer) (bool, error)
 	}
 
-	// Notifier transfer port
+	// Notifier port
 	Notifier interface {
-		Notify(context.Context, entity.Transfer) error
+		Notify(context.Context, entity.Transfer)
 	}
 
 	// Output port
@@ -108,17 +108,13 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 			return err
 		}
 
-		err = c.notifier.Notify(sessCtx, transfer)
-		if err != nil {
-			//@todo enfileirar
-			return nil
-		}
-
 		return nil
 	})
 	if err != nil {
 		return c.pre.Output(entity.Transfer{}), err
 	}
+
+	c.notifier.Notify(ctx, transfer)
 
 	return c.pre.Output(transfer), nil
 }

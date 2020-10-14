@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -21,16 +20,7 @@ func NewMongoHandler() (*MongoHandler, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	uri := fmt.Sprintf(
-		"%s://root:password123@%s,%s,%s/?replicaSet=%s",
-		os.Getenv("MONGODB_HOST"),
-		"mongodb-primary",
-		"mongodb-secondary",
-		"mongodb-arbiter",
-		"replicaset",
-	)
-
-	clientOpts := options.Client().ApplyURI(uri)
+	clientOpts := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		panic(err)

@@ -67,10 +67,6 @@ type (
 	}
 )
 
-func NewCreateUserInput(id vo.Uuid, fullName vo.FullName, document vo.Document, email vo.Email, password vo.Password, wallet *vo.Wallet, t entity.TypeUser, time time.Time) CreateUserInput {
-	return CreateUserInput{ID: id, FullName: fullName, Document: document, Email: email, Password: password, Wallet: wallet, Type: t, CreatedAt: time}
-}
-
 // NewCreateUserInteractor creates new createUserInteractor with its dependencies
 func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserUseCase {
 	return createUserInteractor{

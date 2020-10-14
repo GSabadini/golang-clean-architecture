@@ -8,21 +8,38 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/GSabadini/go-challenge/adapter/queue"
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/infrastructure/logger"
 )
 
+type spyProducer struct {
+	invoked bool
+	err     error
+}
+
+func (s *spyProducer) Publish(_ []byte) error {
+	s.invoked = true
+
+	return s.err
+}
+
 func TestNotifier_Notify(t *testing.T) {
+	var dummyLog = logger.Dummy{}
+
 	type fields struct {
-		client HTTPGetter
+		client   HTTPGetter
+		producer queue.Producer
 	}
 	type args struct {
 		t entity.Transfer
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
+		name             string
+		fields           fields
+		args             args
+		publishIsInvoked bool
+		publishErr       error
 	}{
 		{
 			name: "Test notify success",
@@ -39,7 +56,8 @@ func TestNotifier_Notify(t *testing.T) {
 			args: args{
 				t: entity.Transfer{},
 			},
-			wantErr: false,
+			publishIsInvoked: false,
+			publishErr:       nil,
 		},
 		{
 			name: "Test notify error response",
@@ -47,7 +65,7 @@ func TestNotifier_Notify(t *testing.T) {
 				client: httpGetterStub{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
-							bytes.NewReader([]byte(`{"message":"Enviad1o"}`)),
+							bytes.NewReader([]byte(`{"message":"error"}`)),
 						),
 					},
 					err: nil,
@@ -56,10 +74,11 @@ func TestNotifier_Notify(t *testing.T) {
 			args: args{
 				t: entity.Transfer{},
 			},
-			wantErr: true,
+			publishIsInvoked: true,
+			publishErr:       nil,
 		},
 		{
-			name: "Test notify error",
+			name: "Test notify client error",
 			fields: fields{
 				client: httpGetterStub{
 					res: &http.Response{},
@@ -69,14 +88,40 @@ func TestNotifier_Notify(t *testing.T) {
 			args: args{
 				t: entity.Transfer{},
 			},
-			wantErr: true,
+			publishIsInvoked: true,
+			publishErr:       nil,
+		},
+		{
+			name: "Test notify publish error",
+			fields: fields{
+				client: httpGetterStub{
+					res: &http.Response{},
+					err: errors.New("failure client"),
+				},
+			},
+			args: args{
+				t: entity.Transfer{},
+			},
+			publishIsInvoked: true,
+			publishErr:       errors.New("failed publish"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := NewNotifier(tt.fields.client)
-			if err := n.Notify(context.TODO(), tt.args.t); (err != nil) != tt.wantErr {
-				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
+			spyProducer := &spyProducer{
+				err: tt.publishErr,
+			}
+
+			n := NewNotifier(tt.fields.client, spyProducer, dummyLog)
+			n.Notify(context.TODO(), tt.args.t)
+
+			if tt.publishIsInvoked != spyProducer.invoked {
+				t.Errorf("[TestCase '%s'] Got: '%v' | Want: '%v'",
+					tt.name,
+					tt.publishIsInvoked,
+					spyProducer.invoked,
+				)
+				t.Errorf("Expected to call 'Search' in 'Find', but it wasn't.")
 			}
 		})
 	}

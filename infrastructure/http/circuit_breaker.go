@@ -15,16 +15,16 @@ type (
 		Execute(func() (interface{}, error)) (interface{}, error)
 	}
 
-	// Transport is the application http transport.
-	Transport struct {
-		tripper http.RoundTripper
+	// CircuitBreaker is the application http transport.
+	CircuitBreaker struct {
+		rt      http.RoundTripper
 		breaker Breaker
 	}
 )
 
-// NewTransport returns a new configured Transport.
-func NewTransport(cb Breaker) *Transport {
-	t := &http.Transport{
+// NewCircuitBreaker returns a new configured CircuitBreaker with circuit breaker.
+func NewCircuitBreaker(cb Breaker) *CircuitBreaker {
+	rt := &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   10 * time.Second,
 			KeepAlive: 90 * time.Second,
@@ -32,17 +32,17 @@ func NewTransport(cb Breaker) *Transport {
 		}).DialContext,
 	}
 
-	return &Transport{
-		tripper: t,
+	return &CircuitBreaker{
+		rt:      rt,
 		breaker: cb,
 	}
 }
 
-// RoundTrip decorates tripper.RoundTrip with a circuit breaker.
+// RoundTrip decorates rt.RoundTrip with a circuit breaker.
 // An error is returned if the circuit breaker rejects the request.
-func (t *Transport) RoundTrip(r *http.Request) (*http.Response, error) {
+func (t *CircuitBreaker) RoundTrip(r *http.Request) (*http.Response, error) {
 	res, err := t.breaker.Execute(func() (interface{}, error) {
-		res, err := t.tripper.RoundTrip(r)
+		res, err := t.rt.RoundTrip(r)
 		if err != nil {
 			return nil, err
 		}

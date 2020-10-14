@@ -29,3 +29,17 @@ POST /transaction
     "payee" : 15
 }
 ```
+
+## Getting Started
+
+- Environment variables
+
+```sh
+make init
+```
+
+- Starting API
+
+```sh
+make up
+```

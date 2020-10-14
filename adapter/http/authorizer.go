@@ -31,15 +31,15 @@ func NewAuthorizer(client HTTPGetter) usecase.Authorizer {
 	}
 }
 
-// Authorized
+// Authorized authorizes a transfer
 func (a authorizer) Authorized(_ context.Context, _ entity.Transfer) (bool, error) {
-	r, err := a.client.Get(os.Getenv("AUTHORIZER_URI"))
+	res, err := a.client.Get(os.Getenv("AUTHORIZER_URI"))
 	if err != nil {
 		return false, errors.Wrap(err, errAuthorizationDenied.Error())
 	}
 
 	b := &authorizerResponse{}
-	err = json.NewDecoder(r.Body).Decode(&b)
+	err = json.NewDecoder(res.Body).Decode(&b)
 	if err != nil {
 		return false, errors.Wrap(err, errAuthorizationDenied.Error())
 	}
