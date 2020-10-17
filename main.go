@@ -1,17 +1,16 @@
 package main
 
 import (
-	"context"
 	_ "encoding/json"
 	"fmt"
-	adapterhttp "github.com/GSabadini/go-challenge/adapter/http"
-	"github.com/GSabadini/go-challenge/adapter/queue"
-	"github.com/GSabadini/go-challenge/domain/entity"
-	infrahttp "github.com/GSabadini/go-challenge/infrastructure/http"
+	action2 "github.com/GSabadini/go-challenge/adapter/api/action"
+	"github.com/GSabadini/go-challenge/adapter/presenter"
+	"github.com/GSabadini/go-challenge/adapter/repository"
+	"github.com/GSabadini/go-challenge/infrastructure/db"
 	infralogger "github.com/GSabadini/go-challenge/infrastructure/logger"
-	queue2 "github.com/GSabadini/go-challenge/infrastructure/queue"
+	"github.com/GSabadini/go-challenge/infrastructure/router"
+	"github.com/GSabadini/go-challenge/usecase"
 	"net/http"
-	"time"
 )
 
 func main() {
@@ -147,31 +146,31 @@ func main() {
 	//b, _ := json.Marshal(transfer)
 	//fmt.Println(string(b))
 
-	rabConn, err := queue2.NewRabbitMQHandler()
-	if err != nil {
-		fmt.Println(err, "err")
-	}
+	//rabConn, err := queue2.NewRabbitMQHandler()
+	//if err != nil {
+	//	fmt.Println(err, "err")
+	//}
 	logr := infralogger.NewLogrus()
-
-	//rabConn.Conn().channel()
-	auth := adapterhttp.NewNotifier(
-		infrahttp.NewClient(
-			infrahttp.NewRequest(
-				infrahttp.WithRetry(infrahttp.NewRetry(3, []int{http.StatusInternalServerError}, 400*time.Millisecond)),
-				infrahttp.WithTimeout(5*time.Second),
-			),
-		),
-		queue.NewProducer(rabConn.Channel(), rabConn.Queue().Name, logr),
-		logr,
-	)
 	//
-	auth.Notify(context.TODO(), entity.Transfer{})
+	////rabConn.Conn().channel()
+	//auth := adapterhttp.NewNotifier(
+	//	infrahttp.NewClient(
+	//		infrahttp.NewRequest(
+	//			infrahttp.WithRetry(infrahttp.NewRetry(3, []int{http.StatusInternalServerError}, 400*time.Millisecond)),
+	//			infrahttp.WithTimeout(5*time.Second),
+	//		),
+	//	),
+	//	queue.NewProducer(rabConn.Channel(), rabConn.Queue().Name, logr),
+	//	logr,
+	//)
+	////
+	//auth.Notify(context.TODO(), entity.Transfer{})
 	//fmt.Println(r, err)
 
-	//conn, err := db.NewMongoHandler()
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
+	conn, err := db.NewMongoHandler()
+	if err != nil {
+		fmt.Println(err)
+	}
 	//
 	//repoTr := repository.NewUpdateUserWalletRepository(conn)
 	//uuid, _ = vo.NewUuid("0db298eb-c8e7-4829-84b7-c1036b4f0791")
@@ -179,6 +178,21 @@ func main() {
 	//if err != nil {
 	//	fmt.Println(err)
 	//}
+
+	httpRouter := router.NewMuxRouter()
+	action := action2.NewCreateUserAction(
+		usecase.NewCreateUserInteractor(
+			repository.NewCreateUserRepository(conn),
+			presenter.NewCreateUserPresenter(),
+		),
+		logr,
+	)
+	httpRouter.POST("/user", action.Execute)
+	httpRouter.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("HEllo wolrd"))
+	})
+
+	httpRouter.SERVE(":3000")
 
 	//logrus := logger.NewLoggerAdapter(infralogger.NewLogrus())
 	//

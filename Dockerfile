@@ -9,4 +9,6 @@ RUN go get github.com/cespare/reflex
 
 COPY /reflex.conf /
 
+EXPOSE 3000
+
 ENTRYPOINT ["reflex", "-c", "./reflex.conf"]

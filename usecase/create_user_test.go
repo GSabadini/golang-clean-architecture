@@ -35,7 +35,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 	}
 
 	type args struct {
-		i CreateUserInput
+		u entity.User
 	}
 
 	tests := []struct {
@@ -77,7 +77,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				i: CreateUserInput{
+				u: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -133,7 +133,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				i: CreateUserInput{
+				u: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -169,7 +169,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				i: CreateUserInput{
+				u: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -201,7 +201,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				i: CreateUserInput{
+				u: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -233,7 +233,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				i: CreateUserInput{
+				u: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -253,7 +253,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				tt.fields.pre,
 			)
 
-			got, err := c.Execute(context.TODO(), tt.args.i)
+			got, err := c.Execute(context.TODO(), tt.args.u)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

@@ -25,8 +25,6 @@ func (s *spyProducer) Publish(_ []byte) error {
 }
 
 func TestNotifier_Notify(t *testing.T) {
-	var dummyLog = logger.Dummy{}
-
 	type fields struct {
 		client   HTTPGetter
 		producer queue.Producer
@@ -112,7 +110,7 @@ func TestNotifier_Notify(t *testing.T) {
 				err: tt.publishErr,
 			}
 
-			n := NewNotifier(tt.fields.client, spyProducer, dummyLog)
+			n := NewNotifier(tt.fields.client, spyProducer, logger.Dummy{})
 			n.Notify(context.TODO(), tt.args.t)
 
 			if tt.publishIsInvoked != spyProducer.invoked {

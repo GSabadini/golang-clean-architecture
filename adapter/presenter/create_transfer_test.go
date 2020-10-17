@@ -1,12 +1,13 @@
 package presenter
 
 import (
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/usecase"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/go-challenge/usecase"
 )
 
 func Test_createTransferPresenter_Output(t *testing.T) {

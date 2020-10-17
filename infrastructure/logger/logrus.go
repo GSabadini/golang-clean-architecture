@@ -6,73 +6,73 @@ import (
 )
 
 // NewLogrus returns the instance of logrus logger
-func NewLogrus() *Logrus {
+func NewLogrus() *logrus {
 	log := logrusLib.New()
 	log.SetFormatter(&logrusLib.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	return &Logrus{
+	return &logrus{
 		log: log,
 	}
 }
 
-type Logrus struct {
+type logrus struct {
 	log *logrusLib.Logger
 }
 
 func NewLogrusLogger(log *logrusLib.Logger) logger.Logger {
-	return &Logrus{log: log}
+	return &logrus{log: log}
 }
 
-func (l *Logrus) Infof(format string, args ...interface{}) {
+func (l *logrus) Infof(format string, args ...interface{}) {
 	l.log.Infof(format, args...)
 }
 
-func (l *Logrus) Warnf(format string, args ...interface{}) {
+func (l *logrus) Warnf(format string, args ...interface{}) {
 	l.log.Warnf(format, args...)
 }
 
-func (l *Logrus) Errorf(format string, args ...interface{}) {
+func (l *logrus) Errorf(format string, args ...interface{}) {
 	l.log.Errorf(format, args...)
 }
 
-func (l *Logrus) WithFields(fields logger.Fields) logger.Logger {
-	return &LogrusEntry{
+func (l *logrus) WithFields(fields logger.Fields) logger.Logger {
+	return &logrusEntry{
 		entry: l.log.WithFields(convertToLogrusFields(fields)),
 	}
 }
 
-func (l *Logrus) WithError(err error) logger.Logger {
-	return &LogrusEntry{
+func (l *logrus) WithError(err error) logger.Logger {
+	return &logrusEntry{
 		entry: l.log.WithError(err),
 	}
 }
 
-type LogrusEntry struct {
+type logrusEntry struct {
 	entry *logrusLib.Entry
 }
 
-func (l *LogrusEntry) Infof(format string, args ...interface{}) {
+func (l *logrusEntry) Infof(format string, args ...interface{}) {
 	l.entry.Infof(format, args...)
 }
 
-func (l *LogrusEntry) Warnf(format string, args ...interface{}) {
+func (l *logrusEntry) Warnf(format string, args ...interface{}) {
 	l.entry.Warnf(format, args...)
 }
 
-func (l *LogrusEntry) Errorf(format string, args ...interface{}) {
+func (l *logrusEntry) Errorf(format string, args ...interface{}) {
 	l.entry.Errorf(format, args...)
 }
 
-func (l *LogrusEntry) WithFields(fields logger.Fields) logger.Logger {
-	return &LogrusEntry{
+func (l *logrusEntry) WithFields(fields logger.Fields) logger.Logger {
+	return &logrusEntry{
 		entry: l.entry.WithFields(convertToLogrusFields(fields)),
 	}
 }
 
-func (l *LogrusEntry) WithError(err error) logger.Logger {
-	return &LogrusEntry{
+func (l *logrusEntry) WithError(err error) logger.Logger {
+	return &logrusEntry{
 		entry: l.entry.WithError(err),
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/infrastructure/db"
 	"github.com/pkg/errors"
+
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

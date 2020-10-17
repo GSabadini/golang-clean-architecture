@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/infrastructure/logger"
 )
 
 func TestAuthorizer_Authorized(t *testing.T) {
@@ -78,7 +79,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := NewAuthorizer(tt.fields.client)
+			a := NewAuthorizer(tt.fields.client, logger.Dummy{})
 			got, err := a.Authorized(context.TODO(), tt.args.transfer)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)

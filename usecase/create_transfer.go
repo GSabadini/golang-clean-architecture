@@ -2,11 +2,12 @@ package usecase
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
+
+	"github.com/pkg/errors"
 )
 
 type (
@@ -38,6 +39,15 @@ type (
 		Value     vo.Money
 		CreatedAt time.Time
 	}
+
+	// Input data
+	//CreateTransferInput struct {
+	//	ID        string
+	//	PayerID   string
+	//	PayeeID   string
+	//	Value     int64
+	//	CreatedAt string
+	//}
 
 	// Output data
 	CreateTransferOutput struct {

@@ -16,13 +16,18 @@ type (
 
 	// Input port
 	FindUserByID interface {
-		Execute(context.Context, vo.Uuid) (FindUserByIDOutput, error)
+		Execute(context.Context, FindUserByIDInput) (FindUserByIDOutput, error)
+	}
+
+	// Input data
+	FindUserByIDInput struct {
+		ID string
 	}
 
 	// Output data
 	FindUserByIDOutput struct {
 		ID        string                     `json:"id"`
-		FullName  string                     `json:"full_name"`
+		FullName  string                     `json:"fullname"`
 		Email     string                     `json:"email"`
 		Document  FindUserByIDDocumentOutput `json:"document"`
 		Wallet    FindUserByIDWalletOutput   `json:"wallet"`
@@ -63,9 +68,14 @@ func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserB
 }
 
 // Execute orchestrates the use case
-func (f findUserByIDInteractor) Execute(ctx context.Context, ID vo.Uuid) (FindUserByIDOutput, error) {
+func (f findUserByIDInteractor) Execute(ctx context.Context, i FindUserByIDInput) (FindUserByIDOutput, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
+
+	ID, err := vo.NewUuid(i.ID)
+	if err != nil {
+		return f.pre.Output(entity.User{}), err
+	}
 
 	user, err := f.repo.FindByID(ctx, ID)
 	if err != nil {

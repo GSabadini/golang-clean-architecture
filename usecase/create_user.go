@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"context"
+	"github.com/GSabadini/go-challenge/domain/vo"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
 type (
@@ -20,6 +20,27 @@ type (
 	}
 
 	// Input data
+	//CreateUserInput struct {
+	//	ID       string
+	//	FullName string
+	//	Email    string
+	//	Password string
+	//	Document struct {
+	//		Type  string
+	//		Value string
+	//	}
+	//	Wallet struct {
+	//		Currency string
+	//		Amount   int64
+	//	}
+	//	Roles struct {
+	//		CanTransfer bool
+	//	}
+	//	Type      string
+	//	CreatedAt string
+	//}
+
+	//// Input data
 	CreateUserInput struct {
 		ID        vo.Uuid
 		FullName  vo.FullName

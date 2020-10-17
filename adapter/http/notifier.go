@@ -14,7 +14,6 @@ import (
 
 const (
 	enviado = "Enviado"
-	logKey  = "send_notify"
 )
 
 var errFailedToNotify = errors.New("failed to notify")
@@ -24,6 +23,7 @@ type (
 		client    HTTPGetter
 		publisher queue.Producer
 		log       logger.Logger
+		logKey    string
 	}
 
 	notifierResponse struct {
@@ -37,6 +37,7 @@ func NewNotifier(c HTTPGetter, p queue.Producer, l logger.Logger) usecase.Notifi
 		client:    c,
 		publisher: p,
 		log:       l,
+		logKey:    "send_notify",
 	}
 }
 
@@ -44,6 +45,11 @@ func NewNotifier(c HTTPGetter, p queue.Producer, l logger.Logger) usecase.Notifi
 func (n notifier) Notify(_ context.Context, _ entity.Transfer) {
 	res, err := n.client.Get(os.Getenv("NOTIFY_URI"))
 	if err != nil {
+		n.log.WithFields(logger.Fields{
+			"key":   n.logKey,
+			"error": err.Error(),
+		}).Errorf("failed to client")
+
 		n.publish(err)
 		return
 	}
@@ -51,6 +57,11 @@ func (n notifier) Notify(_ context.Context, _ entity.Transfer) {
 	b := &notifierResponse{}
 	err = json.NewDecoder(res.Body).Decode(&b)
 	if err != nil {
+		n.log.WithFields(logger.Fields{
+			"key":   n.logKey,
+			"error": err.Error(),
+		}).Errorf("failed to marshal message")
+
 		n.publish(err)
 		return
 	}
@@ -61,7 +72,7 @@ func (n notifier) Notify(_ context.Context, _ entity.Transfer) {
 	}
 
 	n.log.WithFields(logger.Fields{
-		"key":         logKey,
+		"key":         n.logKey,
 		"http_status": res.StatusCode,
 	}).Infof("success to notify")
 }
@@ -73,7 +84,7 @@ func (n notifier) publish(err error) {
 	})
 	if err != nil {
 		n.log.WithFields(logger.Fields{
-			"key":   logKey,
+			"key":   n.logKey,
 			"error": err.Error(),
 		}).Errorf("failed to marshal message")
 		return
@@ -81,13 +92,13 @@ func (n notifier) publish(err error) {
 
 	if err := n.publisher.Publish(message); err != nil {
 		n.log.WithFields(logger.Fields{
-			"key":   logKey,
+			"key":   n.logKey,
 			"error": err.Error(),
 		}).Errorf("failed to publish to the queue")
 		return
 	}
 
 	n.log.WithFields(logger.Fields{
-		"key": logKey,
+		"key": n.logKey,
 	}).Infof("success to publish to the queue")
 }
