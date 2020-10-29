@@ -11,12 +11,12 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-type stubCreateUserRepo struct {
+type stubUserRepoCreator struct {
 	result entity.User
 	err    error
 }
 
-func (c stubCreateUserRepo) Create(context.Context, entity.User) (entity.User, error) {
+func (c stubUserRepoCreator) Create(context.Context, entity.User) (entity.User, error) {
 	return c.result, c.err
 }
 
@@ -30,12 +30,12 @@ func (c stubCreateUserPresenter) Output(_ entity.User) CreateUserOutput {
 
 func TestCreateUserInteractor_Execute(t *testing.T) {
 	type fields struct {
-		repo entity.CreateUserRepository
+		repo entity.UserRepositoryCreator
 		pre  CreateUserPresenter
 	}
 
 	type args struct {
-		u entity.User
+		input CreateUserInput
 	}
 
 	tests := []struct {
@@ -48,7 +48,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		{
 			name: "Create custom user success",
 			fields: fields{
-				repo: stubCreateUserRepo{
+				repo: stubUserRepoCreator{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
@@ -71,13 +71,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						Email:     "test@testing.com",
 						Password:  "passw",
 						Wallet:    CreateUserWalletOutput{},
-						Type:      entity.CUSTOM.String(),
+						Type:      vo.CUSTOM.String(),
 						CreatedAt: time.Time{}.String(),
 					},
 				},
 			},
 			args: args{
-				u: CreateUserInput{
+				input: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -96,7 +96,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Email:     "test@testing.com",
 				Password:  "passw",
 				Wallet:    CreateUserWalletOutput{},
-				Type:      entity.CUSTOM.String(),
+				Type:      vo.CUSTOM.String(),
 				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
@@ -104,7 +104,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		{
 			name: "Create merchant user success",
 			fields: fields{
-				repo: stubCreateUserRepo{
+				repo: stubUserRepoCreator{
 					result: entity.NewMerchantUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
@@ -127,13 +127,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						Email:     "test@testing.com",
 						Password:  "passw",
 						Wallet:    CreateUserWalletOutput{},
-						Type:      entity.CUSTOM.String(),
+						Type:      vo.CUSTOM.String(),
 						CreatedAt: time.Time{}.String(),
 					},
 				},
 			},
 			args: args{
-				u: CreateUserInput{
+				input: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -152,7 +152,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Email:     "test@testing.com",
 				Password:  "passw",
 				Wallet:    CreateUserWalletOutput{},
-				Type:      entity.CUSTOM.String(),
+				Type:      vo.CUSTOM.String(),
 				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
@@ -160,7 +160,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		{
 			name: "Create custom user error",
 			fields: fields{
-				repo: stubCreateUserRepo{
+				repo: stubUserRepoCreator{
 					result: entity.User{},
 					err:    errors.New("failed created user"),
 				},
@@ -169,7 +169,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				u: CreateUserInput{
+				input: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "98.521.079/0001-09"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -184,7 +184,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		{
 			name: "Create custom user db error",
 			fields: fields{
-				repo: stubCreateUserRepo{
+				repo: stubUserRepoCreator{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
@@ -201,13 +201,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				u: CreateUserInput{
+				input: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.NewEmailTest("test@testing.com"),
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     entity.CUSTOM,
+					Type:     vo.CUSTOM,
 				},
 			},
 			want:    CreateUserOutput{},
@@ -216,7 +216,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		{
 			name: "Create custom user type user error",
 			fields: fields{
-				repo: stubCreateUserRepo{
+				repo: stubUserRepoCreator{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
@@ -233,7 +233,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				u: CreateUserInput{
+				input: CreateUserInput{
 					FullName: vo.NewFullName("Test testing"),
 					Document: vo.NewDocumentTest(vo.CNPJ, "20.770.438/0001-66"),
 					Email:    vo.NewEmailTest("test@testing.com"),
@@ -253,7 +253,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				tt.fields.pre,
 			)
 
-			got, err := c.Execute(context.TODO(), tt.args.u)
+			got, err := c.Execute(context.Background(), tt.args.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

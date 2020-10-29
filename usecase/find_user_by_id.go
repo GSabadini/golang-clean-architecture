@@ -21,7 +21,7 @@ type (
 
 	// Input data
 	FindUserByIDInput struct {
-		ID string
+		ID vo.Uuid
 	}
 
 	// Output data
@@ -54,13 +54,13 @@ type (
 	}
 
 	findUserByIDInteractor struct {
-		repo entity.FindUserByIDRepository
+		repo entity.UserRepositoryFinder
 		pre  FindUserByIDPresenter
 	}
 )
 
 // NewFindUserByIDInteractor creates new findUserByIDInteractor with its dependencies
-func NewFindUserByIDInteractor(repo entity.FindUserByIDRepository, pre FindUserByIDPresenter) FindUserByID {
+func NewFindUserByIDInteractor(repo entity.UserRepositoryFinder, pre FindUserByIDPresenter) FindUserByID {
 	return findUserByIDInteractor{
 		repo: repo,
 		pre:  pre,
@@ -72,12 +72,7 @@ func (f findUserByIDInteractor) Execute(ctx context.Context, i FindUserByIDInput
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	ID, err := vo.NewUuid(i.ID)
-	if err != nil {
-		return f.pre.Output(entity.User{}), err
-	}
-
-	user, err := f.repo.FindByID(ctx, ID)
+	user, err := f.repo.FindByID(ctx, i.ID)
 	if err != nil {
 		return f.pre.Output(entity.User{}), err
 	}

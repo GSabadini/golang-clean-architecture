@@ -11,12 +11,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-type stubFindUserByIDRepo struct {
+type stubUserRepoFinder struct {
 	result entity.User
 	err    error
 }
 
-func (f stubFindUserByIDRepo) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
+func (f stubUserRepoFinder) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
 	return f.result, f.err
 }
 
@@ -30,12 +30,12 @@ func (f stubFindUserByIDPresenter) Output(entity.User) FindUserByIDOutput {
 
 func TestFindUserByIDInteractor_Execute(t *testing.T) {
 	type fields struct {
-		repo entity.FindUserByIDRepository
+		repo entity.UserRepositoryFinder
 		pre  FindUserByIDPresenter
 	}
 	type args struct {
-		ctx context.Context
-		ID  vo.Uuid
+		ctx   context.Context
+		input FindUserByIDInput
 	}
 	var tests = []struct {
 		name    string
@@ -47,7 +47,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		{
 			name: "Find custom user by id success",
 			fields: fields{
-				repo: stubFindUserByIDRepo{
+				repo: stubUserRepoFinder{
 					result: entity.NewCustomUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Custom user"),
@@ -75,7 +75,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ID: vo.NewUuidStaticTest(),
+				input: FindUserByIDInput{ID: vo.NewUuidStaticTest()},
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
@@ -94,7 +94,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		{
 			name: "Find merchant user by id success",
 			fields: fields{
-				repo: stubFindUserByIDRepo{
+				repo: stubUserRepoFinder{
 					result: entity.NewMerchantUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Merchant user"),
@@ -122,7 +122,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				},
 			},
 			args: args{
-				ID: vo.NewUuidStaticTest(),
+				input: FindUserByIDInput{ID: vo.NewUuidStaticTest()},
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
@@ -141,14 +141,14 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		{
 			name: "Find merchant user by id db error",
 			fields: fields{
-				repo: stubFindUserByIDRepo{
+				repo: stubUserRepoFinder{
 					result: entity.User{},
 					err:    errors.New("fail db"),
 				},
 				pre: stubFindUserByIDPresenter{},
 			},
 			args: args{
-				ID: vo.NewUuidStaticTest(),
+				input: FindUserByIDInput{ID: vo.NewUuidStaticTest()},
 			},
 			want:    FindUserByIDOutput{},
 			wantErr: true,
@@ -161,7 +161,7 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				tt.fields.pre,
 			)
 
-			got, err := f.Execute(context.TODO(), tt.args.ID)
+			got, err := f.Execute(context.Background(), tt.args.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

@@ -15,8 +15,8 @@ var (
 )
 
 type (
-	// CreateTransferRepository defines the operation of creating a transfer entity
-	CreateTransferRepository interface {
+	// TransferRepositoryCreator defines the operation of creating a transfer entity
+	TransferRepositoryCreator interface {
 		Create(context.Context, Transfer) (Transfer, error)
 		WithTransaction(context.Context, func(context.Context) error) error
 	}

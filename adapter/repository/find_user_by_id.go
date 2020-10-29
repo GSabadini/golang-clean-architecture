@@ -50,7 +50,7 @@ type (
 )
 
 // NewFindUserByIDUserRepository creates new findUserByIDRepository with its dependencies
-func NewFindUserByIDUserRepository(handler *db.MongoHandler) entity.FindUserByIDRepository {
+func NewFindUserByIDUserRepository(handler *db.MongoHandler) entity.UserRepositoryFinder {
 	return findUserByIDRepository{
 		handler:    handler,
 		collection: "users",
@@ -112,7 +112,7 @@ func (f findUserByIDRepository) FindByID(ctx context.Context, ID vo.Uuid) (entit
 		vo.NewPassword(userBSON.Password),
 		doc,
 		wallet,
-		entity.TypeUser(userBSON.Type),
+		vo.TypeUser(userBSON.Type),
 		userBSON.CreatedAt,
 	)
 	if err != nil {

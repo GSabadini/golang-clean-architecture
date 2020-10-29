@@ -20,27 +20,6 @@ type (
 	}
 
 	// Input data
-	//CreateUserInput struct {
-	//	ID       string
-	//	FullName string
-	//	Email    string
-	//	Password string
-	//	Document struct {
-	//		Type  string
-	//		Value string
-	//	}
-	//	Wallet struct {
-	//		Currency string
-	//		Amount   int64
-	//	}
-	//	Roles struct {
-	//		CanTransfer bool
-	//	}
-	//	Type      string
-	//	CreatedAt string
-	//}
-
-	//// Input data
 	CreateUserInput struct {
 		ID        vo.Uuid
 		FullName  vo.FullName
@@ -48,7 +27,7 @@ type (
 		Email     vo.Email
 		Password  vo.Password
 		Wallet    *vo.Wallet
-		Type      entity.TypeUser
+		Type      vo.TypeUser
 		CreatedAt time.Time
 	}
 
@@ -83,13 +62,13 @@ type (
 	}
 
 	createUserInteractor struct {
-		repo entity.CreateUserRepository
+		repo entity.UserRepositoryCreator
 		pre  CreateUserPresenter
 	}
 )
 
 // NewCreateUserInteractor creates new createUserInteractor with its dependencies
-func NewCreateUserInteractor(repo entity.CreateUserRepository, pre CreateUserPresenter) CreateUserUseCase {
+func NewCreateUserInteractor(repo entity.UserRepositoryCreator, pre CreateUserPresenter) CreateUserUseCase {
 	return createUserInteractor{
 		repo: repo,
 		pre:  pre,

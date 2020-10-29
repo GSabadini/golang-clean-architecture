@@ -11,30 +11,30 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
-type stubCreateTransferRepo struct {
+type stubTransferRepoCreator struct {
 	result entity.Transfer
 	err    error
 }
 
-func (s stubCreateTransferRepo) Create(_ context.Context, _ entity.Transfer) (entity.Transfer, error) {
+func (s stubTransferRepoCreator) Create(_ context.Context, _ entity.Transfer) (entity.Transfer, error) {
 	return s.result, s.err
 }
 
-func (s stubCreateTransferRepo) WithTransaction(_ context.Context, fn func(context.Context) error) error {
-	if err := fn(context.TODO()); err != nil {
+func (s stubTransferRepoCreator) WithTransaction(_ context.Context, fn func(context.Context) error) error {
+	if err := fn(context.Background()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-type spyUpdateUserWalletRepo struct {
+type spyUserRepoUpdater struct {
 	errUpdatePayer error
 	errUpdatePayee error
 	invoked        bool
 }
 
-func (s *spyUpdateUserWalletRepo) UpdateWallet(_ context.Context, _ vo.Uuid, _ vo.Money) error {
+func (s *spyUserRepoUpdater) UpdateWallet(_ context.Context, _ vo.Uuid, _ vo.Money) error {
 	if s.invoked == true {
 		return s.errUpdatePayee
 	}
@@ -43,7 +43,7 @@ func (s *spyUpdateUserWalletRepo) UpdateWallet(_ context.Context, _ vo.Uuid, _ v
 	return s.errUpdatePayer
 }
 
-type spyFindUserByIDRepo struct {
+type spyUserRepoFinder struct {
 	findPayer func() (entity.User, error)
 	findPayee func() (entity.User, error)
 	invoked   bool
@@ -51,7 +51,7 @@ type spyFindUserByIDRepo struct {
 	err error
 }
 
-func (f *spyFindUserByIDRepo) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
+func (f *spyUserRepoFinder) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
 	if f.invoked == true {
 		return f.findPayee()
 	}
@@ -83,12 +83,12 @@ func (s stubCreateTransferPresenter) Output(_ entity.Transfer) CreateTransferOut
 
 func Test_createTransferInteractor_Execute(t *testing.T) {
 	type fields struct {
-		createTransferRepo   entity.CreateTransferRepository
-		updateUserWalletRepo entity.UpdateUserWalletRepository
-		findUserByIDRepo     entity.FindUserByIDRepository
-		pre                  CreateTransferPresenter
-		authorizer           Authorizer
-		notifier             Notifier
+		repoTransferCreator entity.TransferRepositoryCreator
+		repoUserUpdater     entity.UserRepositoryUpdater
+		repoUserFinder      entity.UserRepositoryFinder
+		pre                 CreateTransferPresenter
+		authorizer          Authorizer
+		notifier            Notifier
 	}
 	type args struct {
 		i CreateTransferInput
@@ -103,7 +103,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer success",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.NewTransfer(
 						vo.NewUuidStaticTest(),
 						vo.NewUuidStaticTest(),
@@ -113,11 +113,11 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 					),
 					err: nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -177,15 +177,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    errors.New("failed create transfer"),
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -233,15 +233,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer authorization denied error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -289,15 +289,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer unauthorized user type error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewMerchantUser(
 							vo.NewUuidStaticTest(),
@@ -345,15 +345,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer find payer error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.User{}, entity.ErrNotFoundUser
 					},
@@ -385,15 +385,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer find payee error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -433,15 +433,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer update payer error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: errors.New("failed update user"),
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -489,15 +489,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer update payee error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: errors.New("failed update user"),
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -545,15 +545,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 		{
 			name: "Create transfer user does not have sufficient balance error",
 			fields: fields{
-				createTransferRepo: stubCreateTransferRepo{
+				repoTransferCreator: stubTransferRepoCreator{
 					result: entity.Transfer{},
 					err:    nil,
 				},
-				updateUserWalletRepo: &spyUpdateUserWalletRepo{
+				repoUserUpdater: &spyUserRepoUpdater{
 					errUpdatePayer: nil,
 					errUpdatePayee: nil,
 				},
-				findUserByIDRepo: &spyFindUserByIDRepo{
+				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
 						return entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
@@ -602,15 +602,15 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewCreateTransferInteractor(
-				tt.fields.createTransferRepo,
-				tt.fields.updateUserWalletRepo,
-				tt.fields.findUserByIDRepo,
-				tt.fields.pre,
+				tt.fields.repoTransferCreator,
+				tt.fields.repoUserUpdater,
+				tt.fields.repoUserFinder,
 				tt.fields.authorizer,
 				tt.fields.notifier,
+				tt.fields.pre,
 			)
 
-			got, err := c.Execute(context.TODO(), tt.args.i)
+			got, err := c.Execute(context.Background(), tt.args.i)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("[TestCase '%s'] Err: '%v' | WantErr: '%v'", tt.name, err, tt.wantErr)
 				return

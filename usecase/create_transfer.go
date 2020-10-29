@@ -59,31 +59,31 @@ type (
 	}
 
 	createTransferInteractor struct {
-		createTransferRepo   entity.CreateTransferRepository
-		updateUserWalletRepo entity.UpdateUserWalletRepository
-		findUserByIDRepo     entity.FindUserByIDRepository
-		pre                  CreateTransferPresenter
-		authorizer           Authorizer
-		notifier             Notifier
+		repoTransferCreator entity.TransferRepositoryCreator
+		repoUserUpdater     entity.UserRepositoryUpdater
+		repoUserFinder      entity.UserRepositoryFinder
+		pre                 CreateTransferPresenter
+		authorizer          Authorizer
+		notifier            Notifier
 	}
 )
 
 // NewCreateTransferInteractor creates new createTransferInteractor with its dependencies
 func NewCreateTransferInteractor(
-	createTransferRepo entity.CreateTransferRepository,
-	updateUserWalletRepo entity.UpdateUserWalletRepository,
-	findUserByIDRepo entity.FindUserByIDRepository,
-	pre CreateTransferPresenter,
+	repoTransferCreator entity.TransferRepositoryCreator,
+	repoUserUpdater entity.UserRepositoryUpdater,
+	repoUserFinder entity.UserRepositoryFinder,
 	authorizer Authorizer,
 	notifier Notifier,
+	pre CreateTransferPresenter,
 ) CreateTransferUseCase {
 	return createTransferInteractor{
-		createTransferRepo:   createTransferRepo,
-		updateUserWalletRepo: updateUserWalletRepo,
-		findUserByIDRepo:     findUserByIDRepo,
-		pre:                  pre,
-		authorizer:           authorizer,
-		notifier:             notifier,
+		repoTransferCreator: repoTransferCreator,
+		repoUserUpdater:     repoUserUpdater,
+		repoUserFinder:      repoUserFinder,
+		authorizer:          authorizer,
+		notifier:            notifier,
+		pre:                 pre,
 	}
 }
 
@@ -97,12 +97,12 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 		err      error
 	)
 
-	err = c.createTransferRepo.WithTransaction(ctx, func(sessCtx context.Context) error {
+	err = c.repoTransferCreator.WithTransaction(ctx, func(sessCtx context.Context) error {
 		if err = c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
 			return err
 		}
 
-		transfer, err = c.createTransferRepo.Create(sessCtx, entity.NewTransfer(
+		transfer, err = c.repoTransferCreator.Create(sessCtx, entity.NewTransfer(
 			i.ID,
 			i.PayerID,
 			i.PayeeID,
@@ -130,7 +130,7 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 }
 
 func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
-	payer, err := c.findUserByIDRepo.FindByID(ctx, payerID)
+	payer, err := c.repoUserFinder.FindByID(ctx, payerID)
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 		return errors.Wrap(err, entity.ErrUnauthorizedTransfer.Error())
 	}
 
-	payee, err := c.findUserByIDRepo.FindByID(ctx, payeeID)
+	payee, err := c.repoUserFinder.FindByID(ctx, payeeID)
 	if err != nil {
 		return err
 	}
@@ -151,12 +151,12 @@ func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, 
 
 	payee.Deposit(value)
 
-	err = c.updateUserWalletRepo.UpdateWallet(ctx, payerID, payer.Wallet().Money())
+	err = c.repoUserUpdater.UpdateWallet(ctx, payerID, payer.Wallet().Money())
 	if err != nil {
 		return err
 	}
 
-	err = c.updateUserWalletRepo.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
+	err = c.repoUserUpdater.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
 	if err != nil {
 		return err
 	}

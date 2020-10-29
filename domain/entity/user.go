@@ -3,37 +3,10 @@ package entity
 import (
 	"context"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/vo"
 )
-
-const (
-	CUSTOM   TypeUser = "CUSTOM"
-	MERCHANT TypeUser = "MERCHANT"
-)
-
-var (
-	ErrInvalidTypeUser = errors.New("invalid type user")
-
-	ErrNotAllowedTypeUser = errors.New("not allowed user type")
-)
-
-type (
-	// TypeUser define user types
-	TypeUser string
-)
-
-// String returns string representation of the TypeUser
-func (t TypeUser) String() string {
-	return string(t)
-}
-
-// ToUpper
-func (t TypeUser) ToUpper() TypeUser {
-	return TypeUser(strings.ToUpper(string(t)))
-}
 
 var (
 	ErrUserInsufficientBalance = errors.New("user does not have sufficient balance")
@@ -48,18 +21,18 @@ var (
 )
 
 type (
-	// CreateUserRepository defines the operation of creating a transfer entity
-	CreateUserRepository interface {
+	// UserRepositoryCreator defines the operation of creating a transfer entity
+	UserRepositoryCreator interface {
 		Create(context.Context, User) (User, error)
 	}
 
-	// FindUserByIDRepository defines the search operation for a user entity
-	FindUserByIDRepository interface {
+	// UserRepositoryFinder defines the search operation for a user entity
+	UserRepositoryFinder interface {
 		FindByID(context.Context, vo.Uuid) (User, error)
 	}
 
-	// UpdateUserWalletRepository defines the update operation of a user entity wallet
-	UpdateUserWalletRepository interface {
+	// UserRepositoryUpdater defines the update operation of a user entity wallet
+	UserRepositoryUpdater interface {
 		UpdateWallet(context.Context, vo.Uuid, vo.Money) error
 	}
 
@@ -71,7 +44,7 @@ type (
 		password  vo.Password
 		document  vo.Document
 		wallet    *vo.Wallet
-		typeUser  TypeUser
+		typeUser  vo.TypeUser
 		roles     vo.Roles
 		createdAt time.Time
 	}
@@ -85,11 +58,11 @@ func NewUser(
 	password vo.Password,
 	document vo.Document,
 	wallet *vo.Wallet,
-	typeUser TypeUser,
+	typeUser vo.TypeUser,
 	createdAt time.Time,
 ) (User, error) {
 	switch typeUser.ToUpper() {
-	case CUSTOM:
+	case vo.CUSTOM:
 		return NewCustomUser(
 			ID,
 			fullName,
@@ -99,7 +72,7 @@ func NewUser(
 			wallet,
 			createdAt,
 		), nil
-	case MERCHANT:
+	case vo.MERCHANT:
 		return NewMerchantUser(
 			ID,
 			fullName,
@@ -111,7 +84,7 @@ func NewUser(
 		), nil
 	}
 
-	return User{}, ErrInvalidTypeUser
+	return User{}, vo.ErrInvalidTypeUser
 }
 
 // NewCustomUser creates new custom user
@@ -134,7 +107,7 @@ func NewCustomUser(
 		roles: vo.Roles{
 			CanTransfer: true,
 		},
-		typeUser:  CUSTOM,
+		typeUser:  vo.CUSTOM,
 		createdAt: createdAt,
 	}
 }
@@ -159,7 +132,7 @@ func NewMerchantUser(
 		roles: vo.Roles{
 			CanTransfer: false,
 		},
-		typeUser:  MERCHANT,
+		typeUser:  vo.MERCHANT,
 		createdAt: createdAt,
 	}
 }
@@ -186,7 +159,7 @@ func (u User) CanTransfer() error {
 		return nil
 	}
 
-	return ErrNotAllowedTypeUser
+	return vo.ErrNotAllowedTypeUser
 }
 
 // ID returns the id property
@@ -215,7 +188,7 @@ func (u User) Roles() vo.Roles {
 }
 
 // TypeUser returns the typeUser property
-func (u User) TypeUser() TypeUser {
+func (u User) TypeUser() vo.TypeUser {
 	return u.typeUser
 }
 

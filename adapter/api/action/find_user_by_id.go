@@ -6,6 +6,7 @@ import (
 
 	"github.com/GSabadini/go-challenge/adapter/api/response"
 	"github.com/GSabadini/go-challenge/adapter/logger"
+	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/usecase"
 )
 
@@ -24,10 +25,8 @@ func NewFindUserByIDAction(uc usecase.FindUserByID, l logger.Logger) FindUserByI
 }
 
 func (f FindUserByIDAction) Execute(w http.ResponseWriter, r *http.Request) {
-	var input usecase.FindUserByIDInput
-
-	ID := r.URL.Query().Get("user_id")
-	if ID == "" {
+	reqID := r.URL.Query().Get("user_id")
+	if reqID == "" {
 		err := errors.New("invalid parameter")
 		f.log.WithFields(logger.Fields{
 			"key":         f.logKey,
@@ -39,9 +38,20 @@ func (f FindUserByIDAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input.ID = ID
+	ID, err := vo.NewUuid(reqID)
+	if err != nil {
+		err := errors.New("invalid uuid")
+		f.log.WithFields(logger.Fields{
+			"key":         f.logKey,
+			"error":       err.Error(),
+			"http_status": http.StatusBadRequest,
+		}).Errorf("invalid uuid")
 
-	output, err := f.uc.Execute(r.Context(), input)
+		response.NewError(err, http.StatusBadRequest).Send(w)
+		return
+	}
+
+	output, err := f.uc.Execute(r.Context(), usecase.FindUserByIDInput{ID: ID})
 	if err != nil {
 		f.log.WithFields(logger.Fields{
 			"key":         f.logKey,

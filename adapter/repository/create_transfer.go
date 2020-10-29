@@ -27,7 +27,7 @@ type (
 )
 
 // NewCreateTransferRepository creates new createTransferRepository with its dependencies
-func NewCreateTransferRepository(handler *db.MongoHandler) entity.CreateTransferRepository {
+func NewCreateTransferRepository(handler *db.MongoHandler) entity.TransferRepositoryCreator {
 	return createTransferRepository{
 		handler:    handler,
 		collection: "transfers",

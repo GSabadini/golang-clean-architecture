@@ -17,7 +17,7 @@ type updateUserWalletRepository struct {
 }
 
 // NewUpdateUserWalletRepository creates new updateUserWalletRepository with its dependencies
-func NewUpdateUserWalletRepository(handler *db.MongoHandler) entity.UpdateUserWalletRepository {
+func NewUpdateUserWalletRepository(handler *db.MongoHandler) entity.UserRepositoryUpdater {
 	return updateUserWalletRepository{
 		handler:    handler,
 		collection: "users",

@@ -47,7 +47,7 @@ type (
 )
 
 // NewCreateUserRepository creates new createUserRepository with its dependencies
-func NewCreateUserRepository(handler *db.MongoHandler) entity.CreateUserRepository {
+func NewCreateUserRepository(handler *db.MongoHandler) entity.UserRepositoryCreator {
 	return createUserRepository{
 		handler:    handler,
 		collection: "users",
