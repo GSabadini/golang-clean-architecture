@@ -1,4 +1,4 @@
-package action
+package handler
 
 import (
 	"errors"
@@ -8,24 +8,28 @@ import (
 	"github.com/GSabadini/go-challenge/adapter/logger"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/gorilla/mux"
 )
 
-type FindUserByIDAction struct {
+// FindUserByIDHandler defines the dependencies of the HTTP handler for the use case
+type FindUserByIDHandler struct {
 	uc     usecase.FindUserByID
 	log    logger.Logger
 	logKey string
 }
 
-func NewFindUserByIDAction(uc usecase.FindUserByID, l logger.Logger) FindUserByIDAction {
-	return FindUserByIDAction{
+// NewFindUserByIDHandler creates new FindUserByIDHandler with its dependencies
+func NewFindUserByIDHandler(uc usecase.FindUserByID, l logger.Logger) FindUserByIDHandler {
+	return FindUserByIDHandler{
 		uc:     uc,
 		log:    l,
 		logKey: "find_user_by_id",
 	}
 }
 
-func (f FindUserByIDAction) Execute(w http.ResponseWriter, r *http.Request) {
-	reqID := r.URL.Query().Get("user_id")
+// Handle handles http request
+func (f FindUserByIDHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	reqID := mux.Vars(r)["user_id"]
 	if reqID == "" {
 		err := errors.New("invalid parameter")
 		f.log.WithFields(logger.Fields{

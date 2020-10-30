@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/infrastructure/db"
+	"github.com/GSabadini/go-challenge/infrastructure/database"
 	"github.com/pkg/errors"
 )
 
@@ -41,13 +41,13 @@ type (
 	}
 
 	createUserRepository struct {
-		handler    *db.MongoHandler
+		handler    *database.MongoHandler
 		collection string
 	}
 )
 
 // NewCreateUserRepository creates new createUserRepository with its dependencies
-func NewCreateUserRepository(handler *db.MongoHandler) entity.UserRepositoryCreator {
+func NewCreateUserRepository(handler *database.MongoHandler) entity.UserRepositoryCreator {
 	return createUserRepository{
 		handler:    handler,
 		collection: "users",

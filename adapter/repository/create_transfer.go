@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/infrastructure/db"
+	"github.com/GSabadini/go-challenge/infrastructure/database"
 	"github.com/pkg/errors"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,13 +21,13 @@ type (
 	}
 
 	createTransferRepository struct {
-		handler    *db.MongoHandler
+		handler    *database.MongoHandler
 		collection string
 	}
 )
 
 // NewCreateTransferRepository creates new createTransferRepository with its dependencies
-func NewCreateTransferRepository(handler *db.MongoHandler) entity.TransferRepositoryCreator {
+func NewCreateTransferRepository(handler *database.MongoHandler) entity.TransferRepositoryCreator {
 	return createTransferRepository{
 		handler:    handler,
 		collection: "transfers",

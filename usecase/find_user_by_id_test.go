@@ -139,11 +139,11 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Find merchant user by id db error",
+			name: "Find merchant user by id database error",
 			fields: fields{
 				repo: stubUserRepoFinder{
 					result: entity.User{},
-					err:    errors.New("fail db"),
+					err:    errors.New("fail database"),
 				},
 				pre: stubFindUserByIDPresenter{},
 			},

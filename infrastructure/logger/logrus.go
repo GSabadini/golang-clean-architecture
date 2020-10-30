@@ -2,55 +2,55 @@ package logger
 
 import (
 	"github.com/GSabadini/go-challenge/adapter/logger"
-	logrusLib "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
-// NewLogrus returns the instance of logrus logger
-func NewLogrus() *logrus {
-	log := logrusLib.New()
-	log.SetFormatter(&logrusLib.JSONFormatter{
+// NewLogrus returns the instance of logrusWrapper logger
+func NewLogrus() *logrusWrapper {
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	return &logrus{
+	return &logrusWrapper{
 		log: log,
 	}
 }
 
-type logrus struct {
-	log *logrusLib.Logger
+type logrusWrapper struct {
+	log *logrus.Logger
 }
 
-func NewLogrusLogger(log *logrusLib.Logger) logger.Logger {
-	return &logrus{log: log}
+func NewLogrusLogger(log *logrus.Logger) logger.Logger {
+	return &logrusWrapper{log: log}
 }
 
-func (l *logrus) Infof(format string, args ...interface{}) {
+func (l *logrusWrapper) Infof(format string, args ...interface{}) {
 	l.log.Infof(format, args...)
 }
 
-func (l *logrus) Warnf(format string, args ...interface{}) {
+func (l *logrusWrapper) Warnf(format string, args ...interface{}) {
 	l.log.Warnf(format, args...)
 }
 
-func (l *logrus) Errorf(format string, args ...interface{}) {
+func (l *logrusWrapper) Errorf(format string, args ...interface{}) {
 	l.log.Errorf(format, args...)
 }
 
-func (l *logrus) WithFields(fields logger.Fields) logger.Logger {
+func (l *logrusWrapper) WithFields(fields logger.Fields) logger.Logger {
 	return &logrusEntry{
 		entry: l.log.WithFields(convertToLogrusFields(fields)),
 	}
 }
 
-func (l *logrus) WithError(err error) logger.Logger {
+func (l *logrusWrapper) WithError(err error) logger.Logger {
 	return &logrusEntry{
 		entry: l.log.WithError(err),
 	}
 }
 
 type logrusEntry struct {
-	entry *logrusLib.Entry
+	entry *logrus.Entry
 }
 
 func (l *logrusEntry) Infof(format string, args ...interface{}) {
@@ -77,8 +77,8 @@ func (l *logrusEntry) WithError(err error) logger.Logger {
 	}
 }
 
-func convertToLogrusFields(fields logger.Fields) logrusLib.Fields {
-	logrusFields := logrusLib.Fields{}
+func convertToLogrusFields(fields logger.Fields) logrus.Fields {
+	logrusFields := logrus.Fields{}
 	for index, field := range fields {
 		logrusFields[index] = field
 	}

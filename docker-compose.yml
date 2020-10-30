@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - 3001:3001
     env_file:
       - .env
     volumes:
@@ -55,12 +55,12 @@ services:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - 15672:15672
+      - 5672:5672
     labels:
       NAME: "rabbitmq"
     volumes:
-      - ./script/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
+      - ./_scripts/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
 
 #volumes:
 #  mongodb_master_data:

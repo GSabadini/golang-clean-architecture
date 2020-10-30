@@ -40,15 +40,6 @@ type (
 		CreatedAt time.Time
 	}
 
-	// Input data
-	//CreateTransferInput struct {
-	//	ID        string
-	//	PayerID   string
-	//	PayeeID   string
-	//	Value     int64
-	//	CreatedAt string
-	//}
-
 	// Output data
 	CreateTransferOutput struct {
 		ID        string `json:"id"`

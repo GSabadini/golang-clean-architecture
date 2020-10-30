@@ -5,19 +5,19 @@ import (
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/infrastructure/db"
+	"github.com/GSabadini/go-challenge/infrastructure/database"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type updateUserWalletRepository struct {
-	handler    *db.MongoHandler
+	handler    *database.MongoHandler
 	collection string
 }
 
 // NewUpdateUserWalletRepository creates new updateUserWalletRepository with its dependencies
-func NewUpdateUserWalletRepository(handler *db.MongoHandler) entity.UserRepositoryUpdater {
+func NewUpdateUserWalletRepository(handler *database.MongoHandler) entity.UserRepositoryUpdater {
 	return updateUserWalletRepository{
 		handler:    handler,
 		collection: "users",

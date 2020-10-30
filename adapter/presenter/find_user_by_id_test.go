@@ -48,7 +48,7 @@ func Test_findUserByIDPresenter_Output(t *testing.T) {
 					CanTransfer: true,
 				},
 				Type:      "CUSTOM",
-				CreatedAt: time.Time{}.String(),
+				CreatedAt: time.Time{}.Format(time.RFC3339),
 			},
 		},
 		{
@@ -80,7 +80,7 @@ func Test_findUserByIDPresenter_Output(t *testing.T) {
 					CanTransfer: false,
 				},
 				Type:      "MERCHANT",
-				CreatedAt: time.Time{}.String(),
+				CreatedAt: time.Time{}.Format(time.RFC3339),
 			},
 		},
 	}

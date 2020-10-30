@@ -3,6 +3,7 @@ package presenter
 import (
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/usecase"
+	"time"
 )
 
 type findUserByIDPresenter struct{}
@@ -30,6 +31,6 @@ func (f findUserByIDPresenter) Output(u entity.User) usecase.FindUserByIDOutput 
 			CanTransfer: u.Roles().CanTransfer,
 		},
 		Type:      u.TypeUser().String(),
-		CreatedAt: u.CreatedAt().String(),
+		CreatedAt: u.CreatedAt().Format(time.RFC3339),
 	}
 }

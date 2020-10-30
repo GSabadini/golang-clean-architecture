@@ -1,4 +1,4 @@
-package action
+package handler
 
 import (
 	"encoding/json"
@@ -13,12 +13,6 @@ import (
 )
 
 type (
-	CreateUserAction struct {
-		uc     usecase.CreateUserUseCase
-		log    logger.Logger
-		logKey string
-	}
-
 	// Request data
 	CreateUserRequest struct {
 		FullName string
@@ -40,19 +34,27 @@ type (
 		Currency string
 		Amount   int64
 	}
+
+	// CreateUserHandler defines the dependencies of the HTTP handler for the use case
+	CreateUserHandler struct {
+		uc     usecase.CreateUserUseCase
+		log    logger.Logger
+		logKey string
+	}
 )
 
-func NewCreateUserAction(uc usecase.CreateUserUseCase, l logger.Logger) CreateUserAction {
-	return CreateUserAction{
+// NewCreateUserHandler creates new CreateUserHandler with its dependencies
+func NewCreateUserHandler(uc usecase.CreateUserUseCase, l logger.Logger) CreateUserHandler {
+	return CreateUserHandler{
 		uc:     uc,
 		log:    l,
 		logKey: "create_user",
 	}
 }
 
-func (c CreateUserAction) Execute(w http.ResponseWriter, r *http.Request) {
+// Handle handles http request
+func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	var reqData CreateUserRequest
-
 	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
 		c.log.WithFields(logger.Fields{
 			"key":         c.logKey,

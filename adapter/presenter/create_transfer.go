@@ -3,6 +3,7 @@ package presenter
 import (
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/usecase"
+	"time"
 )
 
 type createTransferPresenter struct{}
@@ -19,6 +20,6 @@ func (c createTransferPresenter) Output(t entity.Transfer) usecase.CreateTransfe
 		PayerID:   t.Payer().Value(),
 		PayeeID:   t.Payee().Value(),
 		Value:     t.Value().Amount().Value(),
-		CreatedAt: t.CreatedAt().String(),
+		CreatedAt: t.CreatedAt().Format(time.RFC3339),
 	}
 }

@@ -1,7 +1,8 @@
-package db
+package database
 
 import (
 	"context"
+	"log"
 	"os"
 	"time"
 
@@ -16,25 +17,25 @@ type MongoHandler struct {
 }
 
 // NewMongoHandler creates new MongoHandler
-func NewMongoHandler() (*MongoHandler, error) {
+func NewMongoHandler() *MongoHandler {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	clientOpts := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	return &MongoHandler{
 		db:     client.Database(os.Getenv("MONGODB_DATABASE")),
 		client: client,
-	}, nil
+	}
 }
 
 // Client returns the client property
@@ -42,7 +43,7 @@ func (m *MongoHandler) Client() *mongo.Client {
 	return m.client
 }
 
-// Db returns the db property
+// Db returns the database property
 func (m *MongoHandler) Db() *mongo.Database {
 	return m.db
 }

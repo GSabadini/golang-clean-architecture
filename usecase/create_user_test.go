@@ -182,7 +182,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Create custom user db error",
+			name: "Create custom user database error",
 			fields: fields{
 				repo: stubUserRepoCreator{
 					result: entity.NewCustomUser(
@@ -194,7 +194,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						nil,
 						time.Now(),
 					),
-					err: errors.New("fail db"),
+					err: errors.New("fail database"),
 				},
 				pre: stubCreateUserPresenter{
 					result: CreateUserOutput{},
@@ -226,7 +226,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						nil,
 						time.Now(),
 					),
-					err: errors.New("fail db"),
+					err: errors.New("fail database"),
 				},
 				pre: stubCreateUserPresenter{
 					result: CreateUserOutput{},

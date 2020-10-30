@@ -6,7 +6,7 @@ import (
 
 	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/infrastructure/db"
+	"github.com/GSabadini/go-challenge/infrastructure/database"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -44,13 +44,13 @@ type (
 	}
 
 	findUserByIDRepository struct {
-		handler    *db.MongoHandler
+		handler    *database.MongoHandler
 		collection string
 	}
 )
 
 // NewFindUserByIDUserRepository creates new findUserByIDRepository with its dependencies
-func NewFindUserByIDUserRepository(handler *db.MongoHandler) entity.UserRepositoryFinder {
+func NewFindUserByIDUserRepository(handler *database.MongoHandler) entity.UserRepositoryFinder {
 	return findUserByIDRepository{
 		handler:    handler,
 		collection: "users",

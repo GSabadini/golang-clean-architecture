@@ -35,7 +35,7 @@ func Test_createTransferPresenter_Output(t *testing.T) {
 				PayerID:   "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 				PayeeID:   "0db298eb-c8e7-4829-84b7-c1036b4f0791",
 				Value:     100,
-				CreatedAt: time.Time{}.String(),
+				CreatedAt: time.Time{}.Format(time.RFC3339),
 			},
 		},
 	}

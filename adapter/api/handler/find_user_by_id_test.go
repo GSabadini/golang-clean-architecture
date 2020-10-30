@@ -1,8 +1,9 @@
-package action
+package handler
 
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -17,16 +18,16 @@ import (
 	"github.com/GSabadini/go-challenge/usecase"
 )
 
-type stubFindUserByIDRepo struct {
+type stubUserRepoFinder struct {
 	result entity.User
 	err    error
 }
 
-func (f stubFindUserByIDRepo) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
+func (f stubUserRepoFinder) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
 	return f.result, f.err
 }
 
-func TestFindUserByIDAction_Execute(t *testing.T) {
+func TestFindUserByIDHandler_Execute(t *testing.T) {
 	type fields struct {
 		uc  usecase.FindUserByID
 		log logger.Logger
@@ -47,7 +48,7 @@ func TestFindUserByIDAction_Execute(t *testing.T) {
 			name: "Find user by id success",
 			fields: fields{
 				uc: usecase.NewFindUserByIDInteractor(
-					stubFindUserByIDRepo{
+					stubUserRepoFinder{
 						result: entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Custom user"),
@@ -65,7 +66,7 @@ func TestFindUserByIDAction_Execute(t *testing.T) {
 			args: args{
 				ID: vo.NewUuidStaticTest().Value(),
 			},
-			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","fullname":"Custom user","email":"test@testing.com","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"roles":{"can_transfer":true},"type":"CUSTOM","created_at":"0001-01-01 00:00:00 +0000 UTC"}`,
+			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","fullname":"Custom user","email":"test@testing.com","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"roles":{"can_transfer":true},"type":"CUSTOM","created_at":"0001-01-01T00:00:00Z"}`,
 			expectedStatusCode: http.StatusOK,
 		},
 	}
@@ -74,16 +75,17 @@ func TestFindUserByIDAction_Execute(t *testing.T) {
 			uri := fmt.Sprintf("/users/%s", tt.args.ID)
 			req, _ := http.NewRequest(http.MethodGet, uri, nil)
 
-			q := req.URL.Query()
-			q.Add("user_id", tt.args.ID)
-			req.URL.RawQuery = q.Encode()
+			//q := req.URL.Query()
+			//q.Add("user_id", tt.args.ID)
+			//req.URL.RawQuery = q.Encode()
+			req = mux.SetURLVars(req, map[string]string{"user_id": tt.args.ID})
 
 			var (
-				w      = httptest.NewRecorder()
-				action = NewFindUserByIDAction(tt.fields.uc, tt.fields.log)
+				w       = httptest.NewRecorder()
+				handler = NewFindUserByIDHandler(tt.fields.uc, tt.fields.log)
 			)
 
-			action.Execute(w, req)
+			handler.Handle(w, req)
 
 			if w.Code != tt.expectedStatusCode {
 				t.Errorf(
