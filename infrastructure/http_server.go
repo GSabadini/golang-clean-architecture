@@ -2,6 +2,9 @@ package infrastructure
 
 import (
 	"encoding/json"
+	"net/http"
+	"os"
+
 	"github.com/GSabadini/go-challenge/adapter/api/handler"
 	adapterlogger "github.com/GSabadini/go-challenge/adapter/logger"
 	"github.com/GSabadini/go-challenge/adapter/presenter"
@@ -10,8 +13,6 @@ import (
 	"github.com/GSabadini/go-challenge/infrastructure/logger"
 	"github.com/GSabadini/go-challenge/infrastructure/router"
 	"github.com/GSabadini/go-challenge/usecase"
-	"net/http"
-	"os"
 )
 
 // HTTPServer define an application structure
