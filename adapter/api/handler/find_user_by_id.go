@@ -6,6 +6,7 @@ import (
 
 	"github.com/GSabadini/go-challenge/adapter/api/response"
 	"github.com/GSabadini/go-challenge/adapter/logger"
+	"github.com/GSabadini/go-challenge/domain/entity"
 	"github.com/GSabadini/go-challenge/domain/vo"
 	"github.com/GSabadini/go-challenge/usecase"
 	"github.com/gorilla/mux"
@@ -13,13 +14,13 @@ import (
 
 // FindUserByIDHandler defines the dependencies of the HTTP handler for the use case
 type FindUserByIDHandler struct {
-	uc     usecase.FindUserByID
+	uc     usecase.FindUserByIDUseCase
 	log    logger.Logger
 	logKey string
 }
 
 // NewFindUserByIDHandler creates new FindUserByIDHandler with its dependencies
-func NewFindUserByIDHandler(uc usecase.FindUserByID, l logger.Logger) FindUserByIDHandler {
+func NewFindUserByIDHandler(uc usecase.FindUserByIDUseCase, l logger.Logger) FindUserByIDHandler {
 	return FindUserByIDHandler{
 		uc:     uc,
 		log:    l,
@@ -57,13 +58,25 @@ func (f FindUserByIDHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	output, err := f.uc.Execute(r.Context(), usecase.FindUserByIDInput{ID: ID})
 	if err != nil {
-		f.log.WithFields(logger.Fields{
-			"key":         f.logKey,
-			"error":       err.Error(),
-			"http_status": http.StatusInternalServerError,
-		}).Errorf("error fetching user by id")
+		switch err {
+		case entity.ErrNotFoundUser:
+			f.log.WithFields(logger.Fields{
+				"key":         f.logKey,
+				"error":       err.Error(),
+				"http_status": http.StatusNotFound,
+			}).Errorf("error fetching user by id")
 
-		response.NewError(err, http.StatusInternalServerError).Send(w)
+			response.NewError(err, http.StatusNotFound).Send(w)
+		default:
+			f.log.WithFields(logger.Fields{
+				"key":         f.logKey,
+				"error":       err.Error(),
+				"http_status": http.StatusInternalServerError,
+			}).Errorf("error fetching user by id")
+
+			response.NewError(err, http.StatusInternalServerError).Send(w)
+		}
+
 		return
 	}
 

@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"log"
 	"os"
 
 	"github.com/streadway/amqp"
@@ -14,15 +15,15 @@ type RabbitMQHandler struct {
 }
 
 // NewRabbitMQHandler creates new RabbitMQHandler
-func NewRabbitMQHandler() (*RabbitMQHandler, error) {
+func NewRabbitMQHandler() *RabbitMQHandler {
 	conn, err := amqp.Dial(os.Getenv("RABBITMQ_URI"))
 	if err != nil {
-		return &RabbitMQHandler{}, err
+		log.Fatal(err)
 	}
 
 	channel, err := conn.Channel()
 	if err != nil {
-		return &RabbitMQHandler{}, err
+		log.Fatal(err)
 	}
 
 	queue, err := channel.QueueDeclare(
@@ -34,14 +35,14 @@ func NewRabbitMQHandler() (*RabbitMQHandler, error) {
 		nil,
 	)
 	if err != nil {
-		return &RabbitMQHandler{}, err
+		log.Fatal(err)
 	}
 
 	return &RabbitMQHandler{
 		conn:    conn,
 		queue:   queue,
 		channel: channel,
-	}, nil
+	}
 }
 
 // Conn returns the conn property

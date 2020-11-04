@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -16,25 +16,24 @@ import (
 	"github.com/GSabadini/go-challenge/domain/vo"
 	infralogger "github.com/GSabadini/go-challenge/infrastructure/logger"
 	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/gorilla/mux"
 )
 
-type stubUserRepoFinder struct {
-	result entity.User
+type stubFindUserByIDUseCase struct {
+	result usecase.FindUserByIDOutput
 	err    error
 }
 
-func (f stubUserRepoFinder) FindByID(_ context.Context, _ vo.Uuid) (entity.User, error) {
-	return f.result, f.err
+func (s stubFindUserByIDUseCase) Execute(_ context.Context, _ usecase.FindUserByIDInput) (usecase.FindUserByIDOutput, error) {
+	return s.result, s.err
 }
 
 func TestFindUserByIDHandler_Execute(t *testing.T) {
 	type fields struct {
-		uc  usecase.FindUserByID
+		uc  usecase.FindUserByIDUseCase
 		log logger.Logger
 	}
 	type args struct {
-		w  http.ResponseWriter
-		r  *http.Request
 		ID string
 	}
 	tests := []struct {
@@ -45,11 +44,11 @@ func TestFindUserByIDHandler_Execute(t *testing.T) {
 		expectedStatusCode int
 	}{
 		{
-			name: "Find user by id success",
+			name: "Success find user by id",
 			fields: fields{
-				uc: usecase.NewFindUserByIDInteractor(
-					stubUserRepoFinder{
-						result: entity.NewCustomUser(
+				uc: stubFindUserByIDUseCase{
+					result: presenter.NewFindUserByIDPresenter().Output(
+						entity.NewCustomUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Custom user"),
 							vo.NewEmailTest("test@testing.com"),
@@ -57,10 +56,9 @@ func TestFindUserByIDHandler_Execute(t *testing.T) {
 							vo.NewDocumentTest(vo.CPF, "07091054954"),
 							vo.NewWallet(vo.NewMoneyBRL(vo.NewAmountTest(100))),
 							time.Time{},
-						),
-						err: nil,
-					},
-					presenter.NewFindUserByIDPresenter()),
+						)),
+					err: nil,
+				},
 				log: infralogger.Dummy{},
 			},
 			args: args{
@@ -69,15 +67,52 @@ func TestFindUserByIDHandler_Execute(t *testing.T) {
 			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","fullname":"Custom user","email":"test@testing.com","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"roles":{"can_transfer":true},"type":"CUSTOM","created_at":"0001-01-01T00:00:00Z"}`,
 			expectedStatusCode: http.StatusOK,
 		},
+		{
+			name: "Error find user by id invalid parameter",
+			fields: fields{
+				uc:  stubFindUserByIDUseCase{},
+				log: infralogger.Dummy{},
+			},
+			args:               args{},
+			expectedBody:       `{"errors":["invalid parameter"]}`,
+			expectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			name: "Error find user by id database failed",
+			fields: fields{
+				uc: stubFindUserByIDUseCase{
+					result: usecase.FindUserByIDOutput{},
+					err:    errors.New("db_error"),
+				},
+				log: infralogger.Dummy{},
+			},
+			args: args{
+				ID: vo.NewUuidStaticTest().Value(),
+			},
+			expectedBody:       `{"errors":["db_error"]}`,
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: "Error find user by id not found",
+			fields: fields{
+				uc: stubFindUserByIDUseCase{
+					result: usecase.FindUserByIDOutput{},
+					err:    entity.ErrNotFoundUser,
+				},
+				log: infralogger.Dummy{},
+			},
+			args: args{
+				ID: vo.NewUuidStaticTest().Value(),
+			},
+			expectedBody:       `{"errors":["not found user"]}`,
+			expectedStatusCode: http.StatusNotFound,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			uri := fmt.Sprintf("/users/%s", tt.args.ID)
 			req, _ := http.NewRequest(http.MethodGet, uri, nil)
 
-			//q := req.URL.Query()
-			//q.Add("user_id", tt.args.ID)
-			//req.URL.RawQuery = q.Encode()
 			req = mux.SetURLVars(req, map[string]string{"user_id": tt.args.ID})
 
 			var (

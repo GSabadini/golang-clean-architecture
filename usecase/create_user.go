@@ -14,11 +14,6 @@ type (
 		Execute(context.Context, CreateUserInput) (CreateUserOutput, error)
 	}
 
-	// Output port
-	CreateUserPresenter interface {
-		Output(entity.User) CreateUserOutput
-	}
-
 	// Input data
 	CreateUserInput struct {
 		ID        vo.Uuid
@@ -31,6 +26,11 @@ type (
 		CreatedAt time.Time
 	}
 
+	// Output port
+	CreateUserPresenter interface {
+		Output(entity.User) CreateUserOutput
+	}
+
 	// Output data
 	CreateUserOutput struct {
 		ID        string                   `json:"id"`
@@ -39,9 +39,9 @@ type (
 		Password  string                   `json:"password"`
 		Document  CreateUserDocumentOutput `json:"document"`
 		Wallet    CreateUserWalletOutput   `json:"wallet"`
-		Roles     CreateUserRolesOutput
-		Type      string `json:"type"`
-		CreatedAt string `json:"created_at"`
+		Roles     CreateUserRolesOutput    `json:"roles"`
+		Type      string                   `json:"type"`
+		CreatedAt string                   `json:"created_at"`
 	}
 
 	// Output data

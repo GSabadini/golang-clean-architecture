@@ -9,19 +9,19 @@ import (
 )
 
 type (
-	// Output port
-	FindUserByIDPresenter interface {
-		Output(entity.User) FindUserByIDOutput
-	}
-
 	// Input port
-	FindUserByID interface {
+	FindUserByIDUseCase interface {
 		Execute(context.Context, FindUserByIDInput) (FindUserByIDOutput, error)
 	}
 
 	// Input data
 	FindUserByIDInput struct {
 		ID vo.Uuid
+	}
+
+	// Output port
+	FindUserByIDPresenter interface {
+		Output(entity.User) FindUserByIDOutput
 	}
 
 	// Output data
@@ -60,7 +60,7 @@ type (
 )
 
 // NewFindUserByIDInteractor creates new findUserByIDInteractor with its dependencies
-func NewFindUserByIDInteractor(repo entity.UserRepositoryFinder, pre FindUserByIDPresenter) FindUserByID {
+func NewFindUserByIDInteractor(repo entity.UserRepositoryFinder, pre FindUserByIDPresenter) FindUserByIDUseCase {
 	return findUserByIDInteractor{
 		repo: repo,
 		pre:  pre,

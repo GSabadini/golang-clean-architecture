@@ -67,15 +67,15 @@ func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	input, err := NewCreateUserInput(reqData)
-	if err != nil {
+	input, errs := validateCreateUserRequest(reqData)
+	if len(errs) > 0 {
 		c.log.WithFields(logger.Fields{
 			"key":         c.logKey,
-			"error":       err.Error(),
+			"error":       "invalid input",
 			"http_status": http.StatusBadRequest,
 		}).Errorf("failed to data")
 
-		response.NewError(err, http.StatusBadRequest).Send(w)
+		response.NewErrors(errs, http.StatusBadRequest).Send(w)
 		return
 	}
 
@@ -99,15 +99,31 @@ func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(output, http.StatusCreated).Send(w)
 }
 
-func NewCreateUserInput(i CreateUserRequest) (usecase.CreateUserInput, error) {
+func validateCreateUserRequest(i CreateUserRequest) (usecase.CreateUserInput, []error) {
+	var errs []error
 	id, err := vo.NewUuid(uuid.New().String())
+	if err != nil {
+		errs = append(errs, err)
+	}
 	doc, err := vo.NewDocument(vo.TypeDocument(i.Document.Type), i.Document.Value)
+	if err != nil {
+		errs = append(errs, err)
+	}
 	email, err := vo.NewEmail(i.Email)
+	if err != nil {
+		errs = append(errs, err)
+	}
 	amount, err := vo.NewAmount(i.Wallet.Amount)
+	if err != nil {
+		errs = append(errs, err)
+	}
 	wallet := vo.NewWallet(vo.NewMoneyBRL(amount))
+	if err != nil {
+		errs = append(errs, err)
+	}
 	typeUser, err := vo.NewTypeUser(i.Type)
 	if err != nil {
-		return usecase.CreateUserInput{}, err
+		errs = append(errs, err)
 	}
 
 	return usecase.CreateUserInput{
@@ -119,5 +135,5 @@ func NewCreateUserInput(i CreateUserRequest) (usecase.CreateUserInput, error) {
 		Wallet:    wallet,
 		Type:      typeUser,
 		CreatedAt: time.Now(),
-	}, nil
+	}, errs
 }

@@ -19,10 +19,6 @@ type (
 	TypeDocument string
 )
 
-//func (t TypeDocument) toUpper() TypeDocument {
-//	return TypeDocument(strings.ToUpper(string(t)))
-//}
-
 // String returns string representation of the TypeDocument
 func (t TypeDocument) String() string {
 	return string(t)
@@ -46,7 +42,7 @@ func NewDocument(typeDoc TypeDocument, value string) (Document, error) {
 	}
 
 	if err := doc.validate(); err != nil {
-		return Document{}, errors.Wrap(err, ErrInvalidDocument.Error())
+		return Document{}, err
 	}
 
 	return doc, nil

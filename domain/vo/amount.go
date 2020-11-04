@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	errInvalidAmount = errors.New("invalid Amount")
+	errInvalidAmount = errors.New("invalid amount")
 )
 
 // Amount structure

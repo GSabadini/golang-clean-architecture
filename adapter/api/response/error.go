@@ -19,6 +19,19 @@ func NewError(err error, status int) *Error {
 	}
 }
 
+// NewErrors creates new Error
+func NewErrors(errs []error, status int) *Error {
+	var msgs []string
+	for _, v := range errs {
+		msgs = append(msgs, v.Error())
+	}
+
+	return &Error{
+		statusCode: status,
+		Errors:     msgs,
+	}
+}
+
 func NewErrorMessage(messages []string, status int) *Error {
 	return &Error{
 		statusCode: status,

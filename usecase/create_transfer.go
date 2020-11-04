@@ -21,11 +21,6 @@ type (
 		Notify(context.Context, entity.Transfer)
 	}
 
-	// Output port
-	CreateTransferPresenter interface {
-		Output(entity.Transfer) CreateTransferOutput
-	}
-
 	// Input port
 	CreateTransferUseCase interface {
 		Execute(context.Context, CreateTransferInput) (CreateTransferOutput, error)
@@ -38,6 +33,11 @@ type (
 		PayeeID   vo.Uuid
 		Value     vo.Money
 		CreatedAt time.Time
+	}
+
+	// Output port
+	CreateTransferPresenter interface {
+		Output(entity.Transfer) CreateTransferOutput
 	}
 
 	// Output data
