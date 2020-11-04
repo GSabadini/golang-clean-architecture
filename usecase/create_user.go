@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"context"
-	"github.com/GSabadini/go-challenge/domain/vo"
 	"time"
 
 	"github.com/GSabadini/go-challenge/domain/entity"
+	"github.com/GSabadini/go-challenge/domain/vo"
 )
 
 type (
