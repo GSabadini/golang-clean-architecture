@@ -45,12 +45,12 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Find custom user by id success",
+			name: "Find common user by id success",
 			fields: fields{
 				repo: stubUserRepoFinder{
-					result: entity.NewCustomUser(
+					result: entity.NewCommonUser(
 						vo.NewUuidStaticTest(),
-						vo.NewFullName("Custom user"),
+						vo.NewFullName("Common user"),
 						vo.NewEmailTest("test@testing.com"),
 						vo.NewPassword("passw"),
 						vo.NewDocumentTest(vo.CPF, "07091054954"),
@@ -62,14 +62,14 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 				pre: stubFindUserByIDPresenter{
 					result: FindUserByIDOutput{
 						ID:       vo.NewUuidStaticTest().Value(),
-						FullName: "Custom user",
+						FullName: "Common user",
 						Document: FindUserByIDDocumentOutput{
 							Type:  "CPF",
 							Value: "07091054954",
 						},
 						Email:     "test@testing.com",
 						Wallet:    FindUserByIDWalletOutput{},
-						Type:      "CUSTOM",
+						Type:      "COMMON",
 						CreatedAt: time.Time{}.String(),
 					},
 				},
@@ -79,14 +79,14 @@ func TestFindUserByIDInteractor_Execute(t *testing.T) {
 			},
 			want: FindUserByIDOutput{
 				ID:       vo.NewUuidStaticTest().Value(),
-				FullName: "Custom user",
+				FullName: "Common user",
 				Document: FindUserByIDDocumentOutput{
 					Type:  "CPF",
 					Value: "07091054954",
 				},
 				Email:     "test@testing.com",
 				Wallet:    FindUserByIDWalletOutput{},
-				Type:      "CUSTOM",
+				Type:      "COMMON",
 				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,

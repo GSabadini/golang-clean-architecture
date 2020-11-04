@@ -22,7 +22,7 @@ func Test_findUserByIDPresenter_Output(t *testing.T) {
 		{
 			name: "Create find user by id output",
 			args: args{
-				u: entity.NewCustomUser(
+				u: entity.NewCommonUser(
 					vo.NewUuidStaticTest(),
 					vo.NewFullName("Test testing"),
 					vo.NewEmailTest("test@testing.com"),
@@ -47,7 +47,7 @@ func Test_findUserByIDPresenter_Output(t *testing.T) {
 				Roles: usecase.FindUserByIDRolesOutput{
 					CanTransfer: true,
 				},
-				Type:      "CUSTOM",
+				Type:      "COMMON",
 				CreatedAt: time.Time{}.Format(time.RFC3339),
 			},
 		},

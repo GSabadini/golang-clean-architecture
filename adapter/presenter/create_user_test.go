@@ -20,9 +20,9 @@ func Test_createUserPresenter_Output(t *testing.T) {
 		want usecase.CreateUserOutput
 	}{
 		{
-			name: "Create custom user output",
+			name: "Create common user output",
 			args: args{
-				u: entity.NewCustomUser(
+				u: entity.NewCommonUser(
 					vo.NewUuidStaticTest(),
 					vo.NewFullName("Test testing"),
 					vo.NewEmailTest("test@testing.com"),
@@ -48,7 +48,7 @@ func Test_createUserPresenter_Output(t *testing.T) {
 				Roles: usecase.CreateUserRolesOutput{
 					CanTransfer: true,
 				},
-				Type:      "CUSTOM",
+				Type:      "COMMON",
 				CreatedAt: time.Time{}.Format(time.RFC3339),
 			},
 		},

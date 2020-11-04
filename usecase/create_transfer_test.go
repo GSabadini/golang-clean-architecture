@@ -119,7 +119,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -187,7 +187,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -243,7 +243,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -310,7 +310,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 						), nil
 					},
 					findPayee: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -395,7 +395,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -443,7 +443,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -499,7 +499,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),
@@ -555,7 +555,7 @@ func Test_createTransferInteractor_Execute(t *testing.T) {
 				},
 				repoUserFinder: &spyUserRepoFinder{
 					findPayer: func() (entity.User, error) {
-						return entity.NewCustomUser(
+						return entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
 							vo.NewFullName("Test testing"),
 							vo.NewEmailTest("test@testing.com"),

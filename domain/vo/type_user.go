@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	CUSTOM   TypeUser = "CUSTOM"
+	COMMON   TypeUser = "COMMON"
 	MERCHANT TypeUser = "MERCHANT"
 )
 
@@ -24,7 +24,7 @@ type (
 
 func NewTypeUser(value string) (TypeUser, error) {
 	switch TypeUser(strings.ToUpper(value)) {
-	case MERCHANT, CUSTOM:
+	case MERCHANT, COMMON:
 		return TypeUser(strings.ToUpper(value)), nil
 	}
 

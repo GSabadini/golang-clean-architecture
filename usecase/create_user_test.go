@@ -46,10 +46,10 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Create custom user success",
+			name: "Create common user success",
 			fields: fields{
 				repo: stubUserRepoCreator{
-					result: entity.NewCustomUser(
+					result: entity.NewCommonUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
 						vo.NewEmailTest("test@testing.com"),
@@ -71,7 +71,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						Email:     "test@testing.com",
 						Password:  "passw",
 						Wallet:    CreateUserWalletOutput{},
-						Type:      vo.CUSTOM.String(),
+						Type:      vo.COMMON.String(),
 						CreatedAt: time.Time{}.String(),
 					},
 				},
@@ -83,7 +83,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.NewEmailTest("test@testing.com"),
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     "CUSTOM",
+					Type:     "COMMON",
 				},
 			},
 			want: CreateUserOutput{
@@ -96,7 +96,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Email:     "test@testing.com",
 				Password:  "passw",
 				Wallet:    CreateUserWalletOutput{},
-				Type:      vo.CUSTOM.String(),
+				Type:      vo.COMMON.String(),
 				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
@@ -127,7 +127,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 						Email:     "test@testing.com",
 						Password:  "passw",
 						Wallet:    CreateUserWalletOutput{},
-						Type:      vo.CUSTOM.String(),
+						Type:      vo.COMMON.String(),
 						CreatedAt: time.Time{}.String(),
 					},
 				},
@@ -139,7 +139,7 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.NewEmailTest("test@testing.com"),
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     "CUSTOM",
+					Type:     "COMMON",
 				},
 			},
 			want: CreateUserOutput{
@@ -152,13 +152,13 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 				Email:     "test@testing.com",
 				Password:  "passw",
 				Wallet:    CreateUserWalletOutput{},
-				Type:      vo.CUSTOM.String(),
+				Type:      vo.COMMON.String(),
 				CreatedAt: time.Time{}.String(),
 			},
 			wantErr: false,
 		},
 		{
-			name: "Create custom user error",
+			name: "Create common user error",
 			fields: fields{
 				repo: stubUserRepoCreator{
 					result: entity.User{},
@@ -175,17 +175,17 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.NewEmailTest("test@testing.com"),
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     "CUSTOM",
+					Type:     "COMMON",
 				},
 			},
 			want:    CreateUserOutput{},
 			wantErr: true,
 		},
 		{
-			name: "Create custom user database error",
+			name: "Create common user database error",
 			fields: fields{
 				repo: stubUserRepoCreator{
-					result: entity.NewCustomUser(
+					result: entity.NewCommonUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
 						vo.NewEmailTest("test@testing.com"),
@@ -207,17 +207,17 @@ func TestCreateUserInteractor_Execute(t *testing.T) {
 					Email:    vo.NewEmailTest("test@testing.com"),
 					Password: vo.NewPassword("passw"),
 					Wallet:   nil,
-					Type:     vo.CUSTOM,
+					Type:     vo.COMMON,
 				},
 			},
 			want:    CreateUserOutput{},
 			wantErr: true,
 		},
 		{
-			name: "Create custom user type user error",
+			name: "Create common user type user error",
 			fields: fields{
 				repo: stubUserRepoCreator{
-					result: entity.NewCustomUser(
+					result: entity.NewCommonUser(
 						vo.NewUuidStaticTest(),
 						vo.NewFullName("Test testing"),
 						vo.NewEmailTest("test@testing.com"),

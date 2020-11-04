@@ -1,45 +1,174 @@
-## Objetivo
+## Architecture
+-  This is an attempt to implement a clean architecture, in case you don’t know it yet, here’s a reference https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+![Clean Architecture](clean.png)
 
-Temos 2 tipos de usuários, os comuns e lojistas, ambos têm carteira com dinheiro e realizam transferências entre eles. Vamos nos atentar **somente** ao fluxo de transferência entre dois usuários.
+## Objective
 
-Requisitos:
+We have 2 types of users, common and merchant, both have wallet with money and make transfers between themselves.
 
-- Para ambos tipos de usuário, precisamos do Nome Completo, CPF, e-mail e Senha. CPF/CNPJ e e-mails devem ser únicos no sistema. Sendo assim, seu sistema deve permitir apenas um cadastro com o mesmo CPF ou endereço de e-mail.
+Requirements:
 
-- Usuários podem enviar dinheiro (efetuar transferência) para lojistas e entre usuários. 
+- For both types of user, we need the Full Name, CPF, e-mail and Password. CPF/CNPJ and e-mails must be unique in the system. Therefore, your system should allow only one registration with the same CPF or e-mail address.
 
-- Lojistas **só recebem** transferências, não enviam dinheiro para ninguém.
+- Common users can send money (make transfers) to merchants and between common users.
 
-- Antes de finalizar a transferência, deve-se consultar um serviço autorizador externo, use este mock para simular (https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6).
+- Merchant users only receive transfers, do not send money to anyone.
 
-- A operação de transferência deve ser uma transação (ou seja, revertida em qualquer caso de inconsistência) e o dinheiro deve voltar para a carteira do usuário que envia. 
+- Before finalizing the transfer, an external authorization service must be consulted, use this mock to simulate (https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6).
 
-- No recebimento de pagamento, o usuário ou lojista precisa receber notificação enviada por um serviço de terceiro e eventualmente este serviço pode estar indisponível/instável. Use este mock para simular o envio (https://run.mocky.io/v3/b19f7b9f-9cbf-4fc6-ad22-dc30601aec04). 
+- The transfer operation must be a transaction (that is, reversed in any case of inconsistency) and the money must be returned to the sending user's wallet.
 
-- Este serviço deve ser RESTFul.
+- Upon receiving payment, the common user or merchant needs to receive the notification sent by a third party service and eventually this service may become unavailable/unstable. Use this simulation to simulate sending (https://run.mocky.io/v3/b19f7b9f-9cbf-4fc6-ad22-dc30601aec04).
 
-### Payload
+- This service must be RESTFul.
 
-POST /transaction
-
-```json
-{
-    "value" : 100.00,
-    "payer" : 4,
-    "payee" : 15
-}
-```
+## Requirements/dependencies
+    - Docker
+    - Docker-compose
 
 ## Getting Started
 
-- Environment variables
+- Starting API in port `:3001`
 
 ```sh
-make init
+make start
 ```
 
-- Starting API
+- Run the tests using a container
 
 ```sh
-make up
+make test
+```
+
+- Run the tests using a local machine
+
+```sh
+make test-local
+```
+
+- Run coverage
+
+```sh
+make coverage
+```
+
+- View the application logs
+
+```sh
+make logs
+```
+
+- Destroy application
+
+```sh
+make down
+```
+
+## API Endpoint
+
+| Endpoint           | HTTP Method           | Description           |
+| :----------------: | :-------------------: | :-------------------: |
+| `/users`           | `POST`                | `Create user`         |
+| `/users/{:userId}` | `GET`                 | `Find user by ID`     |
+| `/transactions`    | `POST`                | `Create transaction`     |
+| `/health`          | `GET`                 | `Health check`        |
+
+## Test endpoints API using curl
+
+- #### Creating new user
+
+`Request`
+```bash
+curl --location --request POST 'localhost:3001/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "fullname": "Gabriel Gabriel",
+    "email": "gabriel@hotmail.com",
+    "password": "passw123",
+    "document": {
+        "type": "CPF",
+        "value": "070.910.549-64"
+    },
+    "wallet": {
+        "currency": "BRL",
+        "amount": 100
+    },
+    "type": "common"
+}'
+```
+
+`Response`
+```json
+{
+    "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+    "full_name": "Common user",
+    "email": "test@testing.com",
+    "password": "passw",
+    "document": {
+        "type": "CPF",
+        "value": "07091054954"
+    },
+    "wallet": {
+        "currency": "BRL",
+        "amount": 100
+    },
+    "roles": {
+        "can_transfer": true
+    },
+    "type": "COMMON",
+    "created_at": "0001-01-01T00:00:00Z"
+}
+```
+
+- #### Find user by ID
+
+`Request`
+```bash
+curl -i --request GET 'http://localhost:3001/users/{:userId}'
+```
+
+`Response`
+```json
+{
+    "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+    "fullname": "Common user",
+    "email": "test@testing.com",
+    "document": {
+        "type": "CPF",
+        "value": "07091054954"
+    },
+    "wallet": {
+        "currency": "BRL",
+        "amount": 100
+    },
+    "roles": {
+        "can_transfer": true
+    },
+    "type": "COMMON",
+    "created_at": "0001-01-01T00:00:00Z"
+}
+```
+
+- #### Create new transaction
+
+`Request`
+```bash
+curl --location --request POST 'localhost:3001/transactions' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "value": 100,
+    "payer_id": {:userId},
+    "payee_id": {:userId}
+}'
+```
+
+`Response`
+```json
+{
+    "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+    "payer_id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
+    "payee_id": "0db298eb-c8e7-4829-84b7-c1036b4f0792",
+    "value": 100,
+    "created_at": "0001-01-01T00:00:00Z"
+}
 ```

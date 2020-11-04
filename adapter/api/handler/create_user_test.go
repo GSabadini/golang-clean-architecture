@@ -44,13 +44,13 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 		expectedStatusCode int
 	}{
 		{
-			name: "Success create custom user",
+			name: "Success create common user",
 			fields: fields{
 				uc: stubCreateUserUseCase{
 					result: presenter.NewCreateUserPresenter().Output(
-						entity.NewCustomUser(
+						entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
-							vo.NewFullName("Custom user"),
+							vo.NewFullName("Common user"),
 							vo.NewEmailTest("test@testing.com"),
 							vo.NewPassword("passw"),
 							vo.NewDocumentTest(vo.CPF, "07091054954"),
@@ -75,21 +75,21 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 							"currency": "BRL",
 							"amount": 100
 						},
-						"type": "custom"
+						"type": "common"
 					}`,
 				),
 			},
-			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","full_name":"Custom user","email":"test@testing.com","password":"passw","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"Roles":{"can_transfer":true},"type":"CUSTOM","created_at":"0001-01-01T00:00:00Z"}`,
+			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","full_name":"Common user","email":"test@testing.com","password":"passw","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"Roles":{"can_transfer":true},"type":"COMMON","created_at":"0001-01-01T00:00:00Z"}`,
 			expectedStatusCode: http.StatusCreated,
 		},
 		{
-			name: "Success create custom user",
+			name: "Success create common user",
 			fields: fields{
 				uc: stubCreateUserUseCase{
 					result: presenter.NewCreateUserPresenter().Output(
 						entity.NewMerchantUser(
 							vo.NewUuidStaticTest(),
-							vo.NewFullName("Custom user"),
+							vo.NewFullName("Common user"),
 							vo.NewEmailTest("test@testing.com"),
 							vo.NewPassword("passw"),
 							vo.NewDocumentTest(vo.CPF, "07091054954"),
@@ -118,7 +118,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 					}`,
 				),
 			},
-			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","full_name":"Custom user","email":"test@testing.com","password":"passw","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"Roles":{"can_transfer":false},"type":"MERCHANT","created_at":"0001-01-01T00:00:00Z"}`,
+			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","full_name":"Common user","email":"test@testing.com","password":"passw","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"Roles":{"can_transfer":false},"type":"MERCHANT","created_at":"0001-01-01T00:00:00Z"}`,
 			expectedStatusCode: http.StatusCreated,
 		},
 		{

@@ -62,8 +62,8 @@ func NewUser(
 	createdAt time.Time,
 ) (User, error) {
 	switch typeUser.ToUpper() {
-	case vo.CUSTOM:
-		return NewCustomUser(
+	case vo.COMMON:
+		return NewCommonUser(
 			ID,
 			fullName,
 			email,
@@ -87,8 +87,8 @@ func NewUser(
 	return User{}, vo.ErrInvalidTypeUser
 }
 
-// NewCustomUser creates new custom user
-func NewCustomUser(
+// NewCommonUser creates new common user
+func NewCommonUser(
 	ID vo.Uuid,
 	fullName vo.FullName,
 	email vo.Email,
@@ -107,7 +107,7 @@ func NewCustomUser(
 		roles: vo.Roles{
 			CanTransfer: true,
 		},
-		typeUser:  vo.CUSTOM,
+		typeUser:  vo.COMMON,
 		createdAt: createdAt,
 	}
 }

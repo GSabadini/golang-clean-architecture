@@ -48,9 +48,9 @@ func TestFindUserByIDHandler_Execute(t *testing.T) {
 			fields: fields{
 				uc: stubFindUserByIDUseCase{
 					result: presenter.NewFindUserByIDPresenter().Output(
-						entity.NewCustomUser(
+						entity.NewCommonUser(
 							vo.NewUuidStaticTest(),
-							vo.NewFullName("Custom user"),
+							vo.NewFullName("Common user"),
 							vo.NewEmailTest("test@testing.com"),
 							vo.NewPassword("passw"),
 							vo.NewDocumentTest(vo.CPF, "07091054954"),
@@ -64,7 +64,7 @@ func TestFindUserByIDHandler_Execute(t *testing.T) {
 			args: args{
 				ID: vo.NewUuidStaticTest().Value(),
 			},
-			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","fullname":"Custom user","email":"test@testing.com","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"roles":{"can_transfer":true},"type":"CUSTOM","created_at":"0001-01-01T00:00:00Z"}`,
+			expectedBody:       `{"id":"0db298eb-c8e7-4829-84b7-c1036b4f0791","fullname":"Common user","email":"test@testing.com","document":{"type":"CPF","value":"07091054954"},"wallet":{"currency":"BRL","amount":100},"roles":{"can_transfer":true},"type":"COMMON","created_at":"0001-01-01T00:00:00Z"}`,
 			expectedStatusCode: http.StatusOK,
 		},
 		{
