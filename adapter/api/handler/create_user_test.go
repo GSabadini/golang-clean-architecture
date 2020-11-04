@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/GSabadini/go-challenge/adapter/logger"
-	"github.com/GSabadini/go-challenge/adapter/presenter"
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	infralogger "github.com/GSabadini/go-challenge/infrastructure/logger"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/presenter"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
+	infralogger "github.com/GSabadini/golang-clean-architecture/infrastructure/logger"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 )
 
 type stubCreateUserUseCase struct {

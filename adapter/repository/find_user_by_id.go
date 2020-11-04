@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/infrastructure/database"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/database"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

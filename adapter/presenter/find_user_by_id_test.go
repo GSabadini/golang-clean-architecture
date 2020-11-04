@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 )
 
 func Test_findUserByIDPresenter_Output(t *testing.T) {

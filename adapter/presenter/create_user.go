@@ -1,8 +1,8 @@
 package presenter
 
 import (
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 	"time"
 )
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "encoding/json"
-	"github.com/GSabadini/go-challenge/infrastructure"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure"
 )
 
 func main() {

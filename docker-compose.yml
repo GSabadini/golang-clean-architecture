@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   app:
-    container_name: go-challenge
+    container_name: golang-clean-architecture
     build:
       context: .
       dockerfile: Dockerfile

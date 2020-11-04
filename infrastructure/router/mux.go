@@ -28,8 +28,6 @@ func (m *Mux) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
 }
 
 func (m *Mux) SERVE(port string) {
-	log.Printf("Mux HTTP server running on port %v", port)
-
 	server := &http.Server{
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,

@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/GSabadini/go-challenge/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
 	"github.com/sirupsen/logrus"
 )
 

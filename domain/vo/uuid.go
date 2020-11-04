@@ -3,8 +3,6 @@ package vo
 import (
 	"errors"
 	"regexp"
-
-	gouuid "github.com/google/uuid"
 )
 
 var (
@@ -12,10 +10,6 @@ var (
 
 	rxUuid = regexp.MustCompile(`[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}`)
 )
-
-func CreateUuid() string {
-	return gouuid.New().String()
-}
 
 //Uuid structure
 type Uuid struct {

@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/GSabadini/go-challenge/adapter/queue"
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/infrastructure/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/queue"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/logger"
 )
 
 type spyProducer struct {

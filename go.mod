@@ -1,6 +1,6 @@
-module github.com/GSabadini/go-challenge
+module github.com/GSabadini/golang-clean-architecture
 
-go 1.13
+go 1.14
 
 require (
 	github.com/google/uuid v1.1.2

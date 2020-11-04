@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
 
 	"github.com/pkg/errors"
 )

@@ -3,11 +3,11 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/GSabadini/go-challenge/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
 	"os"
 
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 	"github.com/pkg/errors"
 )
 

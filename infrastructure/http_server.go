@@ -6,18 +6,18 @@ import (
 	"os"
 	"time"
 
-	"github.com/GSabadini/go-challenge/adapter/api/handler"
-	adapterhttp "github.com/GSabadini/go-challenge/adapter/http"
-	adapterlogger "github.com/GSabadini/go-challenge/adapter/logger"
-	"github.com/GSabadini/go-challenge/adapter/presenter"
-	adapterqueue "github.com/GSabadini/go-challenge/adapter/queue"
-	"github.com/GSabadini/go-challenge/adapter/repository"
-	"github.com/GSabadini/go-challenge/infrastructure/database"
-	infrahttp "github.com/GSabadini/go-challenge/infrastructure/http"
-	"github.com/GSabadini/go-challenge/infrastructure/logger"
-	"github.com/GSabadini/go-challenge/infrastructure/queue"
-	"github.com/GSabadini/go-challenge/infrastructure/router"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/adapter/api/handler"
+	adapterhttp "github.com/GSabadini/golang-clean-architecture/adapter/http"
+	adapterlogger "github.com/GSabadini/golang-clean-architecture/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/presenter"
+	adapterqueue "github.com/GSabadini/golang-clean-architecture/adapter/queue"
+	"github.com/GSabadini/golang-clean-architecture/adapter/repository"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/database"
+	infrahttp "github.com/GSabadini/golang-clean-architecture/infrastructure/http"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/logger"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/queue"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/router"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 )
 
 // HTTPServer define an application structure
@@ -45,8 +45,9 @@ func (a HTTPServer) Start() {
 	a.router.POST("/users", a.createUserHandler())
 	a.router.GET("/users/{user_id}", a.findUserByIDHandler())
 
-	a.router.POST("/transfers", a.createTransferHandler())
+	a.router.POST("/transactions", a.createTransferHandler())
 
+	a.logger.WithFields(adapterlogger.Fields{"port": os.Getenv("APP_PORT")}).Infof("Starting HTTP Server")
 	a.router.SERVE(os.Getenv("APP_PORT"))
 }
 

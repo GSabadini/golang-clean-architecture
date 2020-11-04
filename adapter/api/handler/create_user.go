@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/GSabadini/go-challenge/adapter/api/response"
-	"github.com/GSabadini/go-challenge/adapter/logger"
-	"github.com/GSabadini/go-challenge/domain/vo"
-	"github.com/GSabadini/go-challenge/usecase"
+	"github.com/GSabadini/golang-clean-architecture/adapter/api/response"
+	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/usecase"
 	"github.com/google/uuid"
 )
 

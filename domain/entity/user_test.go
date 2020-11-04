@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
 	"reflect"
 	"testing"
 	"time"

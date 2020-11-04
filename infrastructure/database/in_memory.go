@@ -2,8 +2,8 @@ package database
 
 import (
 	"context"
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/domain/vo"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/domain/vo"
 )
 
 type UserInMen struct {

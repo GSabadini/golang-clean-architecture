@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/GSabadini/go-challenge/domain/entity"
-	"github.com/GSabadini/go-challenge/infrastructure/logger"
+	"github.com/GSabadini/golang-clean-architecture/domain/entity"
+	"github.com/GSabadini/golang-clean-architecture/infrastructure/logger"
 )
 
 func TestAuthorizer_Authorized(t *testing.T) {

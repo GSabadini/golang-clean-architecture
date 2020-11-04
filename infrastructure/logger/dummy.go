@@ -1,6 +1,6 @@
 package logger
 
-import "github.com/GSabadini/go-challenge/adapter/logger"
+import "github.com/GSabadini/golang-clean-architecture/adapter/logger"
 
 type Dummy struct{}
 
