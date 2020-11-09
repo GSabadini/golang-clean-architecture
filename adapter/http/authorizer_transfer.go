@@ -3,17 +3,21 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
 	"os"
 
+	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
 	"github.com/GSabadini/golang-clean-architecture/domain/entity"
 	"github.com/GSabadini/golang-clean-architecture/usecase"
 	"github.com/pkg/errors"
 )
 
-const autorizado = "Autorizado"
+const (
+	autorizado = "Autorizado"
+)
 
-var errAuthorizationDenied = errors.New("authorization denied")
+var (
+	errAuthorizationDenied = errors.New("authorization denied")
+)
 
 type (
 	authorizer struct {
@@ -45,7 +49,7 @@ func (a authorizer) Authorized(_ context.Context, _ entity.Transfer) (bool, erro
 			"error": err.Error(),
 		}).Errorf("failed to client")
 
-		return false, errors.Wrap(err, errAuthorizationDenied.Error())
+		return false, errAuthorizationDenied
 	}
 
 	b := &authorizerResponse{}
@@ -56,7 +60,7 @@ func (a authorizer) Authorized(_ context.Context, _ entity.Transfer) (bool, erro
 			"error": err.Error(),
 		}).Errorf("failed to marshal message")
 
-		return false, errors.Wrap(err, errAuthorizationDenied.Error())
+		return false, errAuthorizationDenied
 	}
 
 	if b.Message != autorizado {

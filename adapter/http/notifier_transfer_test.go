@@ -42,7 +42,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify success",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"Enviado"}`)),
@@ -60,7 +60,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify error response",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"error"}`)),
@@ -78,7 +78,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify client error",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{},
 					err: errors.New("failure client"),
 				},
@@ -92,7 +92,7 @@ func TestNotifier_Notify(t *testing.T) {
 		{
 			name: "Test notify publish error",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{},
 					err: errors.New("failure client"),
 				},

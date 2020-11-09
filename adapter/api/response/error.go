@@ -32,13 +32,6 @@ func NewErrors(errs []error, status int) *Error {
 	}
 }
 
-func NewErrorMessage(messages []string, status int) *Error {
-	return &Error{
-		statusCode: status,
-		Errors:     messages,
-	}
-}
-
 // Send returns a response with JSON format
 func (e Error) Send(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")

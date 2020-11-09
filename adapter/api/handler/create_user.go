@@ -67,7 +67,7 @@ func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	input, errs := validateCreateUserRequest(reqData)
+	input, errs := c.validate(reqData)
 	if len(errs) > 0 {
 		c.log.WithFields(logger.Fields{
 			"key":         c.logKey,
@@ -99,7 +99,7 @@ func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(output, http.StatusCreated).Send(w)
 }
 
-func validateCreateUserRequest(i CreateUserRequest) (usecase.CreateUserInput, []error) {
+func (c CreateUserHandler) validate(i CreateUserRequest) (usecase.CreateUserInput, []error) {
 	var errs []error
 	id, err := vo.NewUuid(uuid.New().String())
 	if err != nil {

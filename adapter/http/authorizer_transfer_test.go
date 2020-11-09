@@ -29,7 +29,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized success",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"Autorizado"}`)),
@@ -47,7 +47,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized error response",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{
 						Body: ioutil.NopCloser(
 							bytes.NewReader([]byte(`{"message":"fail"}`)),
@@ -65,7 +65,7 @@ func TestAuthorizer_Authorized(t *testing.T) {
 		{
 			name: "Test authorized error",
 			fields: fields{
-				client: httpGetterStub{
+				client: stubHTTPGetter{
 					res: &http.Response{},
 					err: errors.New("failure client"),
 				},

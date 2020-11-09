@@ -52,7 +52,7 @@ func (c CreateTransferHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	input, errs := validateCreateTransferRequest(reqData)
+	input, errs := c.validate(reqData)
 	if len(errs) > 0 {
 		c.log.WithFields(logger.Fields{
 			"key":         c.logKey,
@@ -84,7 +84,7 @@ func (c CreateTransferHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(output, http.StatusCreated).Send(w)
 }
 
-func validateCreateTransferRequest(i CreateTransferRequest) (usecase.CreateTransferInput, []error) {
+func (c CreateTransferHandler) validate(i CreateTransferRequest) (usecase.CreateTransferInput, []error) {
 	var errs []error
 	id, err := vo.NewUuid(uuid.New().String())
 	if err != nil {

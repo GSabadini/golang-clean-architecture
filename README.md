@@ -6,7 +6,7 @@
 </p>
 
 ## Architecture
--  This is an attempt to implement a clean architecture, in case you don’t know it yet, [here's](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) a reference.
+-  The whole code is based on my view about "clean architecture" and how to build maintainable projects. If you don’t know clean architecture yet, [here's](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) a reference.
 ![Clean Architecture](clean.png)
 
 ## Objective
@@ -163,9 +163,9 @@ curl -i --request GET 'http://localhost:3001/users/{:userId}'
 curl --location --request POST 'localhost:3001/transactions' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "value": 100,
     "payer_id": {:userId},
-    "payee_id": {:userId}
+    "payee_id": {:userId},
+    "value": 100
 }'
 ```
 

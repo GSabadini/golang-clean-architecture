@@ -3,10 +3,10 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/GSabadini/golang-clean-architecture/adapter/queue"
 	"os"
 
 	"github.com/GSabadini/golang-clean-architecture/adapter/logger"
+	"github.com/GSabadini/golang-clean-architecture/adapter/queue"
 	"github.com/GSabadini/golang-clean-architecture/domain/entity"
 	"github.com/GSabadini/golang-clean-architecture/usecase"
 	"github.com/pkg/errors"
@@ -16,7 +16,9 @@ const (
 	enviado = "Enviado"
 )
 
-var errFailedToNotify = errors.New("failed to notify")
+var (
+	errFailedToNotify = errors.New("failed to notify")
+)
 
 type (
 	notifier struct {

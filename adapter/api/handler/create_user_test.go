@@ -83,7 +83,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 			expectedStatusCode: http.StatusCreated,
 		},
 		{
-			name: "Success create common user",
+			name: "Success create merchant user",
 			fields: fields{
 				uc: stubCreateUserUseCase{
 					result: presenter.NewCreateUserPresenter().Output(
@@ -122,7 +122,7 @@ func TestCreateUserHandler_Handle(t *testing.T) {
 			expectedStatusCode: http.StatusCreated,
 		},
 		{
-			name: "Error create user invalid inout",
+			name: "Error create user invalid input",
 			fields: fields{
 				uc:  stubCreateUserUseCase{},
 				log: infralogger.Dummy{},

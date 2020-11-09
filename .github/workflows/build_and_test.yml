@@ -14,5 +14,10 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Test
-        run: go test ./...
+      - name: Creating .env
+        uses: canastro/copy-action@0.0.2
+        with:
+          source: ".env.example"
+          target: ".env"
+      - name: Run tests
+        run: go test -v -covermode=count ./...

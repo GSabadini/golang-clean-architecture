@@ -5,14 +5,11 @@ import (
 	"github.com/streadway/amqp"
 )
 
-const (
-	logKey = "queue_producer"
-)
-
 type producer struct {
 	channel   *amqp.Channel
 	queueName string
 	log       logger.Logger
+	logKey    string
 }
 
 // NewProducer creates new producer with its dependencies
@@ -21,6 +18,7 @@ func NewProducer(ch *amqp.Channel, qn string, l logger.Logger) Producer {
 		channel:   ch,
 		queueName: qn,
 		log:       l,
+		logKey:    "queue_producer",
 	}
 }
 
@@ -37,7 +35,7 @@ func (p producer) Publish(message []byte) error {
 			Body:        message,
 		}); err != nil {
 		p.log.WithFields(logger.Fields{
-			"key":   logKey,
+			"key":   p.logKey,
 			"error": err.Error(),
 		}).Errorf("failed to publish message: %s", message)
 
@@ -45,7 +43,7 @@ func (p producer) Publish(message []byte) error {
 	}
 
 	p.log.WithFields(logger.Fields{
-		"key": logKey,
+		"key": p.logKey,
 	}).Infof("new message publish: %s", message)
 
 	return nil

@@ -17,16 +17,13 @@ type (
 	}
 )
 
-type httpGetterStub struct {
-	res *http.Response
-	err error
-}
+type (
+	stubHTTPGetter struct {
+		res *http.Response
+		err error
+	}
+)
 
-// NewHTTPGetterStub returns a new configured HTTPGetter.
-func NewHTTPGetterStub(res *http.Response, err error) HTTPGetter {
-	return httpGetterStub{res: res, err: err}
-}
-
-func (h httpGetterStub) Get(_ string) (*http.Response, error) {
+func (h stubHTTPGetter) Get(_ string) (*http.Response, error) {
 	return h.res, h.err
 }
