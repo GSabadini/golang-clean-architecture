@@ -54,6 +54,10 @@ func NewCreateUserHandler(uc usecase.CreateUserUseCase, l logger.Logger) CreateU
 
 // Handle handles http request
 func (c CreateUserHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	c.log = c.log.WithFields(logger.Fields{
+		"correlation_id": r.Context().Value("correlation_id"),
+	})
+
 	var reqData CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
 		c.log.WithFields(logger.Fields{
@@ -113,11 +117,19 @@ func (c CreateUserHandler) validate(i CreateUserRequest) (usecase.CreateUserInpu
 	if err != nil {
 		errs = append(errs, err)
 	}
+	currency, err := vo.NewCurrency(i.Wallet.Currency)
+	if err != nil {
+		errs = append(errs, err)
+	}
 	amount, err := vo.NewAmount(i.Wallet.Amount)
 	if err != nil {
 		errs = append(errs, err)
 	}
-	wallet := vo.NewWallet(vo.NewMoneyBRL(amount))
+	money := vo.NewMoney(currency, amount)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	wallet := vo.NewWallet(money)
 	if err != nil {
 		errs = append(errs, err)
 	}

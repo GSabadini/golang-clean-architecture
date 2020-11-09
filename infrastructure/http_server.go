@@ -45,7 +45,7 @@ func (a HTTPServer) Start() {
 	a.router.POST("/users", a.createUserHandler())
 	a.router.GET("/users/{user_id}", a.findUserByIDHandler())
 
-	a.router.POST("/transactions", a.createTransferHandler())
+	a.router.POST("/transfers", a.createTransferHandler())
 
 	a.logger.WithFields(adapterlogger.Fields{"port": os.Getenv("APP_PORT")}).Infof("Starting HTTP Server")
 	a.router.SERVE(os.Getenv("APP_PORT"))

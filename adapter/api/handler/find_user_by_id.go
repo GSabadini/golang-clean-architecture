@@ -30,6 +30,10 @@ func NewFindUserByIDHandler(uc usecase.FindUserByIDUseCase, l logger.Logger) Fin
 
 // Handle handles http request
 func (f FindUserByIDHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	f.log = f.log.WithFields(logger.Fields{
+		"correlation_id": r.Context().Value("correlation_id"),
+	})
+
 	reqID := mux.Vars(r)["user_id"]
 	if reqID == "" {
 		err := errors.New("invalid parameter")

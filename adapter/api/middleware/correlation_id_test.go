@@ -33,15 +33,11 @@ func TestCorrelationID_Execute(t *testing.T) {
 				req.Header.Set("X-Correlation-Id", tt.headers["X-Correlation-Id"])
 			}
 
+			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+
 			rr := httptest.NewRecorder()
 
-			middlewareHandler := func(w http.ResponseWriter, r *http.Request) {
-				next := func(w http.ResponseWriter, r *http.Request) {}
-
-				NewCorrelationID().Execute(w, r, next)
-			}
-
-			handler := http.HandlerFunc(middlewareHandler)
+			handler := NewCorrelationID().Execute(testHandler)
 			handler.ServeHTTP(rr, req)
 
 			gotHeader := rr.Header().Get("X-Correlation-Id")

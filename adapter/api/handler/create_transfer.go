@@ -39,6 +39,10 @@ func NewCreateTransferHandler(uc usecase.CreateTransferUseCase, log logger.Logge
 
 // Handle handles http request
 func (c CreateTransferHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	c.log = c.log.WithFields(logger.Fields{
+		"correlation_id": r.Context().Value("correlation_id"),
+	})
+
 	var reqData CreateTransferRequest
 	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
 		c.log.WithFields(logger.Fields{

@@ -77,16 +77,22 @@ make down
 | :----------------: | :-------------------: | :-------------------: |
 | `/users`           | `POST`                | `Create user`         |
 | `/users/{:userId}` | `GET`                 | `Find user by ID`     |
-| `/transactions`    | `POST`                | `Create transaction`     |
+| `/transfers`    | `POST`                | `Create transaction`     |
 | `/health`          | `GET`                 | `Health check`        |
 
 ## Test endpoints API using curl
 
 - #### Creating new user
 
+
+| User type  | 
+| :--------: | 
+| `COMMOM`   | 
+| `MERCHANT` | 
+
 `Request`
 ```bash
-curl --location --request POST 'localhost:3001/users' \
+curl -i --request POST 'localhost:3001/users' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "fullname": "Gabriel Gabriel",
@@ -105,6 +111,13 @@ curl --location --request POST 'localhost:3001/users' \
 ```
 
 `Response`
+```bash
+HTTP/1.1 201 Created
+Content-Type: application/json
+X-Correlation-Id: c6b9d518-1d84-4100-806b-46be21312dc7
+Date: Mon, 09 Nov 2020 22:09:27 GMT
+Content-Length: 302
+```
 ```json
 {
     "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
@@ -135,6 +148,13 @@ curl -i --request GET 'http://localhost:3001/users/{:userId}'
 ```
 
 `Response`
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-Correlation-Id: ec8b22a2-17a9-41a9-b6e8-192b653655d6
+Date: Mon, 09 Nov 2020 22:10:39 GMT
+Content-Length: 279
+```
 ```json
 {
     "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",
@@ -160,7 +180,7 @@ curl -i --request GET 'http://localhost:3001/users/{:userId}'
 
 `Request`
 ```bash
-curl --location --request POST 'localhost:3001/transactions' \
+curl -i --request POST 'localhost:3001/transfers' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "payer_id": {:userId},
@@ -170,6 +190,13 @@ curl --location --request POST 'localhost:3001/transactions' \
 ```
 
 `Response`
+```bash
+HTTP/1.1 201 Created
+Content-Type: application/json
+X-Correlation-Id: 9b2c2433-6316-4321-8c9a-56366cdd3d1b
+Date: Mon, 09 Nov 2020 22:11:51 GMT
+Content-Length: 186
+```
 ```json
 {
     "id": "0db298eb-c8e7-4829-84b7-c1036b4f0791",

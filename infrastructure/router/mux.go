@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/GSabadini/golang-clean-architecture/adapter/api/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -28,6 +29,8 @@ func (m *Mux) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
 }
 
 func (m *Mux) SERVE(port string) {
+	m.router.Use(middleware.NewCorrelationID().Execute)
+
 	server := &http.Server{
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
