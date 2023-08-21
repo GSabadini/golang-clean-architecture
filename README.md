@@ -1,9 +1,4 @@
 <h1 align="center">Golang Clean Architecture :rocket:</h1>
-<p>
-  <a href="https://github.com/GSabadini/golang-clean-architecture/actions" target="_blank">
-    <img alt="Build" src="https://github.com/GSabadini/golang-clean-architecture/workflows/Build%20and%20Testing/badge.svg" />
-  </a>
-</p>
 
 ## Architecture
 -  The whole code is based on my view about "clean architecture" and how to build maintainable projects. If you don’t know clean architecture yet, [here's](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) a reference.
