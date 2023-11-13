@@ -11,7 +11,7 @@ var (
 	rxUuid = regexp.MustCompile(`[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}`)
 )
 
-//Uuid structure
+// Uuid structure
 type Uuid struct {
 	value string
 }

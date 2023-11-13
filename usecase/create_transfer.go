@@ -83,29 +83,16 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	var (
-		transfer entity.Transfer
-		err      error
-	)
+	var transfer = entity.NewTransfer(i.ID, i.PayerID, i.PayeeID, i.Value, i.CreatedAt)
+
+	ok, err := c.authorizer.Authorized(ctx, transfer)
+	if err != nil || !ok {
+		return c.pre.Output(entity.Transfer{}), err
+	}
 
 	err = c.repoTransferCreator.WithTransaction(ctx, func(sessCtx context.Context) error {
-		if err = c.process(sessCtx, i.PayerID, i.PayeeID, i.Value); err != nil {
-			return err
-		}
-
-		transfer, err = c.repoTransferCreator.Create(sessCtx, entity.NewTransfer(
-			i.ID,
-			i.PayerID,
-			i.PayeeID,
-			i.Value,
-			i.CreatedAt,
-		))
+		err = c.performTransactionalFlow(sessCtx, transfer)
 		if err != nil {
-			return err
-		}
-
-		ok, err := c.authorizer.Authorized(sessCtx, transfer)
-		if err != nil || !ok {
 			return err
 		}
 
@@ -120,34 +107,39 @@ func (c createTransferInteractor) Execute(ctx context.Context, i CreateTransferI
 	return c.pre.Output(transfer), nil
 }
 
-func (c createTransferInteractor) process(ctx context.Context, payerID vo.Uuid, payeeID vo.Uuid, value vo.Money) error {
-	payer, err := c.repoUserFinder.FindByID(ctx, payerID)
+func (c createTransferInteractor) performTransactionalFlow(ctx context.Context, transfer entity.Transfer) error {
+	payer, err := c.repoUserFinder.FindByID(ctx, transfer.Payer())
 	if err != nil {
 		return err
 	}
 
-	if err := payer.CanTransfer(); err != nil {
+	if err = payer.CanTransfer(); err != nil {
 		return errors.Wrap(err, entity.ErrUnauthorizedTransfer.Error())
 	}
 
-	payee, err := c.repoUserFinder.FindByID(ctx, payeeID)
+	payee, err := c.repoUserFinder.FindByID(ctx, transfer.Payer())
 	if err != nil {
 		return err
 	}
 
-	err = payer.Withdraw(value)
+	err = payer.Withdraw(transfer.Value())
 	if err != nil {
 		return err
 	}
 
-	payee.Deposit(value)
+	payee.Deposit(transfer.Value())
 
-	err = c.repoUserUpdater.UpdateWallet(ctx, payerID, payer.Wallet().Money())
+	err = c.repoUserUpdater.UpdateWallet(ctx, transfer.Payer(), payer.Wallet().Money())
 	if err != nil {
 		return err
 	}
 
-	err = c.repoUserUpdater.UpdateWallet(ctx, payeeID, payee.Wallet().Money())
+	err = c.repoUserUpdater.UpdateWallet(ctx, transfer.Payee(), payee.Wallet().Money())
+	if err != nil {
+		return err
+	}
+
+	err = c.repoTransferCreator.Create(ctx, transfer)
 	if err != nil {
 		return err
 	}

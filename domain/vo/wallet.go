@@ -1,6 +1,6 @@
 package vo
 
-//  Wallet structure
+// Wallet structure
 type Wallet struct {
 	money Money
 }

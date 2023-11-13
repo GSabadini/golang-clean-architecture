@@ -1,4 +1,4 @@
-version: "3.6"
+version: "3.7"
 
 services:
   app:
@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 3001:3001
+      - "3001:3001"
     env_file:
       - .env
     volumes:
@@ -22,9 +22,9 @@ services:
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
     ports:
-      - 27017:27017
-#    volumes:
-#      - 'mongodb_master_data:/bitnami/mongodb'
+      - "27017:27017"
+    volumes:
+      - 'mongodb_master_data:/bitnami/mongodb'
 
   mongodb-secondary:
     container_name: mongodb-secondary
@@ -55,13 +55,13 @@ services:
     image: "rabbitmq:3-management"
     hostname: "rabbit"
     ports:
-      - 15672:15672
-      - 5672:5672
+      - "15672:15672"
+      - "5672:5672"
     labels:
       NAME: "rabbitmq"
     volumes:
       - ./_scripts/rabbitmq/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
 
-#volumes:
-#  mongodb_master_data:
-#    driver: local
+volumes:
+  mongodb_master_data:
+    driver: local

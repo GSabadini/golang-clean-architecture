@@ -35,7 +35,7 @@ func NewCreateTransferRepository(handler *database.MongoHandler) entity.Transfer
 }
 
 // Create performs insertOne into the database
-func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer) (entity.Transfer, error) {
+func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer) error {
 	var bson = createTransferBSON{
 		ID:        t.ID().Value(),
 		PayerID:   t.Payer().Value(),
@@ -45,10 +45,10 @@ func (c createTransferRepository) Create(ctx context.Context, t entity.Transfer)
 	}
 
 	if _, err := c.handler.Db().Collection(c.collection).InsertOne(ctx, bson); err != nil {
-		return entity.Transfer{}, errors.Wrap(err, entity.ErrCreateTransfer.Error())
+		return errors.Wrap(err, entity.ErrCreateTransfer.Error())
 	}
 
-	return t, nil
+	return nil
 }
 
 func (c createTransferRepository) WithTransaction(ctx context.Context, fn func(context.Context) error) error {

@@ -1,13 +1,7 @@
-FROM golang:1.14-stretch
-
+FROM golang:1.21
 WORKDIR /app
-
 COPY . .
-
-RUN go mod download && go get github.com/cespare/reflex
-
-COPY _scripts/reflex/reflex.conf /
-
+RUN go mod download
+RUN go build -o /golang-clean-architecure
 EXPOSE 3001
-
-ENTRYPOINT ["reflex", "-c", "./_scripts/reflex/reflex.conf"]
+CMD ["/golang-clean-architecure"]

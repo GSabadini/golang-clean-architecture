@@ -10,7 +10,7 @@ type (
 		HTTPGetter
 	}
 
-	// HTTPGetter holds fields and dependencies for executing an http GET request
+	// HTTPGetter holds fields and dependencies for executing a http GET request
 	HTTPGetter interface {
 		// Get executes a GET http request
 		Get(url string) (*http.Response, error)
